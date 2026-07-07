@@ -178,6 +178,6 @@ cp hooks/verify-before-stop.py .claude/hooks/
 
 ## 授權
 
-Opus Pack 以 [MIT License](LICENSE) 發佈——Copyright (c) 2026 Feuer。
+Opus Pack 以 [MIT License](LICENSE) 發佈——Copyright (c) 2026 F-e-u-e-r。
 
 本包納入並改作了採寬鬆式授權(MIT 與 Apache-2.0)的第三方作品;這些授權要求隨附的版權與授權聲明,集中收錄於 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。最具體的一例是 `verify-before-stop` hook——改作自 Curtis Chou(其上游為 Miguok)的 MIT 授權程式碼。整條鏈路不含任何 copyleft(GPL/AGPL/LGPL)。`guideline *.txt` 來源草稿為擁有者自有素材,不隨發佈散佈(已由 `.gitignore` 排除)。

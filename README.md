@@ -285,7 +285,7 @@ attribution survives link rot.
 ## License
 
 Opus Pack is released under the [MIT License](LICENSE) — Copyright (c) 2026
-Feuer.
+F-e-u-e-r.
 
 It incorporates and adapts third-party work under permissive licenses (MIT and
 Apache-2.0); the copyright and permission notices those licenses require to
