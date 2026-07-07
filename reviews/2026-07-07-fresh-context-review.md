@@ -7,7 +7,7 @@ handoff summary from the fresh-context review and the follow-up local review.
 Scope reviewed:
 
 - Six skills under `skills/`
-- The mirrored live install under `.claude/skills/`
+- The maintainer's local mirrored live install under `.claude/skills/`
 - `ground-truth-gates/template/`
 - `hooks/gate-before-commit.sh`
 - English and Traditional Chinese READMEs
@@ -58,7 +58,8 @@ Review lenses from `skill-authoring` section 6:
 
 ## Verification Commands
 
-Run these after edits:
+Maintainer-local commands used during review. Public clones will not have
+`.claude/skills/` unless they create a local live install:
 
 ```bash
 diff -rq skills .claude/skills

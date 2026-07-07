@@ -5,6 +5,9 @@
 為 Fable 5 退場後的日常模型(Opus 4.8 / Sonnet 5 / Haiku)萃取,2026-07。
 原則:少而密的規則勝過完整的憲法;可執行的閘門勝過更多的散文。
 
+早期 alpha(`alpha-0.1.0`):規則會隨真實 session 暴露出的缺口調整。
+歡迎用具體失敗案例開 issue 或 PR。
+
 ## 安裝
 
 ```bash
@@ -15,13 +18,6 @@ mkdir -p <repo>/.claude/skills && cp -R skills/* <repo>/.claude/skills/
 ```
 
 Skill 是按需載入的:平時只有 description 佔 context,觸發才讀全文。
-
-**Keep in sync:** 這個工作目錄可能有兩份相同的 skill(`skills/` 是發佈源、
-`.claude/skills/` 是本機即用安裝,已由 git ignore)及一對雙語 README
-(`README.md` ↔ `README.zh-TW.md`)。改任何一份 SKILL.md → 同步另一份
-(`cp -R skills/. .claude/skills/`),推 GitHub 前跑
-`diff -rq skills .claude/skills` 確認一致;改任一語言的 README →
-同步鏡像另一份。
 
 ## 內容物
 
@@ -150,6 +146,14 @@ cp hooks/verify-before-stop.py .claude/hooks/
 3. **兩份 skill 目錄漂移** → 上方的 keep-in-sync 契約;每次推送前跑 `diff -rq`。
 4. **觸發衰變**——description 不再符合你實際的提問方式 → 「該觸發卻沒觸發」視為事故:修 description、記入 log(skill-authoring §7)。
 5. **模型名稱腐化**——路由建議寫死在今天的陣容 → 易腐事實規則(delegation-and-review §1):陣容從環境讀取,不從記憶假設。
+
+## 維護者筆記
+
+這個工作目錄可能有兩份相同的 skill:`skills/` 是發佈源;`.claude/skills/`
+是本機即用安裝,已由 git ignore。改任何一份 SKILL.md → 同步另一份
+(`cp -R skills/. .claude/skills/`),推 GitHub 前跑
+`diff -rq skills .claude/skills` 確認一致;改任一語言的 README →
+同步鏡像另一份。
 
 ## 已解決的規則衝突
 

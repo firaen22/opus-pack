@@ -7,6 +7,9 @@ Distilled for the daily-driver models that remain after Fable 5's window closes
 Principles: few dense rules beat comprehensive constitutions; executable gates
 beat more prose.
 
+Early alpha (`alpha-0.1.0`): rules may change as real sessions expose misses.
+Issues and PRs with concrete failure cases are welcome.
+
 ## Install
 
 ```bash
@@ -17,14 +20,6 @@ mkdir -p <repo>/.claude/skills && cp -R skills/* <repo>/.claude/skills/
 ```
 
 Skills load on demand: only the description occupies context until triggered.
-
-**Keep in sync:** this working tree may hold two identical skill sets
-(`skills/` is the publish source; `.claude/skills/` is the local live
-install and is ignored by git) and a bilingual README pair
-(`README.md` ↔ `README.zh-TW.md`). Edit any SKILL.md → sync the other copy
-(`cp -R skills/. .claude/skills/`) and run
-`diff -rq skills .claude/skills` before pushing. Edit either README →
-mirror the change in the other language.
 
 ## Contents
 
@@ -230,6 +225,14 @@ take effect.
 3. **The two skill copies drift** → the keep-in-sync contract above; `diff -rq` before every push.
 4. **Trigger decay** — descriptions stop matching how you actually phrase requests → a skill that should have fired and didn't is an incident: fix the description, log it (skill-authoring §7).
 5. **Model-name rot** — routing advice hardcoded to today's lineup → volatile-facts rule (delegation-and-review §1): read the lineup from the environment, never from memory.
+
+## Maintainer Notes
+
+This working tree may hold two identical skill sets: `skills/` is the publish
+source; `.claude/skills/` is the local live install and is ignored by git. Edit
+any SKILL.md → sync the other copy (`cp -R skills/. .claude/skills/`) and run
+`diff -rq skills .claude/skills` before pushing. Edit either README → mirror the
+change in the other language.
 
 ## Rule conflicts resolved during distillation
 
