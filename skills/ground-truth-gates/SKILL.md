@@ -44,6 +44,18 @@ deterministic per input). Set the team's bar by editing `MIN_DEFAULT` in
 `golden/run.mjs` — that is what `run-all.sh` (and any hook/CI on top of it)
 enforces; the `--min` flag only overrides ad-hoc runs.
 
+Score on the **cost-asymmetric** criterion, not aggregate accuracy alone.
+When labels map to real actions, a **false route** (the classifier fires the
+wrong concrete action — sends the message, routes the ticket, books the
+order) is far worse than a **defer miss** (falls through to the safe fallback
+— an LLM call, a human queue). Aggregate accuracy averages false routes away:
+a gate can clear its threshold while shipping an action-taking bug. Set
+`DEFER_LABEL` in `golden/run.mjs` to your fallback label and the gate
+hard-fails on ANY false route regardless of accuracy. To pick the hard-fail
+class in a new domain: "which wrong output triggers a concrete action a human
+didn't confirm?" — that's the false route; "which wrong output just costs a
+fallback call?" — that's the warn.
+
 **replay:** replace `replay/corpus.jsonl` with a representative sample of
 real logged inputs. Replace `transform()` with the step being changed. Run
 `node replay/run.mjs --update` once to freeze current behavior; after each
