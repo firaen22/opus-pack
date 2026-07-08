@@ -5,7 +5,7 @@
 為 Fable 5 退場後的日常模型(Opus 4.8 / Sonnet 5 / Haiku)萃取,2026-07。
 原則:少而密的規則勝過完整的憲法;可執行的閘門勝過更多的散文。
 
-早期 alpha(`alpha-0.1.2`):規則會隨真實 session 暴露出的缺口調整。
+早期 alpha(`alpha-0.1.3`):規則會隨真實 session 暴露出的缺口調整。
 歡迎用具體失敗案例開 issue 或 PR。
 
 ## 安裝
@@ -54,7 +54,7 @@ Skill 是按需載入的:平時只有 description 佔 context,觸發才讀全文
 1. **來源 brief 的 11 檔制度包與四階段閉環**——那是為「一次性 Fable session」設計的流程,不是 Opus 的日常裝備。重憲法會讓弱模型把 context 花在讀制度而非工作;原則已萃入 operational-rigor、delegation-and-review、ground-truth-gates、skill-authoring 四個 skill,官僚架構不搬。
 2. **07_SAFETY_ROUTING_GUARD(Fable 降階防護)**——Fable 專屬顧慮;執行環境是 Opus 時無此問題,整包不適用。
 3. **GPT‑5.5 外部對抗審查 phase**——「跨家族第二意見」的想法值得(delegation skill 保留 fresh-context 第二意見),但為一個未驗證可用的外部模型建立專屬 phase 與報告格式是負擔,不採。
-4. **「升級到更強模型」階梯**——來源 brief 都寫了升級路徑,但在 Fable 退場的前提下 Opus 就是最強模型,階梯頂端懸空。已改寫:換路 → fresh-context 重試 → 帶失敗軌跡問使用者;解出的模式才「降級」給便宜模型批次套用。這是原稿沒有一致處理的矛盾。
+4. **「升級到更強模型」階梯**——來源 brief 都寫了升級路徑,但在 Fable 退場的前提下,以 Opus 駕駛的 session 已在最強一階,階梯頂端懸空。已改寫:換路 → fresh-context 重試(僅當環境確實存在更強一階時,才把這次重試改為顧問模式——例如 Sonnet 駕駛的 session 諮詢 Opus;否則維持同階重試)→ 帶失敗軌跡問使用者;解出的模式才「降級」給便宜模型批次套用。這是原稿沒有一致處理的矛盾。
 5. **USER_DECISION_CARD 完整表格**——壓縮成四要素(問題+脈絡、選項+代價、建議、不回覆時的安全預設)。要弱模型填八欄表格,得到的是填表不是判斷。
 6. **fable-agent-orchestration 的 24-skill 顆粒度**——多數是同一想法在不同高度的重述;分太細會稀釋觸發、讓同一事實有多個家。合併為 2 個 skill。
 7. **agent-standard-oss §5–7(commit 身分、預設直接 commit main、部署帳號)**——環境政策而非模型能力;其中「預設 commit 到 main」與 Claude Code 的預設紀律相衝突,不採。§4 SessionStart hook 屬 harness 設定,留給你自行決定。
@@ -180,6 +180,8 @@ bash hooks/test-gate-before-commit.sh
 - **pro_ai.news** — Threads 貼文;五步驟目標教練 protocol,改作為 `personal-goal-planning`:
   <https://www.threads.com/@pro_ai.news/post/DadQkGHjxq->
 - **Curtis Chou** — [`curtischoutw/claude-institution`](https://github.com/curtischoutw/claude-institution) @ `8dea062`,MIT License,Copyright (c) 2026 Curtis Chou。`verify-before-stop` hook 改作自其 `verify_gate.py`(該檔又改作自 Miguok/fable-harness),另有約 10 條判斷規則吸收進 operational-rigor / delegation-and-review / skill-authoring。已通讀審查;其常載/每回合提醒/罐頭模板層刻意不採——理由同捨棄清單第 5 項。
+- **echo-of-machines** — [`echo-of-machines/fable-advisor`](https://github.com/echo-of-machines/fable-advisor);顧問模式諮詢(更強一階出建議、目前一階續執行),以 tier-relative 形式改作進 `delegation-and-review` §4;與 Anthropic 官方 [advisor tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool) 同一模式。只採意念,未取任何程式碼。
+- **TheColliny** — [`TheColliny/FableClaudeMDForOpus`](https://github.com/TheColliny/FableClaudeMDForOpus);事件措辭路由,改作為 `skill-authoring` §5 的狀態措辭觸發規則。只採意念,未取任何程式碼。
 - **firaen22** — 透過 GitHub PR 貢獻 cost-asymmetric golden runner 與第一版結構化 commit-hook parser。
 - **fable-agent-orchestration** @ `935e4a3`(git.wearein.space/elias,Apache-2.0)
 - **agent-standard-oss** @ `3786c4c`(github.com/anmoln7,MIT)
