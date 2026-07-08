@@ -7,7 +7,7 @@ Distilled for the daily-driver models that remain after Fable 5's window closes
 Principles: few dense rules beat comprehensive constitutions; executable gates
 beat more prose.
 
-Early alpha (`alpha-0.1.2`): rules may change as real sessions expose misses.
+Early alpha (`alpha-0.1.3`): rules may change as real sessions expose misses.
 Issues and PRs with concrete failure cases are welcome.
 
 ## Install
@@ -80,11 +80,14 @@ The judgment you asked for, recorded explicitly:
    delegation-and-review), but building a dedicated phase and report format
    around an unverified external model is overhead.
 4. **"Escalate to a stronger model" ladders** — the source briefs assume one exists;
-   post-Fable, Opus is the top model and the ladder's top rung hangs in air.
-   Rewritten: change approach → fresh-context retry → ask the user with the
-   failure trail; only solved patterns get "downgraded" to cheaper models for
-   batch application. This contradiction was not handled consistently in the
-   originals.
+   post-Fable, an Opus-driven session sits at the top tier and the ladder's top
+   rung hangs in air. Rewritten: change approach → fresh-context retry
+   (advice-mode at a stronger tier only when the environment actually offers
+   one — e.g. a Sonnet-driven session consulting Opus; otherwise the retry
+   stays plain same-tier) → ask the user with the failure trail; only solved
+   patterns get "downgraded"
+   to cheaper models for batch application. This contradiction was not handled
+   consistently in the originals.
 5. **The full USER_DECISION_CARD table** — compressed to four essentials
    (question+context, options with tradeoffs, recommendation, safe default if
    no reply). Asking a weaker model to fill an eight-field form yields form-
@@ -285,6 +288,17 @@ This pack distills and adapts ideas from:
   into operational-rigor / delegation-and-review / skill-authoring. Reviewed
   in full; its always-loaded/nudge/template layer was deliberately not
   adopted — same reasoning as dropped-item 5.
+- **echo-of-machines** —
+  [`echo-of-machines/fable-advisor`](https://github.com/echo-of-machines/fable-advisor);
+  the advice-mode consult (a stronger tier recommends, the current tier keeps
+  executing), adapted tier-relative into `delegation-and-review` §4. Same
+  pattern as Anthropic's
+  [advisor tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool).
+  Ideas only; no code taken.
+- **TheColliny** —
+  [`TheColliny/FableClaudeMDForOpus`](https://github.com/TheColliny/FableClaudeMDForOpus);
+  event-phrased routing, adapted as the state-phrased trigger rule in
+  `skill-authoring` §5. Ideas only; no code taken.
 - **firaen22** — contributed the cost-asymmetric golden runner and the first
   structural commit-hook parser work through GitHub PRs.
 - **fable-agent-orchestration** @ `935e4a3` (git.wearein.space/elias, Apache-2.0)

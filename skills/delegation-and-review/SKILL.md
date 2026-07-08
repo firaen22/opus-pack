@@ -74,6 +74,10 @@ reviewers that they silently absorb as implementers.
 1. Same step fails twice → change approach; never a third cosmetic retry.
 2. Approach fails → re-derive from the actual error trail, not its summary.
 3. Still stuck → spawn fresh context on the same problem with the failure trail.
+   If the environment offers a tier above the one doing the work, make it
+   advice-mode: package goal, constraints, failure trail, and options considered;
+   take back a recommendation and remain the executor. No stronger tier →
+   plain same-tier retry.
 4. Still stuck, or tradeoff is genuinely the user's → escalate with trail,
    options, recommendation, and safe default.
 5. Pattern solved → downgrade batch application to cheaper model with example;
@@ -118,5 +122,7 @@ loop, bounded fan-out, machinery-is-not-the-user, artifact reconciliation),
 agent-standard-oss `3786c4c` (files-over-context, author-is-not-the-judge,
 one-catch-one-class-one-sweep, stop-condition policy, verifier decay, injection
 rule), and a friend's measured-harness export (spec-review-first, critic framing,
-claim tags, batch spot-check, wave sequencing, empty-synthesis check). Stable
-behavioral rules; re-check only worktree/agent mechanics against the current harness.
+claim tags, batch spot-check, wave sequencing, empty-synthesis check); the
+stronger-tier advice-mode rung (2026-07) adapts echo-of-machines/fable-advisor
+and the official advisor-tool pattern. Stable behavioral rules; re-check only
+worktree/agent mechanics against the current harness.
