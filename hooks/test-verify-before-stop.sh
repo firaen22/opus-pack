@@ -84,4 +84,17 @@ assert_pass "doc-only edit never blocks" "$(run_hook "$tmp/t5.jsonl" false)"
 transcript_with "$tmp/t6.jsonl" "$EDIT_PY"
 assert_pass "second Stop (relief valve) passes" "$(run_hook "$tmp/t6.jsonl" true)"
 
+# Write counts as a code edit too (hook covers Edit/Write/NotebookEdit/MultiEdit)
+WRITE_PY='{"type":"tool_use","name":"Write","input":{"file_path":"/work/new_module.py"}}'
+transcript_with "$tmp/t7.jsonl" "$WRITE_PY"
+assert_block "Write without verification blocks" "$(run_hook "$tmp/t7.jsonl" false)"
+
+# Windowing: only tool calls after the LAST real user prompt count
+{
+  printf '%s\n' '{"type":"user","message":{"content":"first request"}}'
+  printf '{"type":"assistant","message":{"content":[%s]}}\n' "$EDIT_PY"
+  printf '%s\n' '{"type":"user","message":{"content":"second request, no edits after this"}}'
+} > "$tmp/t8.jsonl"
+assert_pass "edits before the last user prompt are out of window" "$(run_hook "$tmp/t8.jsonl" false)"
+
 echo "OK: all verify-before-stop tests passed"

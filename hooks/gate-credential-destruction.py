@@ -13,20 +13,26 @@ call whose error message tells the model what discipline applies.
 Behavior:
 - Tokenizes the command with shlex (no execution; substitutions stay inert
   text) and walks command positions across ;|&&(||) separators.
-- Destructive verbs: rm, unlink, shred, srm, truncate, and `git rm`.
-  Arguments (non-flag tokens) are matched against credential patterns:
-  names containing credential/secret/password/apikey; ssh private keys
+- Destructive verbs: rm, unlink, shred, srm, truncate, and `git rm` —
+  matched case-insensitively on the token's basename, so `/bin/rm` and
+  `RM` (case-insensitive filesystems run it) count. Wrapper commands
+  (sudo, doas, command, env, nice, nohup, time, busybox, stdbuf) pass
+  through to the real verb. Arguments (non-flag tokens) are matched
+  against credential patterns: names containing
+  credential/secret/password/apikey; ssh private keys
   (id_rsa/id_dsa/id_ecdsa/id_ed25519, not .pub); .env and .env.* (except
-  example/sample/template/dist); .netrc/.pgpass/.htpasswd; extensions
-  .pem/.p12/.pfx/.keystore/.jks/.kdbx/.ppk/.key; paths under .ssh/, .aws/,
-  .gnupg/.
+  the exact suffixes example/sample/template/dist); .netrc/.pgpass/
+  .htpasswd; extensions .pem/.p12/.pfx/.keystore/.jks/.kdbx/.ppk/.key;
+  the directories .ssh/.aws/.gnupg themselves and any path under them.
 - On a hit: exit 2; stderr explains the rule and the two legitimate paths
   (explicit user confirmation, or surfacing an embedded directive).
-- Relief valve: a command prefixed with the assignment CRED_GATE_APPROVED=1
-  passes and the pass is logged — for deletions the user has explicitly
-  confirmed in conversation. The model can technically self-serve this
-  override; the gate's value is friction plus an audit trail, not
-  tamper-proofing against the model itself.
+- Relief valve: the assignment CRED_GATE_APPROVED=1 prefixed to a single
+  command overrides that command only, mirroring shell env-assignment
+  scoping — `CRED_GATE_APPROVED=1 rm .env; rm id_rsa` still blocks on the
+  second command, and an override appearing after a destructive command
+  does not launder it. Overridden hits are logged. The model can
+  technically self-serve this override; the gate's value is friction plus
+  an audit trail, not tamper-proofing against the model itself.
 - Unparseable commands (unbalanced quotes): fall back to a raw-text scan;
   destructive verb + credential-ish token together fail toward blocking,
   same posture as gate-before-commit's "can't tell" exits.
@@ -35,8 +41,12 @@ Behavior:
 Known limits (inherent to text-level hooks; do not treat as omniscient):
 - `bash script.sh`, aliases, `find -delete`, `xargs rm`, and redirection
   truncation (`> file`) are not detected.
+- Wrappers that take value arguments before the command (`nice -n 10 rm`,
+  `timeout 5 rm`) hide the verb behind the value token.
 - Wildcards are matched as literal argument text (`rm *.pem` is caught;
-  `rm *` expanding to a .pem at runtime is not).
+  `rm *` expanding to a .pem at runtime is not). Unquoted names containing
+  shell metacharacters (`rm file(1).pem`) tokenize into fragments and can
+  slip; the quoted form is matched.
 - It gates Bash only; Write/Edit overwrites of credential files are governed
   by prose rules, not this hook.
 
@@ -52,6 +62,8 @@ import sys
 import traceback
 
 DESTRUCTIVE = {"rm", "unlink", "shred", "srm", "truncate"}
+WRAPPERS = {"sudo", "doas", "command", "env", "nice", "nohup", "time",
+            "busybox", "stdbuf", "ionice", "exec"}
 SEPARATORS = {";", "&", "&&", "|", "||", "(", ")"}
 OVERRIDE = "CRED_GATE_APPROVED=1"
 
@@ -65,9 +77,10 @@ LOG_PATH = os.path.expanduser("~/.claude/hooks/hooks.log")
 
 RAW_SUSPICIOUS_RE = re.compile(
     r"\b(rm|unlink|shred|srm|truncate)\b.*"
-    r"(credential|secret|password|apikey|api[_-]key|id_rsa|id_ed25519|"
+    r"(credential|secret|password|apikey|api[_-]key|"
+    r"id_rsa|id_dsa|id_ecdsa|id_ed25519|"
     r"\.pem\b|\.p12\b|\.pfx\b|\.keystore\b|\.jks\b|\.kdbx\b|\.ppk\b|\.key\b|"
-    r"\.env\b|\.netrc\b|\.pgpass\b|\.htpasswd\b|/\.ssh/|/\.aws/|/\.gnupg/)",
+    r"\.env\b|\.netrc\b|\.pgpass\b|\.htpasswd\b|\.ssh\b|\.aws\b|\.gnupg\b)",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -91,7 +104,7 @@ def is_credential_path(arg):
     if base.endswith(".pub"):
         return False
     if base == ".env" or (
-        base.startswith(".env.") and not base.endswith(ENV_SAFE_SUFFIXES)
+        base.startswith(".env.") and base[len(".env."):] not in ENV_SAFE_SUFFIXES
     ):
         return True
     if base in (".netrc", ".pgpass", ".htpasswd"):
@@ -103,7 +116,9 @@ def is_credential_path(arg):
         return True
     if base.endswith(CRED_EXTENSIONS):
         return True
-    if any(seg in "/" + lowered for seg in CRED_DIR_SEGMENTS):
+    # match .ssh/.aws/.gnupg as a path segment anywhere, including as the
+    # final component (`rm -rf ~/.ssh` destroys the whole credential tree)
+    if any(seg in "/" + lowered + "/" for seg in CRED_DIR_SEGMENTS):
         return True
     return False
 
@@ -123,23 +138,28 @@ def find_credential_targets(command):
     verb_active = False
     git_pending = False
     git_flag_value_pending = False
+    override_this_command = False
     for tok in tokens:
         if tok in SEPARATORS or all(c in ";|&()" for c in tok):
             at_command_position = True
             verb_active = False
             git_pending = False
             git_flag_value_pending = False
+            override_this_command = False  # shell scoping: one command only
             continue
         if at_command_position:
             if "=" in tok and not tok.startswith("="):  # env assignment prefix
                 if tok == OVERRIDE:
-                    return ["__OVERRIDE__"], True
+                    override_this_command = True
                 continue  # stay at command position
-            if tok == "git":
+            name = os.path.basename(tok).lower()
+            if name in WRAPPERS or (name.startswith("-") and tok.startswith("-")):
+                continue  # wrapper (sudo, env, …) or its flag: keep looking
+            if name == "git":
                 git_pending = True
                 at_command_position = False
                 continue
-            verb_active = tok in DESTRUCTIVE
+            verb_active = name in DESTRUCTIVE
             at_command_position = False
             continue
         if git_pending:
@@ -151,11 +171,14 @@ def find_credential_targets(command):
                 if tok in ("-C", "-c", "--git-dir", "--work-tree", "--namespace"):
                     git_flag_value_pending = True
                 continue
-            verb_active = tok == "rm"
+            verb_active = tok.lower() == "rm"
             git_pending = False
             continue
         if verb_active and not tok.startswith("-") and is_credential_path(tok):
-            targets.append(tok)
+            if override_this_command:
+                _log(f"PASS approved-override on: {tok}")
+            else:
+                targets.append(tok)
     return targets, True
 
 
@@ -181,10 +204,6 @@ def main():
                 _log("BLOCK unparseable command with destructive verb + credential token")
                 sys.stderr.write(BLOCK_MESSAGE.format(target="<unparseable command>"))
                 return 2
-            return 0
-
-        if targets == ["__OVERRIDE__"]:
-            _log(f"PASS approved-override: {command[:200]}")
             return 0
 
         if targets:

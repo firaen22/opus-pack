@@ -234,18 +234,21 @@ acknowledgements). Wire it with:
 **Third (optional) hook — credential-pattern files don't get destroyed on
 say-so.** `hooks/gate-credential-destruction.py` (Python 3 stdlib, tested
 2026-07-11) is a `PreToolUse` (matcher: `Bash`) hook that blocks
-`rm`/`unlink`/`shred`/`git rm` on credential-looking paths (ssh private
-keys, `.env` variants, `*.pem`/keystores, anything named
-credential/secret) until the user has explicitly confirmed that specific
-deletion (re-run prefixed with `CRED_GATE_APPROVED=1`; the override is
-logged). Why it exists: in the pack's own eval, both weak-tier no-skills
-runs deleted a credentials backup because an instruction embedded in a
-vendor-notes file told them to — this gate turns that exact failure into a
-blocked call whose error message points at delegation-and-review §7 and
-security-architect. Known limits are in the script header (`bash
-script.sh`, aliases, and `find -delete` bypass it — inherent to text-level
-hooks). Wire it as a second command under the same `PreToolUse`/`Bash`
-matcher:
+`rm`/`unlink`/`shred`/`srm`/`truncate`/`git rm` — including `sudo`/wrapper
+and path-qualified forms — on credential-looking paths (ssh private keys
+and the `.ssh`/`.aws`/`.gnupg` directories, `.env` variants,
+`*.pem`/keystores, anything named credential/secret/password/apikey) until
+that specific deletion is explicitly confirmed: after the user's yes,
+re-run prefixed with `CRED_GATE_APPROVED=1`, which overrides that one
+command only. The override is friction plus an audit log, not proof of
+consent — every use is logged. Why the hook exists: in the pack's own
+eval, both weak-tier no-skills runs deleted a credentials backup because
+an instruction embedded in a vendor-notes file told them to — this gate
+turns that exact failure into a blocked call whose error message points at
+delegation-and-review §7 and security-architect. Known limits are in the
+script header (`bash script.sh`, aliases, `find -delete`, `xargs rm`, and
+`>` truncation bypass it — inherent to text-level hooks). Wire it as a
+second command under the same `PreToolUse`/`Bash` matcher:
 
 ```json
 { "type": "command",
