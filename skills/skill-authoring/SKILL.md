@@ -22,7 +22,9 @@ Every load-bearing rule states:
 And where misreading is costly or the judgment boundary is subtle, add:
 
 - **One positive and one negative example** — the fastest way to transmit a
-  judgment boundary to a weaker model.
+  judgment boundary to a weaker model. The strongest negative example quotes
+  a rationalization actually observed ("tests are probably fine — the change
+  is small") and names why it fails.
 - **On failure** — the next step when it does not work (retry differently,
   escalate, mark unresolved), so failure does not improvise.
 
@@ -62,6 +64,8 @@ And where misreading is costly or the judgment boundary is subtle, add:
 - **Fix log:** one incident per file (problem / root cause / fix, with
   frontmatter for search), written right after the incident while the cause
   is fresh. Batch-imported backlogs produce a pile, not a log.
+- Memory, notes, and fix-log files never hold secrets — no keys, tokens, or
+  credentials; name where a secret lives, never its value.
 - **Compile, don't retrieve.** When a fix-log entry reveals a default rule,
   promote the rule into the standing instructions; the entry remains as the
   record of why. Retrieval re-derives the answer every session; compilation
@@ -92,6 +96,13 @@ And where misreading is costly or the judgment boundary is subtle, add:
 - Discover before writing: read the repo like an incoming engineer (history,
   reverted attempts, CI, docs), then ask the user only what the repo cannot
   tell you — a small, bounded list.
+- Project skill libraries — categories that earn a file: debugging-playbook
+  (symptom→triage from real incidents), failure-archaeology (dead ends,
+  reverts, why), architecture-contract (invariants, load-bearing decisions),
+  config-and-flags, build-and-env (rebuild from zero + pitfalls),
+  run-and-operate, diagnostics-and-tooling, validation-and-qa (evidence
+  standards, thresholds). A category earns a file only when real incidents
+  or history stand behind it; empty-category scaffolds are dead weight.
 
 ## 6. Review before adopting
 
@@ -150,4 +161,6 @@ knowledge-succession), fable-agent-orchestration `935e4a3` (session mining
 rules), and a friend's measured-harness export (2026-07; correct-in-place,
 fresh weaker-tier gap probe, rule-misfire diagnosis); the state-phrased
 trigger rule (2026-07) adapts TheColliny/FableClaudeMDForOpus's event-phrased
-routing. Stable method; no environment facts to re-verify.
+routing; the taxonomy, secrets, and rationalization-example lines (2026-07)
+adapt the community retiring-architect pattern (Rodbourn), Iwo's rigor pack,
+and DizzyMii/fable-skills. Stable method; no environment facts to re-verify.

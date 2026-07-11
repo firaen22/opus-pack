@@ -101,6 +101,9 @@ reviewers that they silently absorb as implementers.
 - Files are state; context is not. Write results as each item completes.
 - Handoff pack: done paths, remaining next step, risks/questions, user decisions,
   and resume command/context.
+- The final summary is for a reader who watched none of the work: lead with
+  the outcome, expand any shorthand you coined mid-task, and shorten by
+  dropping low-impact items — never by compressing sentences into fragments.
 - Unattended loops need written stop conditions first: touch scope, turn/spend
   cap, done command, required record, and human-pull condition. End at a
   deterministic boundary, never because the model feels finished.
@@ -145,5 +148,7 @@ cost-asymmetry, edit-conflict reconciliation, and fallback resumption (each
 rule probe-tested on a fresh weaker-tier agent); the §7 surfacing clause
 (2026-07) comes from the pack's own eval rounds 1–2
 (reviews/2026-07-11-pack-eval-rounds-1-2.md — the strongest tested model
-refused an embedded directive and never mentioned it). Stable behavioral
-rules; re-check only worktree/agent mechanics against the current harness.
+refused an embedded directive and never mentioned it); the handoff
+communication lines (2026-07) adapt benjaminard/fable-skills'
+outcome-first-writing and plain-handoff. Stable behavioral rules; re-check
+only worktree/agent mechanics against the current harness.
