@@ -35,10 +35,11 @@ When rigor conflicts with finishing sooner, rigor wins.
   after: provenance check (owner/age/fork metadata), full source read, one
   written sentence stating why it is inert or safe here, and a fixture test
   of its load-bearing behavior — for hooks/gates, both the allow path and
-  the block path. For security-critical parsers/gates, the fixture step is
-  author-imagination-bound: add a cross-family adversarial review of the
-  source, and re-run the gate when upstream ships fixes — a passed gate
-  certifies the version read, not the file path.
+  the block path. For security-critical parsers/gates, fixtures cover only
+  cases their writer imagined: add a cross-family adversarial review of the
+  source (cross-model-review, including its §6 fallback), and re-gate on
+  any upstream update — a passed gate certifies the version read, not the
+  file path.
 - **Two-failure rule:** after two consecutive failures of the same step, stop and
   replan. Before every retry, including the first, fill "attempt N failed because
   ___" with a mechanism; if it will not fill, reproduce the failure in isolation.
@@ -122,4 +123,7 @@ agent-standard-oss `3786c4c` (slop list, scrutiny-vs-novelty), and a friend's
 measured-harness export (expected-before-actual ordering, retry-mechanism gate),
 plus a 2026-07 mining pass (approval-timing, install gate, mechanism replacement;
 each rule probe-tested on a fresh weaker-tier agent before inclusion).
+The §2 security-critical-parser clause (2026-07-12) generalizes PR #13's
+second-reviewer event: three live bypasses in a gate that had passed the
+standing install gate's fixture suite (fixed in cd0d2a9).
 Stable behavioral rules; no environment-specific facts to re-verify.
