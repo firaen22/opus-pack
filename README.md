@@ -7,7 +7,7 @@ Distilled for the daily-driver models that remain after Fable 5's window closes
 Principles: few dense rules beat comprehensive constitutions; executable gates
 beat more prose.
 
-Early alpha (`alpha-0.1.4`): rules may change as real sessions expose misses.
+Early alpha (`alpha-0.1.5`): rules may change as real sessions expose misses.
 Issues and PRs with concrete failure cases are welcome.
 
 ## Install
@@ -32,6 +32,7 @@ Skills load on demand: only the description occupies context until triggered.
 | `security-architect` | Practical security for a non-expert owner: auth/JWT, per-platform secret storage, MITM/TLS, web/backend/DB rules, agent tool permissions, leak incident response | user-supplied security reference draft + OWASP/RFC common knowledge, verified and extended |
 | `product-roadmap` | Product-owner lens: evidence before opinion, riskiest assumption first, Now/Next/Later/Not-now, milestones, adjacent-repo mining, three-way task split (agent/human/needs-info) | user-supplied roadmap reference draft — ceremony cut, judgment added |
 | `personal-goal-planning` | Coach-style five steps: minimal intake, tiered goals (2–4w / 2–3m / 6–12m) with one mainline, executable tasks with observable done-criteria, realistic weekly rhythm, weekly review with a stuck rule | @pro_ai.news goal-coaching protocol (Threads) + this pack's house rules |
+| `cross-model-review` | Adversarial review from a *different model family* before a load-bearing merge: session-time reviewer discovery (no hard-coded lineup), self-contained packet, findings-are-claims, bounded review-and-fix loop (merge on PROCEED or a recorded gap), exit-code≠pass. Doctrine only — concrete CLIs stay out of the pack | promoted from the owner's private cross-model-review CLI notes; doctrine generalized, machine recipes kept personal |
 
 `ground-truth-gates/template/` was verified by execution (Node v23, 2026-07-06):
 correctly FAILs without a snapshot, goes all-green after freezing, and lists
@@ -75,10 +76,14 @@ The judgment you asked for, recorded explicitly:
    bureaucracy was not ported.
 2. **07_SAFETY_ROUTING_GUARD (Fable downgrade protection)** — a Fable-specific
    concern; not applicable when the runtime is Opus.
-3. **GPT-5.5 external adversarial-review phase** — the cross-family
-   second-opinion idea is kept as one line (fresh-context second opinion in
-   delegation-and-review), but building a dedicated phase and report format
-   around an unverified external model is overhead.
+3. **A GPT-5.5 external adversarial-review phase built around one fixed
+   model** — rejected as written (an always-on phase hard-coding one
+   unverified external model is overhead and drifts the moment lineups
+   change). The durable core of the idea is now the `cross-model-review`
+   skill instead: cross-family review as a *session-time-chosen, doctrine-
+   level* discipline — reviewers discovered and picked at run time, no fixed
+   lineup, concrete CLIs kept out of the pack. What stayed dropped is the
+   fixed-model phase; what was adopted is the model-agnostic doctrine.
 4. **"Escalate to a stronger model" ladders** — the source briefs assume one exists;
    post-Fable, an Opus-driven session sits at the top tier and the ladder's top
    rung hangs in air. Rewritten: change approach → fresh-context retry

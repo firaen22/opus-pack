@@ -5,7 +5,7 @@
 為 Fable 5 退場後的日常模型(Opus 4.8 / Sonnet 5 / Haiku)萃取,2026-07。
 原則:少而密的規則勝過完整的憲法;可執行的閘門勝過更多的散文。
 
-早期 alpha(`alpha-0.1.4`):規則會隨真實 session 暴露出的缺口調整。
+早期 alpha(`alpha-0.1.5`):規則會隨真實 session 暴露出的缺口調整。
 歡迎用具體失敗案例開 issue 或 PR。
 
 ## 安裝
@@ -30,6 +30,7 @@ Skill 是按需載入的:平時只有 description 佔 context,觸發才讀全文
 | `security-architect` | 非資安專家用的實用安全審查:auth/JWT、各平台 secret 存放、MITM/TLS、web/backend/DB rules、agent 工具權限、洩漏事件處理 | 使用者提供的 security 參考稿 + OWASP/RFC 常識,經查證與補強 |
 | `product-roadmap` | Product owner 視角:證據先於意見、最險假設優先、Now/Next/Later/Not-now、milestone、鄰近 repo 挖掘、任務三分(agent/人/待資訊) | 使用者提供的 roadmap 參考稿,砍儀式、補判斷 |
 | `personal-goal-planning` | 教練式五步驟:最少提問建檔、三層目標(2–4週/2–3月/6–12月)單一主線、可執行任務與可觀察完成標準、務實週節奏、含卡關規則的每週檢討 | @pro_ai.news 目標教練 protocol(Threads)+ 本包 house rules |
+| `cross-model-review` | load-bearing merge 前找**不同模型家族**做對抗審查:session 時偵測審查者(不寫死陣容)、自足 packet、findings 視為主張、有界的審查-修正迴圈(PROCEED 或記錄在案的 gap 才 merge)、exit code≠通過。只放 doctrine——具體 CLI 不進 pack | 由 owner 私有 cross-model-review CLI 筆記提升;doctrine 一般化,機器 recipe 保留在個人端 |
 
 `ground-truth-gates/template/` 已實跑驗證(Node v23,2026-07-06):
 無 snapshot 時正確 FAIL、凍結後全綠、改變 transform 行為時精準列出漂移的紀錄並 exit 1。
@@ -53,7 +54,7 @@ Skill 是按需載入的:平時只有 description 佔 context,觸發才讀全文
 
 1. **來源 brief 的 11 檔制度包與四階段閉環**——那是為「一次性 Fable session」設計的流程,不是 Opus 的日常裝備。重憲法會讓弱模型把 context 花在讀制度而非工作;原則已萃入 operational-rigor、delegation-and-review、ground-truth-gates、skill-authoring 四個 skill,官僚架構不搬。
 2. **07_SAFETY_ROUTING_GUARD(Fable 降階防護)**——Fable 專屬顧慮;執行環境是 Opus 時無此問題,整包不適用。
-3. **GPT‑5.5 外部對抗審查 phase**——「跨家族第二意見」的想法值得(delegation skill 保留 fresh-context 第二意見),但為一個未驗證可用的外部模型建立專屬 phase 與報告格式是負擔,不採。
+3. **圍繞單一固定模型的 GPT‑5.5 外部對抗審查 phase**——照原樣不採(為一個寫死的、未驗證的外部模型建常駐 phase 是負擔,而且陣容一變就過時)。這個想法的耐久核心改由 `cross-model-review` skill 承載:把跨家族審查做成**session 時選定、doctrine 層**的紀律——審查者於執行時偵測並挑選、不寫死陣容、具體 CLI 不進 pack。維持不採的是「固定模型 phase」,被採納的是 model-agnostic 的 doctrine。
 4. **「升級到更強模型」階梯**——來源 brief 都寫了升級路徑,但在 Fable 退場的前提下,以 Opus 駕駛的 session 已在最強一階,階梯頂端懸空。已改寫:換路 → fresh-context 重試(僅當環境確實存在更強一階時,才把這次重試改為顧問模式——例如 Sonnet 駕駛的 session 諮詢 Opus;否則維持同階重試)→ 帶失敗軌跡問使用者;解出的模式才「降級」給便宜模型批次套用。這是原稿沒有一致處理的矛盾。
 5. **USER_DECISION_CARD 完整表格**——壓縮成四要素(問題+脈絡、選項+代價、建議、不回覆時的安全預設)。要弱模型填八欄表格,得到的是填表不是判斷。
 6. **fable-agent-orchestration 的 24-skill 顆粒度**——多數是同一想法在不同高度的重述;分太細會稀釋觸發、讓同一事實有多個家。合併為 2 個 skill。
