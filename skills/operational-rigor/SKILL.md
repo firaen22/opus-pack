@@ -28,6 +28,15 @@ When rigor conflicts with finishing sooner, rigor wins.
   action or a recoverable checkpoint (backup, branch, dry run reviewed first).
 - Run destructive operations one at a time; never batch deletions, force-pushes,
   or sends. Prefer dry-run/list-before-act modes and read their output first.
+- **A sync with delete semantics is a destructive action with its own traps**
+  (`rsync --delete`, `rclone sync`): it is a MIRROR, not a backup — run after
+  source-side destruction, it propagates the destruction to the destination.
+  Before running: literal-`ls` the destination to confirm the live mount (an
+  auto-`mkdir -p` in the script masks an unmounted cloud drive and silently
+  mirrors into a dead local directory), and dry-run first — in a non-versioned
+  location, dry-run via a COPY of the script (a forgotten `-n` left in the
+  original silently kills every future run).
+  ❌ "it's just a backup script, run it."
 - **Approval is not a verdict.** A go-ahead that arrives while a verification
   artifact is still pending authorizes the action after the verdict lands, not
   skipping the verification (per-invocation scope is the next bullet).
@@ -58,7 +67,9 @@ When rigor conflicts with finishing sooner, rigor wins.
   rebasing; if the task needs the latest base, disclose and update deliberately.
   Leftover branches, prunable worktrees, and closed do-not-merge PRs are usually
   **residue, not in-progress work** — verify against the project's history before
-  adopting-and-finishing or cleaning them (cleanup mutates the user's workspace).
+  adopting-and-finishing or cleaning them (cleanup mutates the user's workspace);
+  note that squash merges make `git branch --merged` misreport — verify
+  patch-equivalence with `git cherry` instead.
 - **Third-party executable content** (hooks, scripts, plugins) installs only
   after: provenance check (owner/age/fork metadata), full source read, one
   written sentence stating why it is inert or safe here, and a fixture test
@@ -86,6 +97,11 @@ When rigor conflicts with finishing sooner, rigor wins.
   ___" with a mechanism; if it will not fill, reproduce the failure in isolation.
 - Same force as two failures: fixing A breaks B; diff grows while root cause is
   unnamed; you reach for sleep/retry/weakened assertion. Stop and rediagnose.
+- When an automated action "does nothing", first log what the action actually
+  **resolved to** — which element, file, or target id it acted on — before
+  theorizing about internal state. Cheap structural checks precede expensive
+  internal ones (five debugging rounds were once spent on framework-state
+  theories while the click selector had simply matched a different element).
 - Write 3-5 verifiable acceptance criteria before options/code. Revising criteria
   to fit a favored option is the bias alarm.
 - If a precondition is falsified mid-run, halt, state the observation, and replan.
@@ -120,6 +136,14 @@ When rigor conflicts with finishing sooner, rigor wins.
   account, bot identity) is a behavior change with no code diff: it can add or
   drop downstream triggers, permissions, and rate-limit buckets — after any
   credential/identity swap, enumerate what keys off that identity and verify each.
+- **In a first-match classifier or sequential-replace chain, pattern ORDER is a
+  load-bearing invariant.** More-specific must precede broader — a broad pattern
+  placed first shadows the specific one silently (a generic digit-run redactor
+  running before the token pattern once left a secret half-exposed; a
+  wording-based error classifier that checked auth before quota permanently
+  removed healthy keys, because the provider's quota errors carried auth
+  wording). When touching such a chain, re-check every ordering constraint and
+  pin each one with a regression case.
 - Before finishing, re-check diff vs. contract and delete creep.
 
 ## 4. Verify by observation
@@ -152,6 +176,62 @@ When rigor conflicts with finishing sooner, rigor wins.
     infer "fresh/healthy/present/safe" from inability to check.
   - ✅ blank / `—` when genuinely unknown. ❌ "null rate → show 0% so the chart
     still renders."
+- **A third-party tool's exit code is a contract to verify, not assume.** Some
+  tools exit non-zero on success-with-warnings while writing valid output
+  (qpdf exits 3); gating on `=== 0` then misclassifies success as failure — a
+  shipped gate once made legitimately-owned locked files permanently
+  unprocessable this way. For exit-code gates on external tools, read the
+  documented exit table and judge success by the output artifact.
+- **Never tighten a timeout below the measured success-latency tail.** Before
+  setting or "tidying" a timeout constant, measure the distribution of
+  *successful* runs on real payloads, over multiple runs — high-variance
+  backends make one run meaningless (a 25s "tidy" once aborted a measured
+  42s slow-but-successful call). A timeout under the success tail converts
+  slow successes into failures; record the dated measurement beside the
+  constant, and never retune from old numbers alone.
+- **Cache-write discipline: never cache a failure, an empty model result, or
+  an unvalidated payload** — a long TTL converts a transient flake into a
+  locked-in wrong answer. Failures get no entry or an explicitly short
+  negative TTL; a parse failure on read is a miss to overwrite; and a cache
+  in front of a paid producer needs **three states** (miss/error → retry;
+  known-empty → cached sentinel; value), or it either re-spends budget on
+  known-empty inputs or permanently caches transient errors. Scope the key by
+  every dimension that can fail independently (a shared key lets one path's
+  failure poison the other's success), and store the raw producer output,
+  applying curation/policy overrides at read time — baking them in freezes
+  old policy into the cache until TTL.
+  ❌ "cache whatever came back — empty is a valid result and saves an API call."
+- **A fallback chain is a set of unexercised dependencies that rot silently.**
+  A dead or capability-mismatched leg is invisible until the primary fails —
+  it errors on every call and falls through with zero visible errors, pure
+  quota waste (a chain's highest-quota model once went unused for weeks this
+  way). On any add/remove/reorder: live-probe every leg end-to-end with a real
+  payload and record dated results. Each tier helper normalizes failure to the
+  chain's advance signal (return empty, never throw — a throw skips the
+  remaining tiers and drops the item entirely), and a last-resort tier with a
+  hard quota is invoked at batch granularity, or one refresh cycle exhausts
+  the emergency budget exactly when it is needed.
+- **On a UTC server handling a local-wall-clock domain, expect two time
+  conventions to coexist** (shifted-epoch values read via UTC accessors vs.
+  raw instants plus a timezone formatter): document which convention each
+  helper uses and never feed one convention's value to the other's reader —
+  the failure is a silent ±offset double-shift. Range-validate date components
+  BEFORE construction: lenient constructors silently normalize impossible
+  dates (Feb 30 → Mar 2), so the scheduled action fires on the wrong day with
+  no error. Run time-logic tests under at least two TZ environment values.
+- **A deploy target is a contract to verify, not a bigger laptop.** On
+  response-terminates-execution platforms (serverless), fire-and-forget work
+  after the response silently never runs, and in-memory state is per-instance
+  and mortal — cold starts wipe it, concurrent instances multiply it; await
+  side effects before responding, and document each in-memory structure's
+  behavior when it vanishes or multiplies. Bundler file-tracers follow only
+  statically-analyzable imports, so runtime-resolved assets silently vanish
+  from the deployed artifact while local dev AND local build both pass. And
+  "every route 500s" is a module-load crash, not route logic: probe a route
+  that MATCHES (an unmatched route's clean 404 comes from the platform
+  fallthrough and masks a fully-broken deploy); the truthful repro is building
+  the production artifact and importing it — dev-mode resolvers prove nothing
+  about production module loading.
 - **A clue about external data is a map, not a schema.** A field shape learned
   from docs, a blog, another repo's code, or memory tells you where to look,
   never what is there — sample the real shape on a real instance before writing a
@@ -228,4 +308,13 @@ external-shape/field-semantics gate) distill a cross-repo mining pass over seven
 independent retiring-architect `skills-staging/` libraries — a rule's weight is
 how many of the seven independently rediscovered it (class-distilled
 convergence; no single citable commit).
+The 2026-07-13 second batch (§2 delete-semantics sync gate, git-cherry clause,
+resolved-to-first diagnosis; §3 ordered-chain invariant; §4 exit-code contract,
+timeout-vs-success-tail, cache-write discipline, fallback-chain rot, two-time-
+convention rule, deploy-target contract) is mined from five further private
+production retiring-architect libraries (a link-shortener, a market dashboard,
+a Telegram bot, an engine-parity port, a learning lab); every rule is backed by
+a cited incident commit in its source library, and two (cache discipline,
+fallback rot) were independently rediscovered by two libraries (private repos —
+verifiable by the contributor, not linkable here).
 Stable behavioral rules; no environment-specific facts to re-verify.
