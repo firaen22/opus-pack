@@ -217,8 +217,10 @@ Hooks 現已具備放行/擋下兩路單元測試,但行為層(實測 arm)尚未
 
 這個工作目錄可能有兩份相同的 skill:`skills/` 是發佈源;`.claude/skills/`
 是本機即用安裝,已由 git ignore。改任何一份 SKILL.md → 同步另一份
-(`cp -R skills/. .claude/skills/`),推 GitHub 前跑
-`diff -rq skills .claude/skills` 確認一致;改任一語言的 README →
+(`cp -R skills/. .claude/skills/`),推 GitHub 前逐一比對每個已發佈 skill
+(本機的 project skill 才不會被誤判為漂移):
+`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`;
+改任一語言的 README →
 同步鏡像另一份。
 
 ## 已解決的規則衝突
