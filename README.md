@@ -335,9 +335,10 @@ an enforcement substrate, not a proven score boost.
 
 This working tree may hold two identical skill sets: `skills/` is the publish
 source; `.claude/skills/` is the local live install and is ignored by git. Edit
-any SKILL.md → sync the other copy (`cp -R skills/. .claude/skills/`) and run
-`diff -rq skills .claude/skills` before pushing. Edit either README → mirror the
-change in the other language.
+any SKILL.md → sync the other copy (`cp -R skills/. .claude/skills/`) and, before
+pushing, diff per published skill so local project skills don't read as drift:
+`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`. Edit
+either README → mirror the change in the other language.
 
 ## Rule conflicts resolved during distillation
 
