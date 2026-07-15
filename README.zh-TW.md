@@ -219,8 +219,10 @@ Hooks 現已具備放行/擋下兩路單元測試,但行為層(實測 arm)尚未
 是本機即用安裝,已由 git ignore。改任何一份 SKILL.md → 同步另一份
 (`cp -R skills/. .claude/skills/`),推 GitHub 前逐一比對每個已發佈 skill
 (本機的 project skill 才不會被誤判為漂移):
-`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`;
-改任一語言的 README →
+`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`。
+這個迴圈只檢查仍存在於 `skills/` 的目錄(而 `cp -R` 從不刪除),所以移除或
+改名一個已發佈 skill 時,要在同一次修改裡手動刪掉 `.claude/skills/` 裡
+對應的舊目錄;改任一語言的 README →
 同步鏡像另一份。
 
 ## 已解決的規則衝突

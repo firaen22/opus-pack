@@ -32,8 +32,11 @@ When rigor conflicts with finishing sooner, rigor wins.
   (`rsync --delete`, `rclone sync`): it is a MIRROR, not a backup — run after
   source-side destruction, it propagates the destruction to the destination.
   Before running: confirm the destination is the live mount — `ls` is not
-  enough (an unmounted ordinary directory lists fine); check the mountpoint or
-  device (`mountpoint -q`, `findmnt`, `df` the path) or a sentinel file that
+  enough (an unmounted ordinary directory lists fine); check the mountpoint
+  (`mountpoint -q`, `findmnt` — their exit status is the answer) or the
+  device (`df` exits 0 on ANY existing path, so never gate on its exit code —
+  read its output and confirm the reported device is the expected volume,
+  not the system disk) or a sentinel file that
   exists only on the mounted volume (an auto-`mkdir -p` in the script otherwise
   masks an unmounted cloud drive and silently mirrors into a dead local
   directory), and dry-run first — in a non-versioned
@@ -76,7 +79,9 @@ When rigor conflicts with finishing sooner, rigor wins.
   commit) — the authoritative signal is the merged-PR/merge record; for a
   content check, compare the tips directly with a **two-dot**
   `git diff <base> <branch> -- <touched paths>` (empty ⇒ the base already
-  carries the branch's net changes), NOT a three-dot `...` diff, which
+  carries the branch's net changes; non-empty is INCONCLUSIVE — the base may
+  simply have moved on — so it never justifies re-applying the branch), NOT
+  a three-dot `...` diff, which
   measures from the merge-base and still shows the work as unlanded — and
   never per-commit patch equivalence.
 - **Third-party executable content** (hooks, scripts, plugins) installs only
@@ -283,6 +288,11 @@ learning lab); every rule is backed by a cited incident commit in its source
 library, and two (cache discipline, fallback rot) were independently
 rediscovered by two libraries (private repos — verifiable by the contributor,
 not linkable here).
+A 2026-07-16 two-family post-merge review (grok-4.5 + gpt-5.6-sol;
+trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`) tightened
+§2's mount check (`df`'s exit code is not a mount check — both families
+flagged it independently) and made the two-dot content check's non-empty
+direction explicitly inconclusive.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands

@@ -25,16 +25,32 @@ otherwise operational-rigor §4's core "verify by observation" rules are enough.
   backends make one run meaningless (a 25s "tidy" once aborted a measured
   42s slow-but-successful call). A timeout under the success tail converts
   slow successes into failures; record the dated measurement beside the
-  constant, and never retune from old numbers alone.
+  constant, and never retune from old numbers alone. When an enclosing hard
+  deadline (a platform's handler kill, an upstream SLA) sits BELOW the
+  success tail, no timeout value fixes it — raising yours past the deadline
+  only hands the abort to the platform, uncontrolled; restructure (async
+  handoff, tiering) or accept-and-meter the aborted tail as a recorded
+  decision.
 - **Cache-write discipline: never cache a failure, an *unvalidated* empty
-  result, or an unvalidated payload** — a long TTL converts a transient flake
-  into a locked-in wrong answer. The distinction that resolves the apparent
-  conflict: an unvalidated empty (a flake, a parse failure on read) is a miss
-  to retry/overwrite, while a *validated* known-empty (the input legitimately
-  has no answer) is cached as an explicit sentinel. So a cache in front of a
-  paid producer needs **three states** (miss/error → retry; validated
-  known-empty → cached sentinel; value), or it either re-spends budget on
-  known-empty inputs or permanently caches transient errors. Scope the key by
+  result, or an unvalidated payload *as an answer*** — a long TTL converts a
+  transient flake into a locked-in wrong answer. The distinction that
+  resolves the apparent conflict: an unvalidated empty (a flake, a parse
+  failure on read) is a miss to retry/overwrite, while a *validated*
+  known-empty (the input legitimately has no answer) is cached as an
+  explicit sentinel. So a cache in front of a paid producer needs **four
+  entry kinds** (miss → fetch; producer failure → a short-TTL cooldown
+  marker — a typed non-answer, never served as a value, retrying at a
+  bounded rate and scoped to the failure domain, so a provider-wide outage
+  cools the provider, not one key at a time; validated known-empty → cached
+  sentinel; value), or it re-spends budget on known-empty inputs,
+  permanently caches transient errors, or lets every reader amplify an
+  outage against the paid producer. The cooldown bounds retries, not first
+  admission: until the first failure completes, concurrent misses still
+  reach the producer (traffic × producer-timeout worth of calls), so the
+  money bound on a paid surface is always the atomic spend-cap chain
+  (security-architect's spend/abuse bounds), and an admission bound
+  (single-flight, a concurrency cap) is added when the producer cannot
+  tolerate that window. Scope the key by
   every dimension that can fail independently (a shared key lets one path's
   failure poison the other's success), and store the producer output minimized
   and access-controlled per operational-rigor §4 (never third-party PII/secrets
@@ -50,9 +66,15 @@ otherwise operational-rigor §4's core "verify by observation" rules are enough.
   not on an auth/payment/security path, where operational-rigor §4
   fail-loud/fail-closed governs), each tier helper normalizes its own failure
   to the chain's advance signal (return empty so the next tier runs, never
-  throw — a throw skips the remaining tiers and drops the item entirely), but a
-  terminal empty after every tier has failed is an observed failure to log and
-  meter, not a success; and a last-resort tier with a hard quota is invoked at
+  throw — a throw skips the remaining tiers and drops the item entirely);
+  where empty is itself a valid domain answer, the advance signal must be a
+  *typed* failure distinguishable from a validated known-empty (mirror the
+  cache rule above), or a correct "no results" from one tier gets overwritten
+  by a worse tier's stale hit. A terminal all-tiers-failed result is an
+  observed failure to log and meter, not a success — and it keeps its
+  failure type at the chain's outward interface (return or raise the typed
+  failure, never a raw empty a caller could cache or display as a validated
+  "no results"); and a last-resort tier with a hard quota is invoked at
   batch granularity, or one refresh cycle exhausts the emergency budget exactly
   when it is needed.
 - **On a UTC server handling a local-wall-clock domain, expect two time
@@ -64,13 +86,20 @@ otherwise operational-rigor §4's core "verify by observation" rules are enough.
   construct, then confirm the constructor did not silently normalize it to a
   different date (lenient constructors roll Feb 30 → Mar 2), or the scheduled
   action fires on the wrong day with no error. Run time-logic tests under at
-  least two TZ environment values, and state an explicit policy for DST
-  gap/fold instants (which two TZ values alone do not cover).
+  least two TZ environment values, at least one DST-observing; and state an
+  explicit policy for DST gap/fold instants AND execute it on at least one
+  gap and one fold instant (a spring-forward 02:30, a fall-back 01:30) — a
+  stated-but-untested policy is a claim, not a gate, and TZ values alone
+  never exercise those instants.
 - **A deploy target is a contract to verify, not a bigger laptop.** On
   response-terminates-execution platforms (serverless), fire-and-forget work
   after the response silently never runs, and in-memory state is per-instance
   and mortal — cold starts wipe it, concurrent instances multiply it; await
-  side effects before responding, and document each in-memory structure's
+  side effects before responding — "await" means the *durable handoff*
+  (enqueue/persist), not long-running processing, which belongs in a
+  separate worker (security-architect's webhook rule; awaiting full
+  processing past an ack deadline converts the deadline into platform
+  retries and duplicate work) — and document each in-memory structure's
   behavior when it vanishes or multiplies. Bundler file-tracers follow only
   statically-analyzable imports, so runtime-resolved assets silently vanish
   from the deployed artifact while local dev AND local build both pass. And
@@ -92,6 +121,13 @@ discipline, fallback rot) were independently rediscovered by two libraries.
 Split out of operational-rigor §4 into this reference on 2026-07-14 to keep the
 discipline core lean — content unchanged except two `§4` cross-references
 spelled out to `operational-rigor §4`.
+
+On 2026-07-16 a fresh two-family post-merge review (grok-4.5 +
+gpt-5.6-sol; effort tiers per round in the trail) tightened five clauses
+here — timeout-vs-enclosing-deadline,
+error-cooldown cache state, typed advance-signal vs. valid empty, executed
+DST gap/fold cases, and the durable-handoff scope of "await side effects" —
+trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`.
 
 Environment-specific facts to re-verify against current tooling: a tool's
 exit-code table (qpdf's), real success-latency distributions, cache TTL/state

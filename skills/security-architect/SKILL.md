@@ -135,8 +135,15 @@ the work, but ack before the durable handoff and a crash after the 2xx loses
 the event with no retry; the processing then runs as a **separate
 queue-driven worker**, never as fire-and-forget after the 2xx in the same
 handler (on serverless that work dies with the response); the dedup backstop
-is an atomic create-if-absent on durable storage, never check-then-write
-(in-memory dedup state is per-instance and cold starts wipe it) · fan-in
+is an atomic create-if-absent on durable storage where the created row IS
+the enqueued event itself — one operation is both handoff and dedup — and
+the row (or a completed-state marker on it) outlives the platform's retry
+horizon: a worker that deletes the consumed row deletes the dedup key with
+it, and a late redelivery (an ack lost in transit) then reprocesses the
+event; never check-then-write (in-memory dedup state is per-instance and
+cold starts wipe it), and never a separate dedup marker written before the
+handoff: a crash between marker and enqueue makes the platform's retry read
+"duplicate" and drop the event forever · fan-in
 dispatchers: when many handlers share one routing entry point, locate where
 auth actually lives *before* adding a handler — if auth is per-handler, a
 handler added to the routing map without its own auth line is a new public
@@ -171,7 +178,17 @@ failing the build on known-exploited or critical findings.
   lease/TTL (or a reaper) that reclaims an orphaned hold — so a crash
   mid-charge's hold expires or is reaped, freeing the capacity for a safe
   retry, instead of leaking into a stuck hold that wedges the cap (idempotent
-  cancel alone never runs after a crash) — never charge budget on a request
+  cancel alone never runs after a crash). One hard precondition on reclaim:
+  if the hold covers an external charge whose outcome is unknown (the crash
+  came after the provider call was issued), reconcile with the provider
+  first — query by the charge's idempotency key and resolve the hold to
+  spent (commit) or failed (release); until resolved it stays held, and
+  expiry escalates to an alert, never a silent release. Having the retry
+  reuse the SAME key is complementary — it stops the provider charging twice
+  for THIS request — but it is no substitute for reconciliation: releasing
+  an unresolved hold lets other requests consume budget the unresolved
+  charge may already have spent, breaching the cap with no double charge
+  anywhere. Never charge budget on a request
   another cap denies.
 - A shared cache written by unauthenticated requests and served to *other*
   readers is a poisoning surface: include a content hash in the cache/storage
@@ -311,4 +328,8 @@ dashboard, a Telegram bot post-security-audit, an engine-parity port); each
 rule is backed by a cited incident commit or audit finding in its source
 library (private repos — incidents verifiable by the contributor, not linkable
 here).
+A 2026-07-16 two-family post-merge review (grok-4.5 + gpt-5.6-sol;
+trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`) made the
+webhook dedup row the enqueued event itself and added the
+reconcile-before-reclaim precondition on expiring spend holds.
 Volatile facts to re-verify yearly: platform storage APIs and deprecations.

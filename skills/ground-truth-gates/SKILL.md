@@ -84,11 +84,15 @@ The golden runner doubles as an experiment grader: pre-register expected
 outputs as cases before any runs, then grade with code, not impressions —
 no harness, no experiment. Pre-register the full **outcome → action table**
 too (what each result will make you do), so a result cannot be rationalized
-into a favored action afterward. Calibrate difficulty per arm before
-comparing: a comparison where every arm passes — or every arm fails —
-measures nothing; halt at that precondition and report "untestable at this
-tier/difficulty" as a valid outcome instead of publishing a null. Grade
-blind to which arm produced each output.
+into a favored action afterward. Calibrate the difficulty of the SHARED
+case set before comparing — never each arm's separately, which destroys
+comparability: a comparison where every arm sits at the same ceiling (every
+case passes in every arm) or the same floor (none does) carries no
+discriminating evidence — halt there and report "untestable at this
+tier/difficulty" as a valid outcome instead of publishing a null; between
+those extremes, compare the pre-registered per-arm scores (arms clearing a
+shared gate at different scores is still a result). Grade blind to which
+arm produced each output.
 
 **replay:** replace `replay/corpus.jsonl` with a representative sample of
 real logged inputs. Replace `transform()` with the step being changed. Run
@@ -133,7 +137,10 @@ A generic green test is not proof. A gate is real only if:
    alternatives — false collapse) **and** FAILS on a known-broken state (false
    parity), both by execution. And confirm the corpus exercises the changed
    branch: a change "verified" only on inputs where the new code never fires
-   is unverified — synthesize or capture firing inputs first.
+   is unverified — capture firing inputs, or synthesize them into the test
+   suite as a labeled synthetic set, NEVER as rows in the captured
+   golden/replay corpus (the case-set integrity rules above: a hand-written
+   row corrupts the ship gate).
 3. The **easy fake pass is named** and closed — hardcoded expected value,
    weakened assertion, testing the mock, a test that compiled but was never
    registered/run, a permanently `#[ignore]`/`.skip`ped backlog test that reads
@@ -281,5 +288,9 @@ further private retiring-architect libraries (an engine-parity port, a market
 dashboard, a learning-lab experiment harness, a Telegram bot, a link-shortener);
 each is backed by a cited incident or experiment in its source library (private
 repos — verifiable by the contributor, not linkable here).
+A 2026-07-16 two-family post-merge review (grok-4.5 + gpt-5.6-sol;
+trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`) scoped
+experiment calibration to the shared case set and confined synthesized
+fire-path inputs to a labeled test set, never the captured corpus.
 `template/` scripts are self-contained (Node + bash, zero deps) and were run
 green on 2026-07-06 with Node v23; re-verify with `bash template/run-all.sh`.
