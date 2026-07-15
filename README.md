@@ -337,7 +337,10 @@ This working tree may hold two identical skill sets: `skills/` is the publish
 source; `.claude/skills/` is the local live install and is ignored by git. Edit
 any SKILL.md → sync the other copy (`cp -R skills/. .claude/skills/`) and, before
 pushing, diff per published skill so local project skills don't read as drift:
-`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`. Edit
+`for d in skills/*/; do diff -rq "$d" ".claude/skills/$(basename $d)"; done`. The
+loop only checks dirs still present in `skills/` (and `cp -R` never deletes), so
+when you remove or rename a published skill, delete its old dir from
+`.claude/skills/` by hand in the same change. Edit
 either README → mirror the change in the other language.
 
 ## Rule conflicts resolved during distillation
