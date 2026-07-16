@@ -127,15 +127,23 @@ reviewers that they silently absorb as implementers.
   before trusting the clone, find the origin's fixes (`git log -S <symbol>`, or
   its linked fix PRs) and confirm each guarded edge is present or explicitly N/A,
   or you reintroduce bugs that were already paid for.
-- **A synthesizer fed nothing fabricates everything** (`unprobed` in-repo —
-  see Provenance). A synthesis step over fan-out results, given empty or
-  malformed input, does not fail loud — it confabulates a confident,
-  detailed, plausible report. Before trusting fan-out synthesis: confirm
-  inputs arrived non-empty and in the expected count; parse structured
-  input at the boundary and treat a wrong-type arrival (a string where a
-  list should be) as a failure, not a value; never default a critical
-  input to empty — absence throws; and ground the synthesis in at least
-  one deterministic check run outside the synthesizer. A confident report
+- **A synthesizer fed nothing can fabricate everything** (`unprobed` —
+  private evidence as shape; see Provenance). A synthesis step over
+  fan-out results, given empty or malformed input, need not fail loud —
+  it can confabulate a confident, detailed, plausible report. Before
+  trusting fan-out synthesis, in order: (a) deserialize the input per
+  the boundary's DECLARED format — a serialized list still awaiting that
+  deserialization is not yet a wrong-type arrival; (b) then validate the
+  result: its type, its structured shape (element types included where
+  the boundary declares them), and its count — a correctly-sized list of
+  nulls must not pass; (c) absence or a parse/schema mismatch FAILS,
+  never a silent default to empty — operational-rigor §4's data-path
+  integrity, applied at the fan-in; (d) the deterministic check run
+  outside the synthesizer must be ANCHORED — it corroborates an
+  underlying input or a material claim of the synthesis, so an unrelated
+  command cannot be credited as grounding. Done when: every input is
+  deserialized and validated (type, shape, count), no critical input was
+  defaulted, and the anchored external check has run. A confident report
   is not evidence its inputs arrived.
   ❌ "the synthesis stage returned a thorough report, so the finders
   must have run."
