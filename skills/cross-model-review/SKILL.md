@@ -105,6 +105,20 @@ objection is not re-litigated — but a *reproduced* correctness or safety defec
 stays must-fix (§3 triage): it may be deferred only with the owner's explicit
 acceptance, never closed by the reviewers on their own.
 
+**A proposed fix is a suggestion, not a patch.** Reproducing a finding
+licenses the finding, not its remedy — these are separate judgments, and a
+reviewer writes the remedy against only the lines you inlined (§2), so a real
+defect can arrive with a rewrite that breaks something outside the packet's
+frame. This is not the injection clause above: the remedy is offered in good
+faith and its finding reproduced. When a FIX item proposes replacement text or
+a patch, adopt the finding and author the minimal fix yourself; if you declined
+theirs, record it `rejected-with-reason` naming what it would have broken.
+Done when every proposed remedy is either authored by you or recorded.
+neg: pasting in a reviewer's rewrite because its finding reproduced. Seen in
+this pack's own review (PR #30 round 1): a valid must-fix whose proposed
+rewrite reintroduced the very defect the rule under review existed to prevent,
+and would have paraphrased a clause another file owns (skill-authoring §3).
+
 ## 4. The loop, bounded
 
 Packet → reviewers in parallel → reproduce + triage → fix must-fix →
@@ -166,6 +180,11 @@ grok-4.5 max cross-family pass on the fixes themselves — both independently
 flagged the same two. The §3 compromised-reviewer substitution rule (embedded-directive
 handling) and finding-disposition / don't-re-litigate additions (2026-07-13)
 come from a cross-repo mining pass over seven staged libraries (class-distilled).
+The §3 proposed-fix-is-a-suggestion rule (2026-07-16) comes from PR #30's own
+review thread, where a reproduced must-fix arrived with a rewrite the owner
+rejected with reason and replaced with a minimal fix; the contributor reports
+the same finding-vs-remedy split measured separately on another family in a
+private setup (not in-repo, so not relied on here).
 Re-verify
 line: model families, CLI availability, "flagship" identity, and effort tiers
 are volatile — re-discover at session time; never trust a model name or tier
