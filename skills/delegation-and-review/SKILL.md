@@ -127,8 +127,18 @@ reviewers that they silently absorb as implementers.
   before trusting the clone, find the origin's fixes (`git log -S <symbol>`, or
   its linked fix PRs) and confirm each guarded edge is present or explicitly N/A,
   or you reintroduce bugs that were already paid for.
-- Before trusting fan-out synthesis, confirm inputs arrived: non-empty and in the
-  expected count.
+- **A synthesizer fed nothing fabricates everything** (`unprobed` in-repo —
+  see Provenance). A synthesis step over fan-out results, given empty or
+  malformed input, does not fail loud — it confabulates a confident,
+  detailed, plausible report. Before trusting fan-out synthesis: confirm
+  inputs arrived non-empty and in the expected count; parse structured
+  input at the boundary and treat a wrong-type arrival (a string where a
+  list should be) as a failure, not a value; never default a critical
+  input to empty — absence throws; and ground the synthesis in at least
+  one deterministic check run outside the synthesizer. A confident report
+  is not evidence its inputs arrived.
+  ❌ "the synthesis stage returned a thorough report, so the finders
+  must have run."
 - **Miss-is-costly audits** ("find ALL of X": security holes, money paths,
   data leaving the machine) need a different loop than one review pass:
   - Scout the work-list once in-context first — fan out over a known list,
@@ -255,5 +265,15 @@ found 5 of 5 with a REFUTED verdict and explicit re-runs — but wrote a
 findings file into the tree despite "changes nothing", which is exactly
 what the shipped "no edits AND no new files" clause repairs. Final wording
 not re-probed.
+The §3 fan-in expansion (2026-07-16) adds the mechanism behind the
+existing empty-synthesis check (itself from the measured-harness export
+above): the contributor reproduced the failure deterministically in a
+private harness — a structured input arrived as an unparsed string, a
+silent default mapped it to empty, and the synthesis agent returned a
+confident, detailed, mostly-plausible multi-section report instead of an
+error; the report read as complete coverage of work that never ran.
+Private evidence, cited as shape per the README covenant's second branch;
+no in-repo probe has run, so the rule carries an in-body `unprobed`
+marker.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
