@@ -168,6 +168,16 @@ When rigor conflicts with finishing sooner, rigor wins.
 - Between failed fixes, return to a clean state; stacked half-fixes hide causes.
 - Reproduce reported bugs before fixing. Fix the observed failure, not the implied
   one. Refutation is valid: report confirmed non-bugs and ship nothing.
+- **A failing check has two suspects: the code and the check itself.** Before
+  editing either, open the statement of intended behavior (spec, README,
+  docstring, type) and confirm which side it backs; a disagreement is the
+  primary finding — surface it, say which side you trust and why, then fix
+  the side you distrust; never silently make one side match the other.
+  Authority order in a conflict: explicit user statement > spec > tests >
+  current code behavior (a test edit is then a contract edit —
+  ground-truth-gates rule 4). Task framing ("fix the code", "make the tests
+  pass") is a work order, not a statement of intended behavior — it never
+  promotes the tests above the spec.
 - Verify by execution wherever possible. If impossible, say so and state what the
   user must run.
 - Confirm mutating effects from system responses, not command intent. Exit code 0
@@ -225,6 +235,13 @@ When rigor conflicts with finishing sooner, rigor wins.
 - **Scrutiny scales with novelty.** Thin prior art and effortless-looking output
   deserve harder verification. Ask: right step, or easy step?
 - A fix invalidates prior green results in its blast radius; re-run affected gates.
+- **Fixed a defect? Presume twins until searched.** Name the exact wrong
+  construct, search the whole project for the defect class — the same
+  operation written other ways included, which a single literal pattern
+  misses — and report the search: the pattern run and what it found (files,
+  or "none"). Fix or explicitly list every hit; a completeness claim without
+  a named, re-runnable search behind it is fabrication-shaped
+  (delegation-and-review §3: the reviewer re-runs the named search).
 - **Three defects, one mechanism → replace the mechanism.** A review returning
   ≥3 defects that share one underlying mechanism means the mechanism is wrong:
   do not patch each finding; rebuild on a sound base, prototype it standalone
@@ -293,6 +310,16 @@ trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`) tightened
 §2's mount check (`df`'s exit code is not a mount check — both families
 flagged it independently) and made the two-dot content check's non-empty
 direction explicitly inconclusive.
+The §4 two-suspects/authority-order rule and the §5 twin-sweep report rule
+(2026-07-16) adapt fable-method's intent-gate and twin-check mechanisms
+(MIT, ideas only; see README acknowledgements), each probe-tested per the
+README covenant on this pack's private successor fixtures before shipping:
+the bare weak-tier arm reproduced the exact predicted failure both times
+(silent wrong-side edit to satisfy a wrong committed test; fix-one-declare-
+done on a five-site defect class), the ruled arms surfaced their traps —
+and the sweep probe's named search missed one differently-written twin,
+which is what shaped the "written other ways" and reviewer-re-runs-it
+clauses.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands

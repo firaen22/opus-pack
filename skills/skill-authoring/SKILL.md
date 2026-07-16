@@ -127,6 +127,14 @@ And where misreading is costly or the judgment boundary is subtle, add:
 - One skill, one topic; no duplicate homes for a fact — cross-reference the
   sibling instead. Each skill states **when NOT to use it** and which sibling
   to use.
+- **A cross-reference is not a load.** On weak tiers, discovering that a
+  sibling skill applies is a judgment act that reliably fails (fable-method
+  published the negative: four wordings of an in-skill pointer, next to no
+  pickup). A clause a specific decision cannot afford to miss travels WITH
+  the trigger point — quoted verbatim at the site that fires (§3's
+  no-paraphrase rule; the quote inherits §3's sync contract naming which
+  copy wins), not only pointed at; the cross-reference serves the strong
+  reader.
 - The frontmatter `description` is the trigger: write it as the exact
   conditions under which a model should load the skill, not as a title.
   Phrase triggers as observed states ("a test failed twice"), not topic
@@ -153,6 +161,14 @@ And where misreading is costly or the judgment boundary is subtle, add:
   UNCERTAINTY
   trio — are in `references/project-skill-templates.md`. Read it before
   authoring or reviewing a project-skill library.
+- **Red-line domains get no checklist.** Where a wrong answer causes
+  physical, legal, or financial harm, or the practice requires licensure
+  (medical/clinical, legal advice, buy/sell financial advice, mental
+  health, safety-critical engineering), do not author a skill that wears
+  the costume of that competence — a checklist supplies structure, never
+  the judgment, and its presence invites trust it cannot back. Route to a
+  qualified human; an adjacent-domain skill ships only with named expert
+  sign-off in its provenance.
 
 ## 6. Review before adopting
 
@@ -211,6 +227,20 @@ default; an AI rewrite does not launder a derivative).
   A rule that is repeatedly **read but still violated** is at the wrong
   layer — hookify it if machine-checkable, or rewrite it with a sharper
   trigger. Repeating it louder in prose is not the fix.
+- **The enforcement ladder, and where each rung measurably stops working:**
+  prose in a list < a forced artifact bound to the action at its decision
+  point (a required line the report must carry — a named search, a quoted
+  authorization) < a machine check (hook). External smoke-grade A/B
+  evidence (fable-method; shape cited, numbers not restated): a rule
+  shipped as mid-list prose barely moved a weak executor, the same rule as
+  a decision-point artifact transferred — and the artifact form did NOT
+  transfer when compliance meant noticing an ABSENCE (a follow-up
+  deliberately skipped), because an artifact attaches to an action in hand;
+  absences are caught only at the machine layer (this pack's
+  verify-before-stop Stop hook is that layer). Corollary: a rigor rule can
+  itself induce costume rigor — the form of thoroughness with no search
+  behind it — which is why a new behavioral rule ships with its
+  would-have-failed probe (README covenant).
 
 ## Provenance
 
@@ -244,4 +274,13 @@ bullet violating this file's existing rules (§5 state-phrased triggers, §3
 don't-paraphrase-a-load-bearing-clause, §1 executable-rule format), each
 passing the author's self-review and surfaced only by applying the file's
 rules individually to the addition (see that PR's thread).
+The §5 cross-reference-is-not-a-load and red-line-domains rules and the §7
+enforcement ladder (2026-07-16) adopt fable-method's published negatives
+and red-line authoring gate (MIT, ideas only; see README acknowledgements).
+Their evidence base is attributed external A/B results cited as shape
+(numbers not restated) plus this pack's own §7 wrong-layer precedent; no
+in-house authoring probe has run for these three — disclosed here per the
+README covenant (the ladder and red-line are design/normative rules whose
+executable probe shape is an open question, unlike the behavioral rules
+probe-tested the same day in operational-rigor).
 Stable method; no environment facts to re-verify.
