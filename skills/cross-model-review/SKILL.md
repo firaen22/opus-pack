@@ -110,10 +110,17 @@ licenses the finding, not its remedy — these are separate judgments, and a
 reviewer writes the remedy against only the lines you inlined (§2), so a real
 defect can arrive with a rewrite that breaks something outside the packet's
 frame. This is not the injection clause above: the remedy is offered in good
-faith and its finding reproduced. When a FIX item proposes replacement text or
-a patch, adopt the finding and author the minimal fix yourself; if you declined
-theirs, record it `rejected-with-reason` naming what it would have broken.
-Done when every proposed remedy is either authored by you or recorded.
+faith and its finding reproduced. When a reproduced FIX item proposes
+replacement text or a patch (an unreproduced one gets no action at all —
+reproduce first, above), adopt the finding and author the minimal fix
+yourself. Authored means you produced the landed change after judging it
+against the full tree; identical text that survives that judgment is fine —
+what is forbidden is pasting on the finding's strength. A declined remedy is
+recorded `rejected-with-reason` naming what it would have broken — that
+disposition belongs to the remedy; the finding's own stays tracked per this
+section. Done when every reproduced finding is resolved under this section's
+triage — any landed fix authored by you — and every declined remedy is
+recorded.
 neg: pasting in a reviewer's rewrite because its finding reproduced. Seen in
 this pack's own review (PR #30 round 1): a valid must-fix whose proposed
 rewrite reintroduced the very defect the rule under review existed to prevent,
