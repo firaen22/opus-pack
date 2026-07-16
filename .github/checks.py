@@ -71,7 +71,7 @@ for name in skill_names:
     def fm_values(key, fm=fm):
         vals = []
         for l in fm:
-            if re.match(rf"{key}:", l):
+            if re.match(rf"{key}:(\s|$)", l):
                 v = l.split(":", 1)[1]
                 vals.append(v.split(" #", 1)[0].strip())
         return vals
