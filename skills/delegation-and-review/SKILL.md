@@ -141,10 +141,11 @@ reviewers that they silently absorb as implementers.
   integrity, applied at the fan-in; (d) the deterministic check run
   outside the synthesizer must be ANCHORED — it corroborates an
   underlying input or a material claim of the synthesis, so an unrelated
-  command cannot be credited as grounding. Done when: every input is
-  deserialized and validated (type, shape, count), no critical input was
-  defaulted, and the anchored external check has run. A confident report
-  is not evidence its inputs arrived.
+  command cannot be credited as grounding. Done when: every expected
+  input is deserialized and validated (type, shape, count), no input
+  was defaulted — any absence or mismatch failed instead — and the
+  anchored external check has run. A confident report is not evidence
+  its inputs arrived.
   ❌ "the synthesis stage returned a thorough report, so the finders
   must have run."
 - **Miss-is-costly audits** ("find ALL of X": security holes, money paths,
