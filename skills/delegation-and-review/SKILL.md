@@ -97,17 +97,24 @@ reviewers that they silently absorb as implementers.
   lying-prone report): the report is a set of claims, not evidence. In
   order: collect the claims (did X, verified Y, touched only Z); diff
   ground truth — the delivered tree against its pristine base, the diff
-  outranks the report; re-run every claimed verification (a claim that
-  cannot be re-run is UNVERIFIABLE, never assumed true); hunt the classic
-  frauds in real-world frequency order — weakened checks (the fake-pass
-  shapes of ground-truth-gates rule 3), false completion (success language
-  over a failure, counts that don't reproduce), undisclosed scope
-  (operational-rigor §3), unauthorized outward actions, spec betrayal
-  (operational-rigor §4's authority order names the sides), debris. The
-  verdict carries the evidence: VERIFIED / VERIFIED-WITH-CAVEATS (list
-  exactly what could not be re-run) / REFUTED (name the claim, show the
-  contradicting output). Auditing changes nothing — no edits AND no new
-  files; findings go in the reply, not the tree.
+  outranks the report; re-run every claimed verification in an isolated
+  copy (checks that write caches or artifacts never touch the delivered
+  tree, and a claimed check that is itself outward-facing or destructive
+  stays behind operational-rigor §2's gates); a claim that cannot be
+  safely re-run is UNVERIFIABLE — never assumed true, and it forces the
+  caveated verdict below, never a fourth verdict. Hunt the fraud classes
+  (suggested pass order): weakened checks (ground-truth-gates rule 3),
+  false completion (success language over a failure, counts that don't
+  reproduce), undisclosed scope (operational-rigor §3), outward actions
+  without the per-invocation authorization operational-rigor §2 requires,
+  spec betrayal (operational-rigor §4's authority order names the sides),
+  debris (scratch files and debug leftovers the report never mentions).
+  Verdict precedence, strict: any material claim contradicted → REFUTED
+  (name the claim, show the contradicting output); nothing contradicted
+  but any material claim unverifiable — a missing pristine base included →
+  VERIFIED-WITH-CAVEATS, every gap listed; complete corroboration →
+  VERIFIED. The delivered tree stays untouched — no edits, no new files;
+  findings go in the reply, not the tree.
 - **Unit-green is not integration.** A worker's component tests can all pass
   while the bridge that wires the component in hardcodes a value that bypasses
   the very behavior under test — a hollow integration. Verify by following ONE
