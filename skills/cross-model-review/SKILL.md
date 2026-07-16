@@ -129,6 +129,33 @@ this pack's own review (PR #30 round 1): a valid must-fix whose proposed
 rewrite reintroduced the very defect the rule under review existed to prevent,
 and would have paraphrased a clause another file owns (skill-authoring §3).
 
+**Two remedies for one defect are a free cross-check** (`unprobed` — see
+Provenance). When a fix you are holding is overtaken by someone else's
+landed fix for the same finding — a maintainer's gate commit, a parallel
+reviewer's patch — neither discard nor land yours on arrival order
+alone: diff the two remedies first. Agreement is cheap corroboration
+only when the remedies were independently authored — otherwise it is
+mere consistency, not corroboration. Divergence is evidence, not proof
+either remedy is wrong: it names exactly what to adjudicate against the
+spec and the full tree (the authored-fix judgment above). Adjudication
+ends one of three ways — one remedy wins; both are valid and one is
+selected with the reason recorded; or a composed remedy takes the best
+of both. Record a defect only where adjudication established one — that
+record is what stops a losing remedy's misconception from re-entering
+at the next edit; never invent a defect for a valid alternative. A
+non-selected remedy takes the disposition the authored-fix rule above
+defines (`rejected-with-reason` naming why it lost). This rule governs
+the semantic comparison of the two remedies; when parallel remedies
+also touched shared files, delegation-and-review §4's edit-conflict
+re-read/re-anchor and double-edit audit apply as well — the two rules
+are cumulative, never alternatives. Done when the diff ran, any
+divergence is adjudicated with a stated reason and outcome, and any
+established defect is on record.
+neg: "theirs landed, so mine is moot — drop it unexamined." Dropping a
+superseded fix without the diff discards the one artifact positioned to
+falsify the landed one — or, as in the observed case, the landed one
+falsifies yours and the diff is where you learn why.
+
 ## 4. The loop, bounded
 
 Packet → reviewers in parallel → reproduce + triage → fix must-fix →
@@ -195,6 +222,16 @@ review thread, where a reproduced must-fix arrived with a rewrite the owner
 rejected with reason and replaced with a minimal fix; the contributor reports
 the same finding-vs-remedy split measured separately on another family in a
 private setup (not in-repo, so not relied on here).
+The §3 two-remedies cross-check (2026-07-16) comes from PR #32's own
+round: while the maintainer's gate fixes were landing on the contributor's
+branch, the contributor held an unpushed polish for the same clause; the
+diff against the landed round-2 fix exposed the held remedy's wrong
+assumption (it hardcoded one permitted disposition where the landed fix
+shows an owner-accepted deferral is also valid), and it was dropped with
+the reason recorded. The landed side is verifiable in-repo (PR #32's
+commits); the held side was never pushed, so the comparison itself is
+contributor-reported — the rule ships with an in-body `unprobed` marker
+per the README covenant's second branch.
 Re-verify
 line: model families, CLI availability, "flagship" identity, and effort tiers
 are volatile — re-discover at session time; never trust a model name or tier
