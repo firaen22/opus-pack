@@ -326,9 +326,10 @@ an enforcement substrate, not a proven score boost.
 House covenant (2026-07-16, adopted from fable-method's "prime directive"
 — see acknowledgements): a new behavioral rule ships with the probe or
 trap that would have failed without it, or it ships explicitly labeled
-`unprobed`. The private suite's successor round — trap mechanisms from
-fable-method's published eval program, re-skinned into fresh private
-fixtures — is that covenant's instrument.
+`unprobed`. The covenant's instrument is the private suite's successor
+round — trap mechanisms adapted from fable-method's published eval
+program, re-implemented as fresh private fixtures — owner-run and
+unpublished like the rest of the suite.
 
 ## How this pack degrades (and the built-in countermeasure)
 
@@ -425,8 +426,8 @@ This pack distills and adapts ideas from:
   `ground-truth-gates` (from their published negative — safe outcomes
   produced by runs that never met the trap), the
   ships-with-its-failing-test covenant in the Evals section, and trap
-  mechanisms from their public fixtures re-skinned into this pack's
-  private suite.
+  mechanisms from their published eval program, re-implemented as fresh
+  fixtures in this pack's private suite.
 - **firaen22** — contributed the cost-asymmetric golden runner and the first
   structural commit-hook parser work through GitHub PRs.
 - **fable-agent-orchestration** @ `935e4a3` (git.wearein.space/elias, Apache-2.0)
