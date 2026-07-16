@@ -93,6 +93,29 @@ reviewers that they silently absorb as implementers.
   narrow pattern reproduces its hits AND its misses.
 - **Machinery is not the user.** Tool completions, CI events, and agent statuses
   are state changes, not approval or proof. Open the artifact and verify.
+- **Auditing a completion claim** (an agent's or contractor's "done", a
+  lying-prone report): the report is a set of claims, not evidence. In
+  order: collect the claims (did X, verified Y, touched only Z); diff
+  ground truth — the delivered tree against its pristine base, the diff
+  outranks the report; re-run every claimed verification in an isolated
+  copy (checks that write caches or artifacts never touch the delivered
+  tree, and a claimed check that is itself outward-facing or destructive
+  stays behind operational-rigor §2's gates); a claim that cannot be
+  safely re-run is UNVERIFIABLE — never assumed true, and it forces the
+  caveated verdict below, never a fourth verdict. Hunt the fraud classes
+  (suggested pass order): weakened checks (ground-truth-gates rule 3),
+  false completion (success language over a failure, counts that don't
+  reproduce), undisclosed scope (operational-rigor §3), outward actions
+  without the per-invocation authorization operational-rigor §2 requires,
+  spec betrayal (operational-rigor §4's authority order names the sides),
+  debris (scratch files and debug leftovers the report never mentions).
+  Verdict = an explicit otherwise-chain over the MATERIAL claims: any
+  contradicted → REFUTED (name the claim, show the contradicting output);
+  otherwise any unverifiable — a missing pristine base included →
+  VERIFIED-WITH-CAVEATS, every gap listed; otherwise → VERIFIED.
+  Immaterial discrepancies go in the findings, never into the verdict.
+  The delivered tree stays untouched — no edits, no new files; findings
+  go in the reply, not the tree.
 - **Unit-green is not integration.** A worker's component tests can all pass
   while the bridge that wires the component in hardcodes a value that bypasses
   the very behavior under test — a hollow integration. Verify by following ONE
@@ -224,5 +247,13 @@ The §3 named-search amendment (2026-07-16) is the review-side half of
 operational-rigor §5's twin-sweep rule — same probe evidence, recorded in
 that skill's provenance (a weak-tier probe's named search missed a
 differently-written twin that the fixture's checker caught in one command).
+The §3 completion-claim audit (2026-07-16, second batch) adapts
+fable-method's judge procedure (MIT, ideas only; see README
+acknowledgements), probe-tested on the private audit fixture: the bare
+weak-tier arm found 4 of 5 planted frauds with a clean tree; the ruled arm
+found 5 of 5 with a REFUTED verdict and explicit re-runs — but wrote a
+findings file into the tree despite "changes nothing", which is exactly
+what the shipped "no edits AND no new files" clause repairs. Final wording
+not re-probed.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
