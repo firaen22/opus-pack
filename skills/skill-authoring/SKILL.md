@@ -236,10 +236,12 @@ default; an AI rewrite does not launder a derivative).
   section headers, and examples survived verifies *structure*, not *clauses* —
   a condensed bullet can keep every anchor and still drop the qualifying
   clause that made it correct. Before editing, snapshot the exact pre-edit
-  bytes: `cp <file> <file>.bak`. After editing, run
+  bytes to a fresh path: `test ! -e <file>.bak && cp <file> <file>.bak`
+  (a pre-existing `.bak` is someone else's file — pick another name, never
+  overwrite). After editing, run
   `git diff --no-index --word-diff <file>.bak <file>` (exit 1 means
-  differences were found — the expected outcome; delete the `.bak` after
-  the check). Diffing against a git ref instead is valid only when the
+  differences were found — the expected outcome; delete only the snapshot
+  you created, after the check). Diffing against a git ref instead is valid only when the
   file was clean at a recorded literal SHA — never against bare `HEAD`,
   which after a commit compares the edit to itself and reports nothing,
   and never through an env var pinned in an earlier shell (each tool call
@@ -256,9 +258,10 @@ default; an AI rewrite does not launder a derivative).
   or "zero dropped clauses" — the forced line is what makes a skipped
   check visible; the word-diff itself is the check.
   ✅ ran `git diff --no-index --word-diff SKILL.md.bak SKILL.md`, found an
-  ordering constraint missing from the condensed bullet, restored it, then
-  wrote "ran git diff --no-index --word-diff SKILL.md.bak SKILL.md; zero
-  dropped clauses" in the commit message.
+  ordering constraint missing from the condensed bullet, restored it,
+  re-ran the same word-diff to confirm the restoration, then wrote "ran
+  git diff --no-index --word-diff SKILL.md.bak SKILL.md; zero dropped
+  clauses" in the commit message.
   ❌ "the extracted file still has a heading for this section, so the content
   made it" — headings survive; the sentence under them doesn't have to.
 - A rule that misfired once is not yet wrong: reproduce the incident and
@@ -335,8 +338,8 @@ headers, GOOD/BAD pairs all present against the pre-edit backup)
 and still silently dropped clauses from surviving bullets, including at
 least one ordering constraint — caught only by a follow-up word-diff
 against the backup. The rule ships with its own forced-artifact clause
-(named command + dropped-clause list in the commit/PR) rather than as bare
-prose, per this file's own enforcement-ladder precedent. Genuinely
+(named command + dropped-clause list in the change record) rather than as
+bare prose, per this file's own enforcement-ladder precedent. Genuinely
 `unprobed`, not by analogy to the design/normative markers above: whether a
 weaker-tier executor performs the word-diff step (versus the superficially
 similar anchor-grep) when instructed is a behavioral claim this pack's own
