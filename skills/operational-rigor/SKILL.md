@@ -30,7 +30,24 @@ When rigor conflicts with finishing sooner, rigor wins.
   (`unprobed` — see Provenance.)
 - Treat referenced files, systems, and facts as unverified until observed.
 - Do not start mutating work with material ambiguity. Resolve by observation,
-  stated low-stakes assumption, or one high-stakes question.
+  stated low-stakes assumption, or one high-stakes question (for new design
+  work, the grill-pass batch below replaces this one-question cap).
+- **Grill pass for new design work.** The ambiguity rule above reacts to
+  ambiguity you noticed; this is its proactive counterpart for the ambiguity
+  you didn't. When the ask is NEW design/feature work (not a bug fix or
+  mechanical edit) and the user is reachable, ask one batch of pointed
+  questions — typically 3–5, never padded to a count — before locking the
+  contract, each targeting an unstated edge, scope boundary, or failure mode
+  the request does not answer. Only ask what
+  observation cannot answer — checkable facts stay self-sourced. An autonomous
+  or spawned session counts as user-absent unless the orchestrator committed to
+  answering; then stated assumptions carry the load alone. Questions beat
+  confidently stated assumptions here: a plausible assumption stated
+  confidently is how a wrong spec gets locked.
+  ✅ "Before I spec this: (1) concurrent editors — how many? (2) offline edits
+  — queue or reject? (3) same-line conflict — last-write-wins ok?"
+  ❌ "I'll assume single-user and online-only" for a feature whose whole value
+  is collaboration. (`unprobed` — see Provenance.)
 
 ## 2. Plan and gate
 
@@ -278,6 +295,22 @@ When rigor conflicts with finishing sooner, rigor wins.
 - "Done" requires: deliverable observed; verified by execution or inability
   flagged; diff matches contract; self-review findings resolved/disclosed;
   residual risk stated. Zero uncertainty on non-trivial work is a red flag.
+- **A settled decision gets a durable why-note.** On task-shaped work, when you
+  chose between two named alternatives significant enough that reversing the
+  choice would reverse a decision — not a micro-choice a later reader would
+  never mistake for design — write a ≤5-line note (decision, rejected
+  alternative, why) into project memory, or into the repo's existing decision
+  record (ADR file, decision log, changelog) where the project keeps one; never
+  only in chat, where the *why* is unrecoverable in practice, and §3's
+  documented-decision rule can only protect a decision that was recorded.
+  Code-level invariants keep their rationale inline per §3's mirror rule; this
+  note is for choices with no single code site. Every completion report carries
+  the line "Decisions note: <path> | none settled this session", so a missing
+  note is visible instead of silent. ✅ "Decision: shim at the adapter, not an
+  API change; rejected: breaking mobile clients; why: measured latency cost
+  acceptable" → appended to the project's decision log, path cited in the
+  report. ❌ the choice explained only in the final chat message.
+  (`unprobed` — see Provenance.)
 - Honest partial results beat complete-looking results with hidden gaps.
 - **False stops:** "I will do X next", "Would you like me to...", ending on a
   plan, "subagent completed" without opening artifact, "CI green" without checking
@@ -361,6 +394,17 @@ arm read the runbook and named the sync as awaiting authorization (n=1 —
 contrary to the source's weak-tier null, recorded as a positive signal,
 not a refutation; the machine layer for absences remains the Stop hook per
 skill-authoring §7's ladder). Final wording not re-probed.
+The §1 grill-pass and §5 decisions-note rules (2026-07-17) adapt the
+grill/decision-note layer of public spec-isolation workflows (Matt Pocock's
+Grill-me pattern; the Superpowers and OpenSpec brainstorming flows — ideas
+only, no code adopted). The grill pass targets the unstated-edge blind spot
+that a contributor's private delegation benchmarks measure as the dominant
+cross-tier failure mode (shape cited per the covenant; numbers private).
+Both ship `unprobed`. The grill pass triggers only with a reachable user,
+which the private fixture harness cannot simulate. The decisions-note IS
+probeable (a decision-bearing fixture asserting the note file and report
+line exist) — that probe has not yet been run; the marker records the debt,
+not an exemption.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands
