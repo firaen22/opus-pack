@@ -230,6 +230,25 @@ default; an AI rewrite does not launder a derivative).
   demoting incident detail to the fix log, and deleting rules that never
   fire. Record what was removed and why, so a rule that turns out to have
   been load-bearing can be restored.
+- **A compaction or extraction pass needs a word-diff, not a structure check**
+  (verification-time counterpart to §3's don't-paraphrase rule above, which
+  guards the writing, not the later edit). Grepping that anchors, pointers,
+  section headers, and examples survived verifies *structure*, not *clauses* —
+  a condensed bullet can keep every anchor and still drop the qualifying
+  clause that made it correct. Before editing, snapshot the file (`cp
+  SKILL.md SKILL.md.bak`, or rely on `git` if already committed); after, run
+  `git diff --word-diff HEAD -- <file>` (or `diff -y backup edited` without
+  git) and trace every removed token to a surviving copy — a reference file,
+  or the remaining inline text. Per the enforcement ladder later in this
+  section: prose asking for this is the weak tier this very rule warns
+  against, so the compaction commit/PR description must name the command run
+  and state either the dropped-clause list or "zero dropped clauses" —
+  the artifact is the check, not the reader's good intentions.
+  ✅ ran `git diff --word-diff HEAD -- SKILL.md`, found an ordering
+  constraint missing from the condensed bullet, restored it, then wrote
+  "word-diffed vs HEAD, zero remaining drops" in the commit message.
+  ❌ "the extracted file still has a heading for this section, so the content
+  made it" — headings survive; the sentence under them doesn't have to.
 - A rule that misfired once is not yet wrong: reproduce the incident and
   check whether the executor actually followed the rule before editing it.
   A rule that is repeatedly **read but still violated** is at the wrong
@@ -296,4 +315,19 @@ in-body `unprobed` marker per the README covenant's second branch (the
 ladder and red-line are design/normative rules whose executable probe
 shape is an open question, unlike the behavioral rules probe-tested the
 same day in operational-rigor).
+The §7 word-diff-not-structure-check rule (2026-07-17) generalizes a
+colleague's condense pass on a private rules file (shape cited, exact
+clause count not independently verifiable): the pass passed every
+structural check the pack already prescribes (anchors, reference pointers,
+section headers, GOOD/BAD pairs all present against the pre-edit backup)
+and still silently dropped clauses from surviving bullets, including at
+least one ordering constraint — caught only by a follow-up word-diff
+against the backup. The rule ships with its own forced-artifact clause
+(named command + dropped-clause count in the commit/PR) rather than as bare
+prose, per this file's own enforcement-ladder precedent. Genuinely
+`unprobed`, not by analogy to the design/normative markers above: whether a
+weaker-tier executor performs the word-diff step (versus the superficially
+similar anchor-grep) when instructed is a behavioral claim this pack's own
+§6 fresh-weaker-tier-agent method could test — that probe has not yet been
+run, and this note records that gap rather than asserting it is untestable.
 Stable method; no environment facts to re-verify.
