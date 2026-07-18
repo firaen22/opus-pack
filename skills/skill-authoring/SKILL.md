@@ -36,10 +36,14 @@ same check asked first costs one sentence and holds. Smoke-measured
 fail-then-fix at the source (n=1 per cell): a weak-tier executor ran 68
 tool calls and escaped its sandbox past a mid-procedure scope check; with
 the identical check moved before the first generation step, six tool
-calls, nothing generated, correct early exit. When a rule says "stop
-unless X", the skill's step order must put that test before the executor
-has produced anything; done when the test precedes the first
-artifact-producing step in the skill's ordering.
+calls, nothing generated, correct early exit. When a rule refuses or
+scopes the work — "refuse red-line domains", "no adapter when the sector
+is coding in disguise" — the skill's step order puts that test before
+the executor has produced anything; done when every eligibility or
+refusal test precedes the first artifact-producing step in the skill's
+ordering. A verification gate whose input IS the produced work (tests
+pass, a ship check) stays terminal — this rule moves eligibility and
+refusal checks, not verification.
 ❌ "Stage 4: before finalizing, confirm the sector needed an adapter at
 all" — by Stage 4 the adapter exists and the check reads as waste.
 ✅ the same sentence as Stage 1's first bullet, before any file is opened.
@@ -380,7 +384,7 @@ losses, inviting a duplicate-home restore (§4). The reviewer's motivating
 verification run is contributor-reported (not independently reproducible
 in this repo); the doctrine gap it points at is verified against the
 file's own demotion and relocation rules.
-The §1 gate-placement rule (2026-07-17) adapts fable-method v1.4.0's
+The §1 gate-placement rule (2026-07-18) adapts fable-method v1.4.0's
 scope-stop relocation (MIT, ideas only; see README acknowledgements). Its
 evidence is the source's own published fail-then-fix measurement (their
 round-15 smoke eval, n=1 per cell by its own labeling: a weak-tier
