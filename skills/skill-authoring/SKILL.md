@@ -28,8 +28,9 @@ And where misreading is costly or the judgment boundary is subtle, add:
 - **On failure** — the next step when it does not work (retry differently,
   escalate, mark unresolved), so failure does not improvise.
 
-Placement is part of the format: **a hard-exit gate goes before any work
-exists, not mid-procedure.** A refusal or scope check positioned after
+Placement is part of the format: **an eligibility or refusal hard-exit
+gate precedes the first artifact-producing step, not mid-procedure.** A
+refusal or scope check positioned after
 generation has begun gets blown past by mid-build momentum — the executor
 already has an artifact to protect and reads the gate as an obstacle. The
 same check asked first costs one sentence and holds. Smoke-measured
@@ -46,7 +47,8 @@ pass, a ship check) stays terminal — this rule moves eligibility and
 refusal checks, not verification.
 ❌ "Stage 4: before finalizing, confirm the sector needed an adapter at
 all" — by Stage 4 the adapter exists and the check reads as waste.
-✅ the same sentence as Stage 1's first bullet, before any file is opened.
+✅ the same sentence as Stage 1's first bullet, before any
+artifact-producing step.
 (`unprobed` in-house; external evidence — see Provenance.)
 
 ## 2. Ground truth only
