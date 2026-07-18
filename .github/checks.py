@@ -45,15 +45,38 @@ tracked = [
 #    a bare "name:" counts as a duplicate entry, not nothing. Single-line
 #    description is a deliberate house-style tripwire (skill-authoring:
 #    the description IS the trigger).
-skills_dir = os.path.join(ROOT, "skills")
-skill_names = sorted(
-    d for d in os.listdir(skills_dir)
-    if os.path.isdir(os.path.join(skills_dir, d))
-)
-if not skill_names:
-    fail("skills/: no skill directories discovered - the pack IS the skills")
-for name in skill_names:
-    rel = f"skills/{name}/SKILL.md"
+# Skill roots are DISCOVERED from marketplace.json plugins[] sources, not
+# hand-kept: every entry's <source>/skills/ is a root. A malformed
+# marketplace file falls back to the root plugin's skills/ so this check
+# still runs; check 2 fails loudly on the manifest itself.
+try:
+    _mp_sources = [
+        e.get("source", "")
+        for e in json.loads(read(".claude-plugin/marketplace.json")).get("plugins", [])
+        if isinstance(e, dict)
+    ]
+except (OSError, ValueError):
+    _mp_sources = ["./"]
+skill_roots = []
+for _src in _mp_sources:
+    _norm = os.path.normpath(_src) if _src else "."
+    _rel_root = "skills" if _norm == "." else f"{_norm}/skills"
+    if _rel_root not in [r for r, _ in skill_roots]:
+        skill_roots.append((_rel_root, os.path.join(ROOT, _rel_root)))
+skill_names = []  # (rel_root, name) pairs across every plugin
+for _rel_root, _abs_root in skill_roots:
+    if not os.path.isdir(_abs_root):
+        fail(f"{_rel_root}/: skills root named by marketplace.json does not exist")
+        continue
+    _names = sorted(
+        d for d in os.listdir(_abs_root)
+        if os.path.isdir(os.path.join(_abs_root, d))
+    )
+    if not _names:
+        fail(f"{_rel_root}/: no skill directories discovered - the pack IS the skills")
+    skill_names.extend((_rel_root, n) for n in _names)
+for _rel_root, name in skill_names:
+    rel = f"{_rel_root}/{name}/SKILL.md"
     try:
         lines = read(rel).split("\n")
     except OSError as e:
@@ -85,11 +108,12 @@ for name in skill_names:
     else:
         ok(f"{rel} frontmatter valid")
 
-# 2. Version agreement: README badges + callouts + both plugin manifests,
-#    plus manifest shape and cross-manifest identity. The callout patterns
-#    are a deliberate tripwire - a reword that breaks them forces a
-#    conscious re-pin of all version sites. SemVer core is ASCII with no
-#    leading zeros.
+# 2. Version agreement: README badges + callouts track the ROOT plugin
+#    (opus-pack); every marketplace entry is shape-checked and must agree
+#    with its own source's plugin.json (name and version), so sibling
+#    plugins version independently. The callout patterns are a deliberate
+#    tripwire - a reword that breaks them forces a conscious re-pin of all
+#    version sites. SemVer core is ASCII with no leading zeros.
 NUM = r"(?:0|[1-9][0-9]*)"
 SEMVER = rf"({NUM}\.{NUM}\.{NUM})"
 versions = []
@@ -126,21 +150,54 @@ except (OSError, ValueError) as e:
 try:
     marketplace = json.loads(read(".claude-plugin/marketplace.json"))
     entries = marketplace.get("plugins")
-    if not isinstance(entries, list) or len(entries) != 1:
-        fail("marketplace.json: expected exactly one plugins[] entry")
-    else:
-        mp = entries[0]
+    if not isinstance(entries, list) or not entries:
+        fail("marketplace.json: plugins[] must be a non-empty list")
+        entries = []
+    seen_names, seen_sources = set(), set()
+    for i, mp in enumerate(entries):
+        ctx = f"marketplace.json plugins[{i}]"
+        if not isinstance(mp, dict):
+            fail(f"{ctx}: entry is not an object")
+            continue
         for k in ("name", "source", "description", "version"):
             if not nonempty_str(mp, k):
-                fail(f"marketplace.json plugins[0]: {k} missing or not a non-empty string")
-        if re.fullmatch(SEMVER, mp.get("version", "")):
-            versions.append(("marketplace.json", mp["version"]))
-        else:
-            fail(f"marketplace.json plugins[0]: version {mp.get('version')!r} is not strict X.Y.Z")
-        if plugin and mp.get("name") != plugin.get("name"):
-            fail(f"manifest identity mismatch: plugin.json name {plugin.get('name')!r} vs plugins[0].name {mp.get('name')!r}")
-        if mp.get("source") != "./":
-            fail(f"marketplace.json plugins[0]: source must be './', got {mp.get('source')!r}")
+                fail(f"{ctx}: {k} missing or not a non-empty string")
+        pname, src = mp.get("name", ""), mp.get("source", "")
+        if pname in seen_names:
+            fail(f"{ctx}: duplicate plugin name {pname!r}")
+        if src in seen_sources:
+            fail(f"{ctx}: duplicate source {src!r}")
+        seen_names.add(pname)
+        seen_sources.add(src)
+        if not re.fullmatch(SEMVER, mp.get("version", "")):
+            fail(f"{ctx}: version {mp.get('version')!r} is not strict X.Y.Z")
+        norm = os.path.normpath(src) if src else ""
+        if not src or os.path.isabs(norm) or norm.split(os.sep)[0] == "..":
+            fail(f"{ctx}: source {src!r} is not a relative path inside the repo")
+            continue
+        pj_rel = (".claude-plugin/plugin.json" if norm == "."
+                  else f"{norm}/.claude-plugin/plugin.json")
+        try:
+            pj = json.loads(read(pj_rel))
+        except (OSError, ValueError) as e:
+            fail(f"{pj_rel}: unreadable or malformed ({e})")
+            continue
+        for k in ("name", "description", "version"):
+            if not nonempty_str(pj, k):
+                fail(f"{pj_rel}: {k} missing or not a non-empty string")
+        if pj.get("name") != pname:
+            fail(f"manifest identity mismatch: {pj_rel} name {pj.get('name')!r} vs {ctx}.name {pname!r}")
+        if pj.get("version") != mp.get("version"):
+            fail(f"per-plugin version mismatch: {pj_rel} {pj.get('version')!r} vs {ctx} {mp.get('version')!r}")
+        if "hooks" in pj:
+            fail(f"{pj_rel} declares a hooks field - plugins must never register hooks (standing invariant)")
+        if pname == "opus-pack":
+            if src != "./":
+                fail(f"{ctx}: the root opus-pack plugin's source must be './', got {src!r}")
+            if re.fullmatch(SEMVER, mp.get("version", "")):
+                versions.append(("marketplace.json[opus-pack]", mp["version"]))
+    if entries and "opus-pack" not in seen_names:
+        fail("marketplace.json: root plugin entry 'opus-pack' is missing")
 except (OSError, ValueError) as e:
     fail(f"marketplace.json: unreadable or malformed ({e})")
 if versions and len({v for _, v in versions}) == 1:
@@ -152,7 +209,7 @@ elif versions:
 #    check, deliberately - not a table-structure parse).
 for rel in ("README.md", "README.zh-TW.md"):
     body = read(rel)
-    missing = [n for n in skill_names if f"`{n}`" not in body]
+    missing = [f"{r}/{n}" for r, n in skill_names if f"`{n}`" not in body]
     if missing:
         fail(f"{rel}: skills without a `backticked` mention: {missing}")
     else:
