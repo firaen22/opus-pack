@@ -28,6 +28,23 @@ And where misreading is costly or the judgment boundary is subtle, add:
 - **On failure** — the next step when it does not work (retry differently,
   escalate, mark unresolved), so failure does not improvise.
 
+Placement is part of the format: **a hard-exit gate goes before any work
+exists, not mid-procedure.** A refusal or scope check positioned after
+generation has begun gets blown past by mid-build momentum — the executor
+already has an artifact to protect and reads the gate as an obstacle. The
+same check asked first costs one sentence and holds. Smoke-measured
+fail-then-fix at the source (n=1 per cell): a weak-tier executor ran 68
+tool calls and escaped its sandbox past a mid-procedure scope check; with
+the identical check moved before the first generation step, six tool
+calls, nothing generated, correct early exit. When a rule says "stop
+unless X", the skill's step order must put that test before the executor
+has produced anything; done when the test precedes the first
+artifact-producing step in the skill's ordering.
+❌ "Stage 4: before finalizing, confirm the sector needed an adapter at
+all" — by Stage 4 the adapter exists and the check reads as waste.
+✅ the same sentence as Stage 1's first bullet, before any file is opened.
+(`unprobed` in-house; external evidence — see Provenance.)
+
 ## 2. Ground truth only
 
 - Verify every command, flag, path, and claim against the actual repo/system
@@ -363,4 +380,15 @@ losses, inviting a duplicate-home restore (§4). The reviewer's motivating
 verification run is contributor-reported (not independently reproducible
 in this repo); the doctrine gap it points at is verified against the
 file's own demotion and relocation rules.
+The §1 gate-placement rule (2026-07-17) adapts fable-method v1.4.0's
+scope-stop relocation (MIT, ideas only; see README acknowledgements). Its
+evidence is the source's own published fail-then-fix measurement (their
+round-15 smoke eval, n=1 per cell by its own labeling: a weak-tier
+executor blew past the mid-procedure form of the check and held at the
+moved-first form; numbers restated in-body because the source publishes
+them, with the smoke grade carried alongside). It carries an in-body `unprobed`
+marker per the README covenant: the external measurement is of one
+skill's one gate, and whether placement generalizes across gate types is
+exactly what an in-house probe would test — that probe has not been run;
+the marker records the debt.
 Stable method; no environment facts to re-verify.

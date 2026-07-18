@@ -104,6 +104,19 @@ When rigor conflicts with finishing sooner, rigor wins.
   scope → say that instead (and whether it would still need authorization
   if reconsidered). A silently dropped prescribed follow-up is
   indistinguishable from ignorance of it.
+- **An outward or irreversible action carries the user's words with it.**
+  Before taking one, write the line `AUTH: user said "<their exact words>"`
+  — the quote from this conversation that authorizes *that action* — or,
+  when the grant bullet above's project-policy clause applies,
+  `AUTH: standing authorization — <policy file/section>` naming the policy
+  that scopes it. No quote and no scoped policy, no action: it goes in the
+  report as a proposed next step instead. The line ships verbatim in the
+  report so a reviewer can check the grant against the act
+  (delegation-and-review §3's completion-claim audit reaches it through
+  this rule). This is the forced-artifact form of the per-invocation grant
+  above — same semantics, now visible: a general mandate ("verify and
+  fix") visibly fails to cover a deploy the moment it is written next to
+  one. (`unprobed` in-house — see Provenance.)
 - **First move on a live repo: baseline before you mutate.** Capture the
   starting state (`git status` + run the safe checks) and attribute every red to
   pre-existing-vs-your-change — never assume a clean baseline, and confirm intent
@@ -320,6 +333,17 @@ When rigor conflicts with finishing sooner, rigor wins.
   report. ❌ the choice explained only in the final chat message.
   (`unprobed` — see Provenance.)
 - Honest partial results beat complete-looking results with hidden gaps.
+- **Artifact gate — one owed-disclosure sweep before the report goes out.**
+  Check the finished report mechanically against what this run owed and
+  repair it: an outward action taken and no `AUTH:` line — add it, and if
+  there is no grant to cite, the action was unauthorized — report that as
+  a finding, never construct the line; a defect fixed and no twin-search
+  line (the pattern run and what it found) — add it; a prescribed
+  follow-up deliberately untaken and not named — add it; residual risk
+  known and unstated — add it. The gate fires only when something is owed
+  and missing; a clean report passes untouched, so it costs nothing on
+  ordinary tasks. (`unprobed` in-house; external evidence — see
+  Provenance.)
 - **False stops:** "I will do X next", "Would you like me to...", ending on a
   plan, "subagent completed" without opening artifact, "CI green" without checking
   the relevant claim. Stop only at external gates: publish/send, money,
@@ -414,6 +438,22 @@ private fixture harness does not currently drive (no interactive arm). The
 decisions-note IS probeable (a decision-bearing fixture asserting the note
 file and report line exist) — that probe has not yet been run; the marker
 records the debt, not an exemption.
+The §2 AUTH-quote artifact and §5 artifact gate (2026-07-17) adapt
+fable-method v1.4.0's authorization gate and artifact gate (MIT, ideas
+only; see README acknowledgements). The AUTH quote is the forced-artifact
+rung of §2's existing per-invocation grant: the source earned it at the
+frontier tier (same evidence produced a split decision — one of two runs
+deployed without authorization), and its acceptance-review counterpart
+(check the quote against the act) lands in delegation-and-review §3's
+existing completion-claim audit rather than as new machinery. The artifact
+gate's measurement is the source's, not ours: their outside contributor
+A/B-measured owed-line dropout at 3/6 ungated rising to 6/6 gated with no
+false positives on their fixtures, while the source's own replication
+could not arm the trap in three attempts and ships it as declared debt.
+Both ship `unprobed` here in that sense: adopted on the source's external
+measurement plus mechanism fit with this pack's existing owed-disclosure
+rules (twin-search line, prescribed-follow-up naming); not yet probed on
+this pack's private fixtures — the marker records that debt.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands
