@@ -52,9 +52,13 @@ tracked = [
 try:
     _mp = json.loads(read(".claude-plugin/marketplace.json"))
     _mp_sources = [
-        e.get("source", "")
-        for e in (_mp.get("plugins", []) if isinstance(_mp, dict) else [])
-        if isinstance(e, dict)
+        s
+        for s in (
+            e.get("source", "")
+            for e in (_mp.get("plugins", []) if isinstance(_mp, dict) else [])
+            if isinstance(e, dict)
+        )
+        if isinstance(s, str) and s
     ]
 except (OSError, ValueError):
     _mp_sources = []
@@ -169,17 +173,25 @@ try:
             if not nonempty_str(mp, k):
                 fail(f"{ctx}: {k} missing or not a non-empty string")
         pname, src = mp.get("name", ""), mp.get("source", "")
+        if not isinstance(pname, str) or not isinstance(src, str):
+            continue  # non-string name/source: the nonempty_str failures above already recorded it
         if pname in seen_names:
             fail(f"{ctx}: duplicate plugin name {pname!r}")
         if src in seen_sources:
             fail(f"{ctx}: duplicate source {src!r}")
         seen_names.add(pname)
         seen_sources.add(src)
-        if not re.fullmatch(SEMVER, mp.get("version", "")):
+        if not isinstance(mp.get("version"), str) or not re.fullmatch(SEMVER, mp["version"]):
             fail(f"{ctx}: version {mp.get('version')!r} is not strict X.Y.Z")
-        norm = os.path.normpath(src) if src else ""
-        if not src or os.path.isabs(norm) or norm.split(os.sep)[0] == "..":
-            fail(f"{ctx}: source {src!r} is not a relative path inside the repo")
+        if not src.startswith("./"):
+            fail(f"{ctx}: source must be a './'-prefixed relative path, got {src!r}")
+            continue
+        norm = os.path.normpath(src)
+        resolved = os.path.realpath(os.path.join(ROOT, norm))
+        if norm.split(os.sep)[0] == ".." or not (
+            resolved == REAL_ROOT or resolved.startswith(REAL_ROOT + os.sep)
+        ):
+            fail(f"{ctx}: source {src!r} escapes the repo")
             continue
         pj_rel = (".claude-plugin/plugin.json" if norm == "."
                   else f"{norm}/.claude-plugin/plugin.json")
@@ -187,6 +199,9 @@ try:
             pj = json.loads(read(pj_rel))
         except (OSError, ValueError) as e:
             fail(f"{pj_rel}: unreadable or malformed ({e})")
+            continue
+        if not isinstance(pj, dict):
+            fail(f"{pj_rel}: top level is not a JSON object")
             continue
         for k in ("name", "description", "version"):
             if not nonempty_str(pj, k):
@@ -197,6 +212,14 @@ try:
             fail(f"per-plugin version mismatch: {pj_rel} {pj.get('version')!r} vs {ctx} {mp.get('version')!r}")
         if "hooks" in pj:
             fail(f"{pj_rel} declares a hooks field - plugins must never register hooks (standing invariant)")
+        if "hooks" in mp:
+            fail(f"{ctx}: declares a hooks component - plugins must never register hooks (standing invariant)")
+        if "skills" in mp or "skills" in pj:
+            fail(f"{ctx}: a skills path override is declared - keep skills under <source>/skills/ so the frontmatter sweep (check 1) covers them")
+        if norm != ".":
+            hooks_file = f"{norm}/hooks/hooks.json"
+            if os.path.exists(os.path.join(ROOT, hooks_file)):
+                fail(f"{hooks_file} exists - plugins must never register hooks (standing invariant)")
         if pname == "opus-pack":
             if src != "./":
                 fail(f"{ctx}: the root opus-pack plugin's source must be './', got {src!r}")

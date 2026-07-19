@@ -17,15 +17,18 @@ First action, before any code or mockup:
 
 - **MARKETING** (landing, portfolio, about, pricing): all sections below
   apply, §2 layout budgets included.
-- **APP UI** (dashboard, admin, dense product screens, editors, tables):
-  route the visual system to an established design system (Material, Fluent,
-  Carbon, Polaris, or the project's own); from this file apply only §1 bans,
-  §3 discipline, §4 states, §5 floors. The §2 marketing budgets do NOT
-  apply - a dashboard is allowed to be dense and repetitive.
+- **APP UI** (dashboard, admin, dense product screens - including the
+  chrome AROUND embedded tables and editors): route the visual system to
+  an established design system (Material, Fluent, Carbon, Polaris, or the
+  project's own); from this file apply only §1 bans, §3 discipline, §4
+  states, §5 floors. The §2 marketing budgets do NOT apply - a dashboard
+  is allowed to be dense and repetitive.
 - **HYBRID** (product site with embedded app screens): classify each section.
-- Out of scope entirely - say so and route: data tables (TanStack/AG Grid),
-  code editors (Monaco/CodeMirror), native mobile (HIG/Material), realtime
-  collaboration surfaces.
+- Out of scope entirely - say so and route: the INTERNALS of data-grid
+  and code-editor widgets (TanStack/AG Grid, Monaco/CodeMirror - theme
+  them through their official APIs; the app chrome around them stays in
+  scope above), native mobile idiom (HIG/Material), realtime collaboration
+  surfaces.
 - If the project has a governing design contract (DESIGN.md, tokens file,
   brand guide), it outranks every default in this file - verify and consume
   it per `design-review-gate` ("the design contract"); the bans below still
@@ -118,9 +121,10 @@ override is the recorded reason, never silent).
 - **Navigation:** single line at desktop, height max 80px (default 64-72px).
   A two-line desktop nav is broken, not cozy.
 - **Section rhythm:** a layout family (3-col cards, full-width quote,
-  text+image split...) appears at most once per page; a page of 8 sections
-  uses at least 4 distinct families; max 2 consecutive alternating
-  image/text "zigzag" sections - the third consecutive is a gate failure.
+  text+image split...) appears at most once per page - which itself
+  forces variety, no separate diversity quota needed; max 2 consecutive
+  alternating image/text "zigzag" sections - the third consecutive is a
+  gate failure.
 - **Bento grids:** exactly as many cells as there is content (3 items = a
   1+2 or 2+1 composition, never a blank filler tile), and at least 2-3
   cells carry real visual variation (image, tinted background, pattern) -
@@ -139,7 +143,8 @@ override is the recorded reason, never silent).
 - One lock each per page: ONE theme (no section flipping to inverted
   mid-page), ONE accent applied identically, ONE corner-radius system.
 - Contrast floors (WCAG AA): text needs 4.5:1 at normal size and 3:1 only
-  at large size - placeholder text and text over images or scrims
+  at large size (large = at least 24px, or 18.66px bold) - placeholder
+  text and text over images or scrims
   included, with no exemption for either; non-text UI (focus rings,
   component boundaries, state indicators) needs 3:1; secondary BODY-size
   text needs 4.5:1 in both color modes - dark-mode secondary text is
@@ -155,7 +160,7 @@ fetches, accepts, or transforms data renders five states before it is done:
 
 | State | Must contain |
 |---|---|
-| Loading | skeleton/spinner plus a "taking longer than expected" fallback |
+| Loading | skeleton/spinner plus a "taking longer than expected" fallback after ~10-15s |
 | Empty | headline, plain explanation, primary CTA - designed, not blank |
 | Error | plain-language cause, recovery action, user input preserved |
 | Populated | the case you actually designed |
@@ -177,9 +182,11 @@ rendering.
   missing or near-invisible scrim is a defect.
 - Press/hover states never shift layout (no border-width or size jumps -
   swap colors/elevation instead).
-- Both color modes rendered and looked at before done, with every state of
-  §4 checked in each - dark mode regressions hide in secondary text and
-  disabled states.
+- Every SUPPORTED color mode rendered and looked at before done, with
+  every applicable §4 state checked in each. A single-mode product passes
+  as single-mode - supporting dark is a product decision, and §1's tell
+  is about DEFAULTING to dark unasked, not about supporting it. Dark-mode
+  regressions hide in secondary text and disabled states.
 
 ## 6. Restyling an existing surface: preservation rules
 
@@ -198,22 +205,34 @@ operational-rigor §3; on disagreement that file wins).
 
 Run before delivering the surface. Every box, honestly; **if a single box
 cannot be honestly ticked, the surface is not done.** Counts are counted,
-not estimated.
+not estimated. Boxes group by §0's surface class - an APP UI surface skips
+the MARKETING group because §0 scoped those budgets out, not as an escape
+hatch.
+
+All surfaces:
 
 - [ ] Surface classified (§0) and, for APP UI, a design system named?
 - [ ] Zero em-dashes in page copy (search the output for the character)?
 - [ ] Accent count per screen <= 2, and accent is none of the §1 hexes
       (grep the stylesheet for them)?
+- [ ] One theme lock, one accent lock, one radius system?
+- [ ] WCAG AA floors pass for text, CTAs, forms, placeholders, focus rings?
+- [ ] §4 states: all five rendered and looked at on every surface that
+      fetches, accepts, or transforms data; purely static surfaces get an
+      explicit N/A (say so, don't skip silently)?
+- [ ] No banned tell present without a written brand/brief override?
+- [ ] Restyle only: §6 preservation list untouched or approval quoted?
+
+MARKETING surfaces (and the marketing sections of a HYBRID):
+
 - [ ] Eyebrow count <= ceil(sections / 3) (count uppercase-tracking labels)?
 - [ ] Layout-family repetition within budget; zigzag run <= 2?
 - [ ] Hero: <= 2-line headline, <= 20-word subtext, <= 4 text elements,
       CTA above the fold?
-- [ ] One theme lock, one accent lock, one radius system?
-- [ ] WCAG AA floors pass for text, CTAs, forms, placeholders, focus rings?
-- [ ] All five §4 states rendered and looked at?
-- [ ] Touch targets and scrim floors met (§5, app surfaces)?
-- [ ] Restyle only: §6 preservation list untouched or approval quoted?
-- [ ] No banned tell present without a written brand/brief override?
+
+APP UI surfaces:
+
+- [ ] Touch targets and scrim floors met (§5)?
 
 Litmus checks when a box feels arguable:
 - **Card test:** remove border/shadow/background - if nothing breaks, it
@@ -244,11 +263,13 @@ if-one-box-fails framing; its full §9-10 corpus remains the deeper upstream
 reference), referodesign/refero_skill (indigo/cards/dark-default/calm-
 editorial/emoji/stripe tells, litmus tests, media-slot preservation), and
 Emil Kowalski's skills (context; his marketing directives stripped).
-Ideas adopted without text from Apache-2.0 nexu-io/open-design (accent
-budget number, five-state table shape and edge matrix, tiered-ban
-severity), from MIT garrytan/gstack (surface classifier, icon-circle-grid
-tell - independently listed by taste-skill), and from MIT
-creativetimofficial/ui (micro-text whitelist technique). WCAG/HIG/Material
+From Apache-2.0 nexu-io/open-design: the accent-budget number and
+tiered-ban severity as ideas, and §4's five-state table as ADAPTED
+EXPRESSION carried under Apache-2.0 (notice in THIRD-PARTY-NOTICES) -
+not an ideas-only borrow. Ideas without text from MIT garrytan/gstack
+(surface classifier, icon-circle-grid tell - independently listed by
+taste-skill) and MIT creativetimofficial/ui (micro-text whitelist
+technique). WCAG/HIG/Material
 floors are vendor facts - re-verify on major vendor releases; hex lists and
 font-fashion bans are the fastest-decaying facts here (they track model
 training data - revisit each model generation). Probe status: probe-tested

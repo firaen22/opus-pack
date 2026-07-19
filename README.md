@@ -90,7 +90,10 @@ drifted records precisely (exit 1) when transform behavior changes.
 `design-pack/` is a sibling plugin in this marketplace: three domain-craft
 skills applying the pack's doctrine style — numeric budgets, prohibited
 patterns, observable gates — to visual design work. It versions
-independently (currently 0.1.0) and installs without opus-pack:
+independently (currently 0.1.0) and installs separately at the plugin
+level; a few review-time rules lean on opus-pack's discipline skills - the
+two load-bearing clauses travel as verbatim quotes, the rest degrades to
+context without them - so the packs are designed to run together:
 
 ```
 /plugin marketplace add F-e-u-e-r/opus-pack
@@ -112,7 +115,8 @@ Notes that keep this honest:
   design-contract evidence section inside design-review-gate", which is
   what shipped.
 - **[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**
-  (MIT) hosts 74 reverse-engineered per-brand DESIGN.md files. The pack
+  (MIT) hosts 74 (as of 2026-07-19) reverse-engineered per-brand
+  DESIGN.md files. The pack
   points at it as non-authoritative research material — concrete and
   useful, and exactly the "unofficial observation" class design-review-gate
   §4 teaches you to verify before trusting. Nothing from it is vendored.
@@ -524,9 +528,10 @@ This pack distills and adapts ideas from:
   **Leonxlnx** ([`Leonxlnx/taste-skill`](https://github.com/leonxlnx/taste-skill)),
   **LottieFiles** ([`LottieFiles/motion-design-skill`](https://github.com/LottieFiles/motion-design-skill)),
   **Refero Design** ([`referodesign/refero_skill`](https://github.com/referodesign/refero_skill)).
-  Ideas only, no text: **nexu-io/open-design** (Apache-2.0; accent budget,
-  five-state coverage shape, research-misquote corrections with their
-  primary citations, the promote-rules-into-a-linter architecture),
+  **nexu-io/open-design** (Apache-2.0): ideas - accent budget,
+  linter-promotion architecture - plus two attributed Apache-2.0
+  adaptations (the five-state table; the misquote-correction items),
+  notice in `THIRD-PARTY-NOTICES.md`. Ideas only, no text:
   **garrytan/gstack** (MIT; measurement pairing, surface classifier,
   fix-loop shape, anti-convergence test, preference-poisoning defense — its
   self-described-unmeasured numeric heuristics deliberately not adopted),

@@ -26,6 +26,8 @@ Numbers first; taste second. Defaults for product UI:
 - **Standard interactions stay under 300ms; nothing in product UI exceeds
   500ms.** A 180ms dropdown reads as more responsive than a 400ms one.
 - **Exit = 65-75% of entrance.** Leaving is confirmation, not an event.
+  The rows above bound ENTRANCES; a rule-derived exit may drop below its
+  row - that is the intent, not a violation.
 - **Distance scales duration:** 100px is the base; 200px ~1.3x, 400px ~1.6x,
   full-screen ~1.8-2.0x. Small moves at long durations read as lag.
 - **Frequency scales duration DOWN.** An action done 100 times a day
@@ -63,21 +65,27 @@ Numbers first; taste second. Defaults for product UI:
 
 ## 3. Springs and gesture physics
 
-- Spring parameters below are **coefficients in the Framer Motion / React
-  Spring convention** (stiffness + damping). A damping *ratio* (where <1.0
-  oscillates and 1.0 is critical) is a different unit - an error that has
-  reached published tables (this pack's own LottieFiles source conflates
-  the two); name which convention you are using.
+- Spring parameters below are **Framer Motion-convention coefficients**
+  (stiffness + damping). Two unit traps: React Spring parameterizes as
+  tension/friction, not these; and a damping *ratio* (where <1.0
+  oscillates, 1.0 is critical) is a different unit again - an error that
+  has reached published tables (this pack's own LottieFiles source
+  conflates the two). Name which convention you are using.
+- **Critical damping (no overshoot) for mass 1 is `damping = 2 *
+  sqrt(stiffness)`** - stiffness 400 needs damping 40, stiffness 300
+  needs ~35. The presets below are deliberately UNDERDAMPED (they
+  overshoot a little), which per the settle rule places them on
+  momentum-driven interactions only:
 
-| Feel | Stiffness | Damping |
-|---|---|---|
-| Snappy UI | ~400 | 25-30 |
-| Standard | 250-350 | 18-24 |
-| Bouncy (sparingly) | 150-250 | 10-15 |
+| Feel | Stiffness | Damping | Where it belongs |
+|---|---|---|---|
+| Snappy (mild overshoot) | ~400 | 25-30 | flick-driven UI |
+| Standard (visible settle) | 250-350 | 18-24 | drag release |
+| Bouncy (sparingly) | 150-250 | 10-15 | playful, earned |
 
-- **Springs must settle.** Default to critically damped (no overshoot);
-  reserve bounce for momentum-driven physical interactions - a little
-  overshoot is earned by a flick, never by a click. Prolonged wobble
+- **Springs must settle.** Click-triggered UI defaults to critically
+  damped (use the formula above); overshoot is earned by a flick, never
+  by a click, and never appears on error paths. Prolonged wobble
   ("jello") is a defect, not personality.
 - **Momentum projection** (where a flick should land): Apple ships the
   exponential-decay form `projectedDistance = (velocity / 1000) * d / (1 - d)`
@@ -89,9 +97,13 @@ Numbers first; taste second. Defaults for product UI:
   current)` (libraries taking raw px/s can be handed the gesture velocity
   directly). A visible seam between drag and animation is the tell this rule
   was skipped.
-- **Momentum dismissal is velocity-based, not distance-based:** compute
-  `|distance| / elapsedMs` and dismiss above ~0.11 - a flick should be
-  enough; requiring a distance threshold makes flicks feel ignored.
+- **Momentum dismissal: velocity OR distance - either alone suffices.** A
+  flick dismisses on velocity above ~0.11 px/ms (the source's cheap
+  approximation is average `|distance| / elapsedMs`; prefer the gesture's
+  actual release velocity where the framework exposes it). A slow drag
+  past the distance threshold still dismisses - velocity-only would snap
+  a deliberate full drag back. The failure this rule exists to prevent is
+  requiring distance from a fast flick.
 
 ## 4. Choreography
 
@@ -112,12 +124,16 @@ Numbers first; taste second. Defaults for product UI:
 - Animate `transform` and `opacity` only; anything animating layout
   properties (width, height, top, padding) is rewritten, not accepted.
 - **`transition: all` is banned.**
-  ❌ `transition: all 300ms ease` - animates properties you never intended
-  and recalculates layout every frame.
+  ❌ `transition: all 300ms ease` - it animates every property that
+  happens to change, layout-affecting ones you never intended included,
+  plus whichever property a future edit adds; the failure signature is
+  surprise animations and layout work appearing when unrelated styles
+  change.
   ✅ `transition: transform 200ms ease-out, opacity 200ms ease-out`.
-- Framer Motion's shorthand props (`x`, `y`, `scale`) are **not**
-  hardware-accelerated - they tween on the main thread via rAF. Under load,
-  use the full `transform` string.
+- Framer Motion's shorthand props (`x`, `y`, `scale`) animate on the main
+  thread via rAF rather than as compositor-run transforms (Kowalski's
+  production finding; the observable symptom is dropped frames while the
+  page is busy). Under load, use the full `transform` string.
 - Updating a CSS variable on a parent recalculates styles for **all
   children** - in a drawer with many items, drive `transform` on the moving
   element directly instead of `--offset` on the container.
@@ -147,18 +163,26 @@ Numbers first; taste second. Defaults for product UI:
 
 ## 7. Misquoted research - do not cite these wrong
 
-Adopted from open-design's primary-literature review (see Provenance);
-statements below follow the cited papers, not the folklore:
+These corrections are adapted from open-design's primary-literature review
+(Apache-2.0; adaptation notice in THIRD-PARTY-NOTICES). The papers were
+NOT re-opened for this pack - each line below is that review's checked
+claim, restated, not this pack's own reading of the source:
 
-- "Skeleton screens feel 11% faster" - Harrison/Yeo/Hudson CHI 2010 measured
-  backwards-decelerating ribbed *progress bars* (n=16), not skeletons; the
-  mechanism does not transfer.
-- "Doherty threshold = 400ms" - Doherty & Thadani (IBM Systems Journal 1982)
-  contains no 400ms figure; the lowest threshold actually measured is 300ms.
-- "Heer & Robertson recommend 300-1000ms transitions" - they tested 1.25s
-  and 2s only, and recommend roughly one second per animated stage.
-- Motion *confirms* state changes; it must not *perform* them. Optimistic UI
-  first, animation second.
+- "Skeleton screens feel 11% faster" - per that review, Harrison/Yeo/
+  Hudson (CHI 2010) measured backwards-decelerating ribbed *progress
+  bars* (n=16), not skeletons; the mechanism does not transfer.
+- "Doherty threshold = 400ms" - per that review, the source contains no
+  400ms figure; the lowest measured threshold is 300ms. And cite the
+  source itself correctly: Doherty & Thadhani, "The Economic Value of
+  Rapid Response Time", IBM technical report GE20-0752 (1982) - the
+  "IBM Systems Journal 1982" venue and the "Thadani" spelling circulating
+  online (and in the review this pack adapted) are themselves
+  miscitations, corrected here.
+- "Heer & Robertson recommend 300-1000ms transitions" - per that review,
+  they tested 1.25s and 2s only, and recommend roughly one second per
+  animated stage.
+- Motion *confirms* state changes; it must not *perform* them. Optimistic
+  UI first, animation second.
 
 ## 8. Pre-ship gate
 
@@ -202,10 +226,13 @@ severity-tier gate shape (their damping-units conflation is corrected here,
 not copied; §1's duration rows are envelope syntheses across the three
 motion sources, not quotes of any single table); `referodesign/refero_skill` (MIT) - purpose triad, easing
 direction table, reduced-motion mapping, `transition: all` ban. §7's
-corrections and the M2/M3 mislabel are adopted from nexu-io/open-design's
-`craft/animation-discipline.md` primary-source review (Apache-2.0; facts and
-citations restated in this pack's words, no text copied); the primary papers
-were not independently re-opened for this pack. greensock/gsap-skills was
+corrections and the M2/M3 mislabel are adapted from nexu-io/open-design's
+`craft/animation-discipline.md` primary-source review (Apache-2.0; the
+correction items keep that review's selection, figures, and framing - an
+ADAPTATION carried with notice in THIRD-PARTY-NOTICES, not an ideas-only
+borrow). The primary papers were not independently re-opened for this
+pack, with one exception: the Doherty citation itself (report GE20-0752,
+"Thadhani") is this pack's own correction of the review's miscite. greensock/gsap-skills was
 surveyed and deliberately not mined: library-usage doctrine, out of scope
 here. Numeric values (beziers, spring pairs, budgets) are the volatile
 facts - re-verify beziers against the published Material 3 motion tokens

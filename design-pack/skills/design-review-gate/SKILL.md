@@ -46,8 +46,10 @@ facts first, in the running page:
    §3's Block keys on its deviations - a review that never looked for the
    contract cannot claim one is absent.
 2. **Static pass** - run `ui-design-craft` §7's mechanical gate per screen.
-3. **States pass** - the five states of `ui-design-craft` §4, rendered and
-   looked at, both color modes.
+3. **States pass** - the five states of `ui-design-craft` §4 where that
+   section applies (data-bearing surfaces; record an explicit N/A for
+   static ones), in every SUPPORTED color mode - single-mode products are
+   reviewed as single-mode.
 4. **Motion pass** - `motion-craft` §8's gate; trigger each interaction.
 5. **Flow pass** - walk the primary user journey end to end once; note
    every point of friction or surprise with its screen.
@@ -58,6 +60,11 @@ Each pass emits findings; no pass emits a verdict alone.
 
 ## 3. Findings and the bounded fix loop
 
+- **The fix loop needs an authorization the review ask does not carry.** A
+  bare "review this" / "does this look right?" is question-shaped: it ends
+  at findings plus verdict - report, do not edit (operational-rigor's ask
+  classification owns this rule; its canonical copy wins). Enter the fix
+  loop only when fixes were requested or the finding list was approved.
 - A finding names: location (file:line or screen+selector), the rule broken
   (a budget, a ban, a contract clause - never bare taste), before evidence
   (measurement or screenshot), and the proposed remedy.
@@ -68,10 +75,12 @@ Each pass emits findings; no pass emits a verdict alone.
   that regresses anything else reverts immediately. Two consecutive
   reverted fixes = stop and rediagnose (operational-rigor's two-failure
   rule governs; do not push through with a third variation).
-- Verdict is explicit: **Block** (any contract deviation, CRITICAL gate
-  failure, or missing state) or **Approve** - and an approval names the
-  point nearest failure (delegation-and-review: all-clear verdicts that
-  name nothing are rubber stamps).
+- Verdict is explicit: **Block** (a deviation from the PROJECT-GOVERNING
+  contract - §4's class 1 only, never from an advisory reference or an
+  unofficial observation - a CRITICAL gate failure, or a missing required
+  state) or **Approve** - and an approval names the point nearest failure
+  (delegation-and-review: all-clear verdicts that name nothing are rubber
+  stamps).
 
 ## 4. The design contract
 
@@ -157,6 +166,12 @@ then state the assumption you will work under."
   code-review tooling; this file judges the rendered surface only.
 - Driving the browser itself -> the harness's browser tooling docs; the
   snippets in §1 assume you already have a page open.
+- This file names opus-pack siblings (operational-rigor,
+  domain-evidence-discipline, delegation-and-review) at several seams. The
+  two load-bearing clauses travel here as verbatim quotes and bind on
+  their own; the remaining pointers assume those skills are installed -
+  without opus-pack they degrade to context, and the packs are designed
+  to run together.
 
 ## Provenance
 
@@ -191,5 +206,8 @@ arm returned BLOCK with correct classification, all three planted
 contradictions found, and the impersonation refusal. The drift-direction
 clause's own probe returned NULL (both arms chose the right direction -
 the fixture's in-contract rejection rationale made it obvious), so that
-clause stays `unprobed` with a harder variant owed. A round-0 run was
+clause stays `unprobed` with a harder variant owed. §§1-3 - the census
+snippets, the pass order, and the fix-loop bounds - are likewise
+`unprobed`: no fixture has exercised the review loop itself; §4's
+coverage is exactly as stated above, nothing more. A round-0 run was
 voided for a leaked in-fixture answer key. Trail in the design-pack PR.

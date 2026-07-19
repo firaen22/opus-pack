@@ -130,16 +130,21 @@ Copyright (c) 2026 Refero
 
 - **License:** Apache License, Version 2.0
   (https://www.apache.org/licenses/LICENSE-2.0).
-- **How used:** ideas and facts only, informing design-pack's
-  `ui-design-craft` (accent budget, five-state coverage shape),
-  `motion-craft` (research-misquote corrections, restated with their
-  primary citations), and `design-review-gate` (the
-  promote-rules-into-a-linter stance). Its `craft/` layer credits the
-  MIT-licensed refero_skill, which this pack mined directly instead.
-- **Notice:** the same no-expression notice as the entry above applies:
-  no copyrightable expression from this project is included; only
-  non-copyrightable ideas and factual claims (with their citations) were
-  incorporated.
+- **How used:** ideas and facts informing design-pack's `ui-design-craft`
+  (accent budget), `motion-craft`, and `design-review-gate` (the
+  promote-rules-into-a-linter stance) - AND two passages of **adapted
+  expression** carried under Apache-2.0 with this notice:
+  `ui-design-craft` §4's five-state table (adapted from
+  `craft/state-coverage.md`) and `motion-craft` §7's misquote-correction
+  items (adapted from `craft/animation-discipline.md`, with this pack's
+  own correction of that file's Doherty citation). Its `craft/` layer
+  credits the MIT-licensed refero_skill, which this pack also mined
+  directly.
+- **Notice:** except for the two adapted passages identified above (which
+  remain licensed under the Apache License 2.0, reproduced by pointer
+  here), no other expression from this project is included; the remaining
+  borrowings are non-copyrightable ideas and factual claims with their
+  citations.
 
 ---
 
