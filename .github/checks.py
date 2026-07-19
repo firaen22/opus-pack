@@ -81,6 +81,24 @@ for _rel_root, _abs_root in skill_roots:
     if not _names:
         fail(f"{_rel_root}/: no skill directories discovered - the pack IS the skills")
     skill_names.extend((_rel_root, n) for n in _names)
+# Tolerant of quoted/spaced YAML key spellings ("hooks":, hooks :) - a
+# literal-spelling match is a bypass, not a check. Exotic YAML beyond this
+# (block-scalar keys) is outside plausible authoring and stays a known gap.
+HOOKS_KEY = re.compile(r"""\s*["']?hooks["']?\s*:""")
+
+
+def fm_block(rel):
+    """Frontmatter lines of a markdown file, [] if none/unreadable (caller fails on read elsewhere)."""
+    try:
+        lines = read(rel).split("\n")
+    except OSError:
+        return []
+    if not lines or lines[0] != "---":
+        return []
+    close = next((i for i, l in enumerate(lines[1:], 1) if l == "---"), None)
+    return lines[1:close] if close else []
+
+
 for _rel_root, name in skill_names:
     rel = f"{_rel_root}/{name}/SKILL.md"
     try:
@@ -105,7 +123,7 @@ for _rel_root, name in skill_names:
                 vals.append(v.split(" #", 1)[0].strip())
         return vals
 
-    if fm_values("hooks"):
+    if any(HOOKS_KEY.match(l) for l in fm):
         fail(f"{rel}: frontmatter declares hooks - plugins must never register hooks (standing invariant)")
     names = fm_values("name")
     descs = fm_values("description")
@@ -115,6 +133,24 @@ for _rel_root, name in skill_names:
         fail(f"{rel}: frontmatter needs exactly one single-line description: substantial enough to be a trigger")
     else:
         ok(f"{rel} frontmatter valid")
+
+# 1b. Hooks may also ride other loadable markdown surfaces (a root
+#     <source>/SKILL.md, command files) - sweep their frontmatter too.
+for _rel_root, _abs_root in skill_roots:
+    _srcdir = _rel_root[: -len("/skills")] if _rel_root.endswith("/skills") else "."
+    _extras = ["SKILL.md" if _srcdir == "." else f"{_srcdir}/SKILL.md"]
+    _cmd_dir = os.path.join(ROOT, _srcdir, "commands")
+    if os.path.isdir(_cmd_dir):
+        _extras.extend(
+            (f"commands/{f}" if _srcdir == "." else f"{_srcdir}/commands/{f}")
+            for f in sorted(os.listdir(_cmd_dir))
+            if f.endswith(".md")
+        )
+    for _extra in _extras:
+        if os.path.isfile(os.path.join(ROOT, _extra)) and any(
+            HOOKS_KEY.match(l) for l in fm_block(_extra)
+        ):
+            fail(f"{_extra}: frontmatter declares hooks - plugins must never register hooks (standing invariant)")
 
 # 2. Version agreement: README badges + callouts track the ROOT plugin
 #    (opus-pack); every marketplace entry is shape-checked and must agree
@@ -149,7 +185,7 @@ try:
     for k in ("name", "description", "version"):
         if not nonempty_str(plugin, k):
             fail(f"plugin.json: {k} missing or not a non-empty string")
-    if re.fullmatch(SEMVER, plugin.get("version", "")):
+    if isinstance(plugin.get("version"), str) and re.fullmatch(SEMVER, plugin["version"]):
         versions.append(("plugin.json", plugin["version"]))
     else:
         fail(f"plugin.json: version {plugin.get('version')!r} is not strict X.Y.Z")
@@ -160,6 +196,11 @@ try:
     if not isinstance(marketplace, dict):
         fail("marketplace.json: top level is not a JSON object")
         marketplace = {}
+    if marketplace and marketplace.get("name") != "opus-pack":
+        fail(f"marketplace.json: marketplace name must stay 'opus-pack' (the documented install commands depend on it), got {marketplace.get('name')!r}")
+    _owner = marketplace.get("owner") if marketplace else None
+    if marketplace and (not isinstance(_owner, dict) or not nonempty_str(_owner, "name")):
+        fail("marketplace.json: owner.name missing or not a non-empty string")
     entries = marketplace.get("plugins")
     if not isinstance(entries, list) or not entries:
         fail("marketplace.json: plugins[] must be a non-empty list")
@@ -182,6 +223,8 @@ try:
             fail(f"{ctx}: duplicate source {src!r}")
         seen_names.add(pname)
         seen_sources.add(src)
+        if pname and not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", pname):
+            fail(f"{ctx}: plugin name {pname!r} is not kebab-case")
         if not isinstance(mp.get("version"), str) or not re.fullmatch(SEMVER, mp["version"]):
             fail(f"{ctx}: version {mp.get('version')!r} is not strict X.Y.Z")
         if not src.startswith("./"):
@@ -233,6 +276,37 @@ if versions and len({v for _, v in versions}) == 1:
     ok(f"version consistent across {len(versions)} sites ({versions[0][1]})")
 elif versions:
     fail(f"version mismatch: {versions}")
+
+# 2b. Reverse completeness: every TRACKED sibling plugin manifest must be
+#     reachable from a marketplace entry (an unreferenced plugin escapes
+#     every per-plugin check above), and the design-pack README version
+#     callouts must match the manifests - the alpha-badge tripwire, sibling
+#     edition.
+_seen_src_norm = set()
+if isinstance(marketplace, dict) and isinstance(marketplace.get("plugins"), list):
+    for _e in marketplace["plugins"]:
+        if isinstance(_e, dict) and isinstance(_e.get("source"), str) and _e["source"]:
+            _seen_src_norm.add(os.path.normpath(_e["source"]))
+for _p in tracked:
+    if not _p.endswith("/.claude-plugin/plugin.json"):
+        continue
+    _d = os.path.normpath(_p[: -len("/.claude-plugin/plugin.json")])
+    if _d not in _seen_src_norm:
+        fail(f"{_p}: no marketplace.json entry points at {_d!r} - an unreferenced plugin escapes validation")
+    else:
+        ok(f"{_p} is reachable from marketplace.json")
+_dp = None
+if isinstance(marketplace, dict) and isinstance(marketplace.get("plugins"), list):
+    _dp = next((e for e in marketplace["plugins"] if isinstance(e, dict) and e.get("name") == "design-pack"), None)
+if _dp and isinstance(_dp.get("version"), str):
+    for rel, pat in [
+        ("README.md", rf"currently {re.escape(_dp['version'])}"),
+        ("README.zh-TW.md", rf"目前 {re.escape(_dp['version'])}"),
+    ]:
+        if re.search(pat, read(rel)):
+            ok(f"{rel} design-pack version callout matches {_dp['version']}")
+        else:
+            fail(f"{rel}: design-pack version callout missing or stale (expected a 'currently/目前 {_dp['version']}' mention)")
 
 # 3. Every skill has a backticked mention in both READMEs (a mention
 #    check, deliberately - not a table-structure parse).

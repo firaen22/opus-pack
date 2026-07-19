@@ -50,9 +50,12 @@ Numbers first; taste second. Defaults for product UI:
 | On-screen move / morph | ease-in-out | smooth both ends |
 | Spinners, progress, marquee | linear | mechanical processes read linear |
 
-- **Never linear for spatial movement; never ease-in for entrances.** An
-  ease-in dropdown at 300ms feels slower than ease-out at the same 300ms:
-  it delays movement in the exact frames the user watches most closely.
+- **Never linear for finite point-to-point movement; never ease-in for
+  entrances.** Continuous mechanical motion - spinners, progress bars,
+  marquee loops - is the linear exception the table names, not a
+  contradiction of it. An ease-in dropdown at 300ms feels slower than
+  ease-out at the same 300ms: it delays movement in the exact frames the
+  user watches most closely.
 - Named defaults: Material 3 standard `cubic-bezier(0.2, 0, 0, 1)`; M3
   emphasized-decelerate `cubic-bezier(0.05, 0.7, 0.1, 1)`; Core Animation's
   `kCAMediaTimingFunctionDefault` / CSS `ease` is `cubic-bezier(0.25, 0.1,
@@ -89,16 +92,21 @@ Numbers first; taste second. Defaults for product UI:
   ("jello") is a defect, not personality.
 - **Momentum projection** (where a flick should land): Apple ships the
   exponential-decay form `projectedDistance = (velocity / 1000) * d / (1 - d)`
-  with `d ~= 0.998` - NOT the physics-textbook `v^2 / (2 * deceleration)`.
+  with `d ~= 0.998`, velocity in px per SECOND (the /1000 folds it onto the
+  per-millisecond decay step; the dismissal rule below uses px/ms - mixing
+  the two units is a 1000x error) - NOT the physics-textbook
+  `v^2 / (2 * deceleration)`.
 - **Rubber-band overscroll:** `(overshoot * dimension * c) / (dimension + c *
   |overshoot|)` with `c = 0.55` - resistance grows the further past the bound.
 - **Velocity handoff:** when a gesture ends, the animation continues at the
   finger's velocity: `relativeVelocity = gestureVelocity / (target -
   current)` (libraries taking raw px/s can be handed the gesture velocity
-  directly). A visible seam between drag and animation is the tell this rule
-  was skipped.
+  directly). Guard the zero/near-zero displacement case: when `target -
+  current` is ~0 there is nothing to animate - skip the spring instead of
+  dividing by it. A visible seam between drag and animation is the tell
+  this rule was skipped.
 - **Momentum dismissal: velocity OR distance - either alone suffices.** A
-  flick dismisses on velocity above ~0.11 px/ms (the source's cheap
+  flick dismisses on velocity above ~0.11 px/ms (~110 px/s; the source's cheap
   approximation is average `|distance| / elapsedMs`; prefer the gesture's
   actual release velocity where the framework exposes it). A slow drag
   past the distance threshold still dismisses - velocity-only would snap
@@ -137,9 +145,11 @@ Numbers first; taste second. Defaults for product UI:
   thread via rAF rather than as compositor-run transforms (Kowalski's
   production finding; the observable symptom is dropped frames while the
   page is busy). Under load, use the full `transform` string.
-- Updating a CSS variable on a parent recalculates styles for **all
-  children** - in a drawer with many items, drive `transform` on the moving
-  element directly instead of `--offset` on the container.
+- Updating an inheriting CSS variable on a parent recalculates style for
+  its children - the default for unregistered custom properties (a
+  registered `@property` with `inherits: false` sidesteps it) - so in a
+  drawer with many items, drive `transform` on the moving element directly
+  instead of `--offset` on the container.
 - Animations are interruptible: new input retargets mid-flight (CSS
   transitions and springs retarget; keyframes restart from zero - wrong for
   toasts, toggles, anything triggered rapidly); no fill-mode or delay may

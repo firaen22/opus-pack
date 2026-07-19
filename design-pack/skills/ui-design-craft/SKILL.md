@@ -178,8 +178,11 @@ rendering.
 
 ## 5. Platform floors (APP and touch surfaces)
 
-- Touch targets: 44x44pt (iOS) / 48x48dp (Android) minimum - vendor floors,
-  not suggestions.
+- Touch targets: 44x44pt (iOS) / 48x48dp (Android) minimum - the vendors'
+  published guidance (Apple phrases it as a rule, Android as a
+  recommendation), adopted here as hard pack floors. Audits measure CSS px
+  (~= pt/dp at 1x) and apply to touch-capable surfaces; a
+  desktop-pointer-only UI may go smaller with the reason recorded.
 - Modal scrims visibly isolate the foreground: content behind reads as
   inert, and any text sitting over the scrim still meets the §3 floors.
   Vendor anchor: Material defines scrim as a color ROLE, commonly
