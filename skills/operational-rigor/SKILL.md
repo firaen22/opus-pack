@@ -278,15 +278,18 @@ When rigor conflicts with finishing sooner, rigor wins.
   Provenance). The class: a callback's identity across renders, a ref's
   mount/unmount timing, an effect's dependency capture. A gate that never
   exercises the transition cannot establish it — the build, a clean diff, and
-  tests that don't drive it stay silent; a re-render+event component test or a
-  dependency lint catches SOME, which is exactly the point (exercise the
-  transition; don't take a green static artifact as its stand-in). Duty keeps
-  the execute-or-say ordering above: when a faithful runtime is reachable — a
-  browser e2e gate, a dev UI, or an in-process render harness running the real
-  framework, usually a local one — drive the relevant sequence (re-render then
-  invoke, mount/unmount/remount, change the dependency) and observe the
-  expected result; fall back to disclosing it unverified and naming what the
-  user must run ONLY when no faithful runtime is reachable. Distinct from
+  non-driving tests may catch other defects but can't certify this one; a
+  re-render+event component test or a dependency lint catches SOME, which is
+  why the rule is exercise-the-transition, not distrust-every-test. Duty keeps
+  the execute-or-say ordering above: when a faithful runtime can drive and
+  observe the transition — a browser e2e gate, a dev UI, or an in-process
+  render harness running the real framework, usually a local one — drive the
+  relevant sequence (re-render then invoke, mount/unmount/remount, change the
+  dependency) and observe the expected result; disclose it unverified and name
+  what the user must run only when the transition genuinely cannot be driven
+  and observed in any reachable runtime (required state, credentials, or
+  hardware unavailable), never merely because a reachable one was skipped.
+  Distinct from
   delegation-and-review §3's unit-green seam-bypass (a wiring defect); this is
   the runtime the static artifact never ran.
   ✅ "re-rendered after the parent changed, clicked the toggle, watched the
