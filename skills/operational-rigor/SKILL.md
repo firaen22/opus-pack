@@ -302,6 +302,24 @@ When rigor conflicts with finishing sooner, rigor wins.
   (contract holds under adversarial input). Only correct permits "done".
 - Never fabricate observations or report outputs not produced. Report skipped
   verification as skipped.
+- **A recurring scheduled process's own "completed" report is not evidence its
+  side effects landed.** A weekly task reported success for three months while
+  its write step silently never executed — every output file's mtime frozen at
+  the date the write path broke, caught only by an unrelated mtime audit; a
+  second, independent output channel on the same task was separately dead on a
+  stale hardcoded credential the whole time (`unprobed` — private incident as
+  shape; see Provenance). Arming or reviewing any recurring automation: run it
+  supervised once and verify each output channel by its actual artifact or
+  response body, not the runner's exit status; have the task write a dated
+  health line whose absence itself is the failure signal (an "OK" it can only
+  ever emit is not one); pre-confirm every permission-gated call it makes,
+  since a headless run cannot clear an interactive prompt; and when auditing an
+  existing schedule, check output mtimes before trusting its run history — a
+  green log proves the process executed, not that anything downstream received
+  what it produced.
+  ✅ "ran it once watched, confirmed a new file appeared with today's mtime and
+  the correct content, then armed the schedule."
+  ❌ "the log shows 200/exit-0 every week, so it's working."
 - **Data-path integrity — fail loud on *unspecified* ambiguity, never emit a
   silently-wrong value.** Honor an explicit, documented contract (a declared
   default, precedence, or freshness window); what is forbidden is *silently*
@@ -538,6 +556,15 @@ the deployed path (contributor-reported shape; the private repo is verifiable by
 the contributor, not linkable here). It ships `unprobed` — the pack's private
 fixtures have no interactive arm to drive it (cf. the grill-pass note above); the
 marker records that debt, not an exemption.
+The §4 scheduled-process rule (2026-07-21) generalizes a private production
+incident: a weekly automation ran and reported completion for roughly three
+months while its write step silently never executed, every output file's mtime
+frozen from the date the path broke; a second, independent output channel on
+the same task was separately dead the entire time on a stale hardcoded
+credential (contributor-reported shape; the private repo is verifiable by the
+contributor, not linkable here). It ships `unprobed` — the pack's private
+fixtures have no long-running-schedule arm to drive it; the marker records
+that debt, not an exemption.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands
