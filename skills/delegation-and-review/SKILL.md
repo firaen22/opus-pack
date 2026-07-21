@@ -22,6 +22,18 @@ treat every returned result as a claim until verified.
   depends on the last, accept/reject the last wave before the next; independent
   slices only need to stay within review capacity. Parallel writers get isolated
   worktrees.
+- **Isolated trees do not isolate ports** (`unprobed` — private incident as
+  shape; see Provenance). Sibling sessions contend for the same configured
+  dev-server port; once auto-port-fallback moves yours, any hardcoded
+  `localhost:<port>` proxy or target elsewhere in the app's config now
+  silently reaches ANOTHER session's server — the page loads blank or shows
+  the wrong build while every request returns 200, which reads as a bug in
+  your own change. In a worktree fan-out: enable auto-port assignment from
+  the start, verify against the port you were ACTUALLY assigned, and when a
+  fanned-out preview misbehaves with all-green requests, check cross-port
+  references before debugging your own code — stopping your preview cannot
+  stop a sibling's server, so the wrong upstream stays up.
+  ❌ "every request is 200, so the proxy target must be my server."
 - Route by task: mechanical clear-spec work → cheapest capable model; user-facing
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
@@ -301,5 +313,15 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
+The §1 port-contention bullet (2026-07-21) comes from a private incident in
+a multi-worktree fan-out: a dev server displaced from its configured port
+by auto-port-fallback left a hardcoded same-port proxy in the app config
+pointing at a concurrent sibling session's server — blank app, all
+requests 200, roughly forty lines of in-your-own-code diagnosis before the
+cross-port reference was checked (contributor-reported; the private repo
+is verifiable by the contributor, not linkable here). Ships `unprobed` per
+the README covenant's second branch: no in-repo probe has run — a probe
+would need two live servers and a displaced port, a fixture this pack does
+not yet carry; the marker records that debt.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
