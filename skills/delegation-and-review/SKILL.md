@@ -31,23 +31,33 @@ treat every returned result as a claim until verified.
   check. About to route work through a listed model: a lineup listing is
   the tool's routing claim, not callability — across two independent
   tools, a listed entry failed hard on first real invocation. Verify by
-  one invocation through the SAME wrapper and execution context the work
-  will use, and success means an attributable model response, not just
-  output (a ghost route can print diagnostics); an error or non-response
+  sending a fixed trivial prompt through the SAME wrapper, flags, auth,
+  and execution context the work will use; the pass is a model ANSWER to
+  that prompt naming the route where the wrapper reports one — wrapper
+  banners, usage text, diagnostics, or error pages are not answers, and
+  a wrapper that silently falls back to a default model passes only
+  wrapper reachability, not this route (check the wrapper's own route
+  report where it emits one; where it cannot say which model answered,
+  say the check proved reachability only). An error or non-answer
   leaves the route unverified — do not dispatch dependent work on it
   (§4's retry/escalation ladder governs), and a pass is session-scoped
   per the volatile-lineups rule above. About to use a wrapper's model
   string OUTSIDE the wrapper — a direct provider API call, a pricing or
   quota lookup: the string is the wrapper's internal routing name, not
-  necessarily the provider's ID; do not cross that namespace until the
-  provider's own ID list or docs confirm the identifier (resolve the
-  mapping first — a working wrapper invocation proves nothing about the
-  provider-side name).
-  ✅ "invoked it once through the wrapper we dispatch with — real
-  completion came back; and for the quota check, looked the ID up in
-  the provider's model list instead of pasting the wrapper's alias."
+  necessarily the provider's ID — and the same spelling existing on the
+  provider side proves nothing (an alias can collide with a different
+  provider model). Resolve the alias → provider-ID mapping from the
+  wrapper's OWN config, docs, or request trace, then validate that
+  resulting ID with the provider; mapping unresolved → the namespace
+  crossing stays blocked.
+  ✅ "sent 'reply OK' through the wrapper we dispatch with — the model
+  answered and the wrapper's route line named it; for the quota check,
+  read the wrapper config's alias map to get the provider ID, then
+  confirmed that ID in the provider's model list."
   ❌ "the CLI lists it, so it's available — route tomorrow's batch to
   it."
+  ❌ "the wrapper call worked and the alias exists in the provider's
+  list, so they're the same model."
 
 ## 2. The dispatch packet
 
