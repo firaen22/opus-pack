@@ -340,8 +340,11 @@ second such ghost entry observed across two independent tools), and a
 session caught itself about to treat another wrapper's model strings as
 provider API IDs for a quota lookup before verifying they are the
 wrapper's internal routing names. Private evidence, cited as shape per
-the README covenant's second branch; the executable probe — invoke every
-listed model once and diff claimed-vs-callable — has not been run
-in-repo; the in-body `unprobed` marker records that debt.
+the README covenant's second branch; two probes owed, one per boundary —
+invoke every listed model once and diff claimed-vs-callable (the listing
+half), and seed an alias-collision fixture and observe whether the
+mapping is resolved before a namespace crossing (the provider-ID half);
+neither has run in-repo, and the in-body `unprobed` marker stands until
+both have.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
