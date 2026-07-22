@@ -83,25 +83,34 @@ reviewers that they silently absorb as implementers.
   verdicts name the point nearest failure or they are rubber stamps.
 - Critic verdicts carry evidence: REFUTED needs a counterexample; untested
   assumptions are listed. Verify critics too; stale or missing review is not approval.
-- **Freeze the tree for a read-only review dispatch, or shard it disjointly**
-  (`unprobed` — private incident as shape; see Provenance). Editing a file a
-  fresh-context critic is still reading contaminates its verdict: one
-  read-only critic re-read a file the orchestrator had already fixed
-  mid-review and voted REFUTED on a bug already confirmed elsewhere. A
-  separate critic committed the very worktree it was reviewing, moving the
-  tree out from under the orchestrator's expected end-state. Neither is
-  §4's write-write clobber below (a subordinate overwriting concurrent
-  edits with no conflict signal): the first is a read verdict going stale
-  mid-read, the second a "read-only" reviewer writing anyway — nothing
-  overwritten, but the tree moved. Land or hold pending edits before
-  dispatching a read-only wave; if edits must continue, shard the review
-  over files disjoint from what you are touching (safe only if the
-  dispatch is enforced read-only — hence the check below), or re-dispatch
-  a fresh wave against the settled state rather than trust a verdict
-  formed on a moving tree. After any reviewer returns, confirm the tree
-  still matches what you expect before trusting its verdict.
+- **Settle the tree before a read-only review dispatch** — a fresh-context
+  critic wave in flight while the tree it reads can still move returns a
+  verdict about a state that no longer exists (`unprobed` — private
+  incidents as shape; see Provenance). One read-only critic re-read a file
+  the orchestrator had already fixed mid-review and voted REFUTED on a bug
+  already confirmed elsewhere; a separate critic committed the very
+  worktree it was reviewing, moving the tree out from under the requested
+  end-state. Neither is §4's write-write clobber below (a subordinate
+  overwriting concurrent edits with no conflict signal): the first is a
+  read verdict going stale mid-read, the second a "read-only" reviewer
+  writing anyway. Before dispatch: stabilize without merging — commit
+  pending edits on the reviewed branch, or move them out of the reviewed
+  tree (stash, scratch copy); merging is never part of dispatch — and
+  record the exact state dispatched against (revision plus dirty-file
+  set). Prefer handing the wave an isolated snapshot (a copy or worktree
+  pinned at that revision, write access withheld); if it must read the
+  live tree while your edits continue, edit only files the reviewed slice
+  neither contains nor depends on — file-disjoint is not
+  dependency-disjoint. On each return, re-check the recorded state:
+  reviewed files changed (your own edits included) → the verdict is
+  stale; re-dispatch against the settled state. Repo state moved without
+  your doing (a commit, a moved HEAD or index) → the "read-only" wave
+  wrote; treat its verdict and the tree as suspect and investigate before
+  trusting either.
   ✅ "held my own edits until the critic's wave returned, then applied
   them." ❌ "kept fixing files while the critic was still reading them."
+  ❌ "the tree matches what I intended, so the verdict stands" — the
+  baseline is the dispatched state, not your intentions.
 - Review against the packet contract, not line-by-line theater. New bug class
   caught → sweep the codebase: one catch, one class, one sweep. The worker's
   sweep report obeys operational-rigor §5 (the canonical copy, verbatim:
@@ -327,8 +336,9 @@ fixed mid-dispatch and voted REFUTED on an already-confirmed bug, and a
 separate critic committed the reviewed worktree to a branch mid-review,
 leaving the requested end-state unreachable. Both observed in a private
 audit harness (contributor-verifiable, not linkable here); the fix
-(freeze-or-shard, re-check on return) is the defensive split, not a
-mechanism finding, mirroring how the §4 silent-clobber bullet above
+(settle-or-snapshot, dependency-disjoint sharding, a recorded-state
+re-check on return) is the defensive split, not a mechanism finding,
+mirroring how the §4 silent-clobber bullet above
 handles its own single-sandbox observation. Private evidence, cited as
 shape per the README covenant's second branch; no in-repo probe has
 run — in-body `unprobed` marker.
