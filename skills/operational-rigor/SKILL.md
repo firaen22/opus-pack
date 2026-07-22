@@ -268,7 +268,7 @@ When rigor conflicts with finishing sooner, rigor wins.
   invocation path and setup that feed them, whether that path executed
   in the cited run, and whether its assertions PASSED there with their
   failure controlling the check's final status (a run is not a pass —
-  the runs/passes/correct line above) — and assert only the properties
+  the runs/passes/correct line later in this section) — and assert only the properties
   that trace established: whatever the check's NAME implies but the
   trace did not show stays unverified — say so; two checks with
   identical assertions differ when one drives the real integration and
