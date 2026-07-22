@@ -308,30 +308,37 @@ When rigor conflicts with finishing sooner, rigor wins.
   mtime frozen at the date the write path broke, caught only by an unrelated
   mtime audit; a second, independent output channel on the same task was
   separately dead on a stale hardcoded credential the whole time (`unprobed`
-  — private incident as shape; see Provenance). Arming one: run it once
-  under the schedule's own execution context — its principal, environment,
-  working directory, and headless path, or one real scheduled fire — and
-  verify every output channel at its destination (the artifact's content, a
-  delivery receipt or observed destination state; an async 2xx acceptance is
-  not delivery), then repeat the run and watch the second pass behave
-  (existing output, locks, overlap): any unverified channel leaves the
-  schedule unarmed. A consequential send or spend in a supervised run stays
-  behind §2's gates — arming is not authorization to fire it. Permission
-  gates: a headless run cannot clear an interactive prompt, so the scheduled
-  path must hold durable non-interactive grants under the schedule's
-  principal for its technical permissions, while consequential actions still
-  need §2's explicitly scoped standing authorization — "pre-confirmed once
-  while watched" is neither. Ongoing: a dead task cannot report its own
-  death, so check each destination's freshness on a cadence independent of
-  the task (a dated health line the task writes shows the task ran, not
-  that anything arrived). Reviewing an existing schedule without
-  authorization to run it: inspect the evidence that already exists —
-  per-channel artifacts, receipts, output mtimes — and treat a green run
-  history as evidence the runner reported success, never that downstream
-  received anything.
-  ✅ "ran it under the cron user's environment: today's file content
-  verified AND the second channel's receipt checked; repeat run clean; then
-  armed the schedule."
+  — private incident as shape; see Provenance). Arming one, gates first:
+  a consequential send or spend needs its own per-invocation authorization
+  for every test fire, and the unattended recurrence needs an explicitly
+  scoped standing authorization — §2's confirmation-gate rule governs
+  both, and neither substitutes for the other. Verify the existing
+  non-interactive grants under the schedule's principal; creating or
+  broadening a credential is itself a §2-gated action, and with no safely
+  scoped grant the schedule stays unarmed. Then drive and attribute:
+  confirm the schedule's configured entry (command, arguments, trigger,
+  enabled) invokes the thing you are testing; run it headless under the
+  schedule's own execution context (principal, environment, working
+  directory) or watch one real scheduled fire; verify every output channel
+  at its destination with evidence correlated to that invocation — a
+  before/after state or a run-tied receipt; a fresh artifact another
+  writer could have produced proves nothing, and an async 2xx acceptance
+  is not delivery. Repeat the run for existing-output and lock behavior
+  (a sequential repeat cannot exercise overlap — test concurrency
+  deliberately or state it unverified, never by overlapping consequential
+  actions). Any unverified channel, or a run that needed a human to clear
+  a prompt, leaves the schedule unarmed. Ongoing: a dead task cannot
+  report its own death — check each destination on a cadence independent
+  of the task, against that channel's documented emission condition and
+  deadline (a task-written health line shows the task ran, not that
+  anything arrived; stale-or-uncheckable reads as unhealthy, never
+  healthy). Reviewing an existing schedule without authorization to run
+  it: inspect the evidence that already exists — per-channel artifacts,
+  receipts, output mtimes — and treat a green run history as evidence the
+  runner reported success, never that downstream received anything.
+  ✅ "confirmed the cron entry runs this script, fired it headless as the
+  cron user, correlated both channels' new evidence to that run, repeat
+  pass clean — then armed the schedule."
   ❌ "the log shows 200/exit-0 every week, so it's working."
 - **Data-path integrity — fail loud on *unspecified* ambiguity, never emit a
   silently-wrong value.** Honor an explicit, documented contract (a declared
