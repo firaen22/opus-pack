@@ -46,33 +46,47 @@ Every packet names:
   structurally excluded). The inventory closes per §3's miss-is-costly
   loop, verbatim: "Stop only after two consecutive empty rounds; one
   clean round is not convergence" — a round counts only when every axis
-  ran, with dedup against everything already surfaced; no single
-  pattern's zero hits ever prove completeness. The packet lists the
-  inventory (each surface and how it was found) and the value family,
-  closed (every tier/variant listed) or bounded per §3's "State
-  anything you bounded" clause — and a bounded or gap-carrying sweep
-  returns a non-exhaustive outcome: reducing scope needs the
-  dispatcher's explicit say, and an every-instance claim with
-  unobserved members is false. The WRITE scope stays the owned
-  files/modules explicitly listed above: a generator discovered outside
-  that WRITE scope is reported for escalation, never edited on
-  discovery.
+  ran AND it adds a broadened or newly derived query (rerunning
+  yesterday's identical searches is empty by construction and counts
+  for nothing), with dedup against everything already surfaced; for a
+  behavioral target, no single pattern's zero hits ever prove
+  completeness. The packet lists the inventory (each surface and how it
+  was found) and the value family — closed only by its named canonical
+  source (the enum, config, or definition site, `file:line`) or by the
+  same discovery loop, else bounded per §3's "State anything you
+  bounded" clause — and a bounded or gap-carrying sweep returns a
+  non-exhaustive outcome: reducing scope needs the dispatcher's
+  explicit say, and an every-instance claim with unobserved members is
+  false. The WRITE scope stays the owned files/modules explicitly
+  listed above: a generator discovered outside that WRITE scope is
+  reported for escalation, never edited on discovery.
+  ✅ "inventory: 53 literal sites (reference search), the shared class
+  (style audit), the emitting helper (trace); tiers from the palette
+  enum at its definition site."
   ❌ "the inventory is the 53 grep hits — the shared utility never made
   the list."
 - **Invariant** — property to close and properties to preserve.
 - **Proof gate** — concrete check that would fail under the broken behavior;
   worker-chosen "tests pass" is not a gate. For an every-instance sweep
   whose target is behavior or rendered effect, the gate is the observed
-  effect at every inventoried generator surface and value tier (render
-  or run each); one observation may stand for a declared equivalence
-  class only when the shared path is verified branch-free for that
-  outcome (read the path — a stated "they share a helper" is a claim,
-  not evidence), and anything unobserved is reported unverified — never
-  folded into an exhaustive claim. Where the invariant is itself textual
-  (an exact forbidden spelling in a declared corpus), a correctly scoped
-  search over that corpus IS the gate. A zero-hit search on a behavioral
-  target is a report, not the gate: a clean grep proves one spelling is
-  gone, not that the defect is gone.
+  effect at every inventoried generator surface and value tier — render
+  or run each inside an authorized, side-effect-contained harness; an
+  outward effect you cannot safely drive (a payment, a send, a delete)
+  is reported unverified and escalated, never fired for the gate
+  (operational-rigor §2's gates govern). One observation may stand for
+  a declared equivalence class only when equivalence is verified across
+  the members' inputs, backing data, and downstream context —
+  branch-free control flow alone is not equivalence (a table lookup
+  differs per entry), and a stated "they share a helper" is a claim,
+  not evidence; anything unobserved is reported unverified — never
+  folded into an exhaustive claim. Where the invariant is itself
+  textual (an exact forbidden spelling; the declared corpus covers
+  every inventoried surface) AND no inventoried generator can emit the
+  target without that literal appearing, the correctly scoped search
+  over that corpus IS the gate — any emitting generator in the
+  inventory keeps the sweep on the effect gate. A zero-hit search on a
+  behavioral target is a report, not the gate: a clean grep proves one
+  spelling is gone, not that the defect is gone.
   ✅ "each literal's site re-rendered, the shared class's consumers
   re-rendered, every tier through the emitting helper — effect gone at
   each observation point."
@@ -132,9 +146,10 @@ reviewers that they silently absorb as implementers.
   trust — then challenges its coverage with one differently-shaped query (a
   broader or structural pattern, or a class-aware check): re-running a
   narrow pattern reproduces its hits AND its misses. (A
-  find-and-fix-every-instance sweep's dispatch scope and acceptance gate
-  are §2's sweep fields; there, "a zero-hit search is a report, not the
-  gate.")
+  find-and-fix-every-instance sweep's dispatch scope and acceptance
+  gate are §2's sweep fields — acceptance is the effect at every
+  inventoried surface; there, for behavioral targets, "a zero-hit
+  search is a report, not the gate.")
 - **Machinery is not the user.** Tool completions, CI events, and agent statuses
   are state changes, not approval or proof. Open the artifact and verify.
 - **Auditing a completion claim** (an agent's or contractor's "done", a
