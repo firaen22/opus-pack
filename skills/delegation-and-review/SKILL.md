@@ -22,6 +22,58 @@ treat every returned result as a claim until verified.
   depends on the last, accept/reject the last wave before the next; independent
   slices only need to stay within review capacity. Parallel writers get isolated
   worktrees.
+- **Isolated trees do not isolate ports** (`unprobed` — private incident as
+  shape; see Provenance). When sibling sessions run servers sharing a
+  port namespace and a configured port, they contend for it; once one is
+  displaced (auto-port fallback, a restart elsewhere), any STATIC
+  reference meant for that session's server — a `localhost:<port>`
+  proxy, target, or env entry still naming the configured port — now
+  silently reaches the sibling's server: the page loads blank or shows
+  the wrong build while every request returns 200, which reads as a bug
+  in your own change. Defenses (pick one, apply it fully — what you
+  persist differs by defense): a unique fixed port per worktree, run
+  with fallback disabled so a collision fails loud, the NUMBER
+  persisted and propagated to every session-local reference (proxy,
+  env, browser entry) — an explicit address-in-use bind error is the
+  contention diagnostic (any other bind error — permissions, bad
+  address, exhaustion — is its own failure, not a cue to switch
+  ports): then pick a different free unique port, propagate, restart;
+  or runtime derivation, where the MECHANISM is what persists — every
+  reference re-derived from the actually-bound port after every bind,
+  never a bound number frozen into a static ref. Auto-port fallback
+  alone is the displacement mechanism, never the repair; writing
+  today's fallback port into static references is the forbidden
+  ephemeral retarget — the next restart recreates the mismatch. To
+  repair a mismatch: choose a defense, apply its own persistence shape
+  as above, update every session-local reference, restart or reload
+  every consumer that read its target at startup, and never kill the
+  sibling's server — it is another session's work. Identity check,
+  LAST, after all mutations including cleanup: record the expected
+  marker for THIS session first (the worktree name it serves, a
+  session nonce noted before the request — a fresh nonce from the
+  wrong sibling still looks fresh; a content build id shared by
+  same-revision worktrees does not discriminate), then observe exact
+  equality with that recorded value THROUGH every relied session-local
+  consumer path (the API proxy included, not just the top page); a
+  listener check (`lsof`-style) is port discovery, never identity
+  evidence; any restart or reload after the check — a marker cleanup
+  included — voids it: re-prove without mutating. A temporarily served
+  marker is removed afterward and its removal verified against the
+  pre-instrumentation state (tracked, untracked, and ignored files —
+  the declared persistent port configuration stays).
+  When a fanned-out preview misbehaves with all-green requests, check
+  cross-port references — references still naming the shared configured
+  port instead of this session's bound port — before debugging your own
+  code: stopping your preview cannot stop a sibling's server, so the
+  wrong upstream stays up. A reference to an intentionally shared local
+  service (one database for all worktrees) is not a cross-port defect;
+  the rule covers references meant for the displaced session-owned
+  server.
+  ✅ "each worktree pinned to its own persisted port, proxy and env
+  updated and reloaded; marker cleaned up; final non-mutating check:
+  the page AND a request through the API proxy both returned the
+  nonce recorded for this session."
+  ❌ "every request is 200, so the proxy target must be my server."
 - Route by task: mechanical clear-spec work → cheapest capable model; user-facing
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
@@ -420,5 +472,15 @@ utility class the token grep pattern never touched, and each follow-up round's
 class-emitting helper function) the prior round's search structurally
 excluded. Private evidence, cited as shape per the README covenant's second
 branch; no in-repo probe has run — in-body `unprobed` marker.
+The §1 port-contention bullet (2026-07-21) comes from a private incident in
+a multi-worktree fan-out: a dev server displaced from its configured port
+by auto-port-fallback left a hardcoded same-port proxy in the app config
+pointing at a concurrent sibling session's server — blank app, all
+requests 200, roughly forty lines of in-your-own-code diagnosis before the
+cross-port reference was checked (contributor-reported; the private repo
+is verifiable by the contributor, not linkable here). Ships `unprobed` per
+the README covenant's second branch: no in-repo probe has run — a probe
+would need two live servers and a displaced port, a fixture this pack does
+not yet carry; the marker records that debt.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
