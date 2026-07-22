@@ -93,22 +93,29 @@ reviewers that they silently absorb as implementers.
   end-state. Neither is §4's write-write clobber below (a subordinate
   overwriting concurrent edits with no conflict signal): the first is a
   read verdict going stale mid-read, the second a "read-only" reviewer
-  writing anyway. Before dispatch: stabilize without merging — commit
-  pending edits on the reviewed branch, or move them out of the reviewed
-  tree (stash, scratch copy); merging is never part of dispatch — and
-  record the exact state dispatched against (revision plus dirty-file
-  set). Prefer handing the wave an isolated snapshot (a copy or worktree
-  pinned at that revision, write access withheld); if it must read the
-  live tree while your edits continue, edit only files the reviewed slice
-  neither contains nor depends on — file-disjoint is not
-  dependency-disjoint. On each return, re-check the recorded state:
-  reviewed files changed (your own edits included) → the verdict is
-  stale; re-dispatch against the settled state. Repo state moved without
-  your doing (a commit, a moved HEAD or index) → the "read-only" wave
-  wrote; treat its verdict and the tree as suspect and investigate before
-  trusting either.
-  ✅ "held my own edits until the critic's wave returned, then applied
-  them." ❌ "kept fixing files while the critic was still reading them."
+  writing anyway. Before dispatch, stabilize — committing is fine,
+  merging is not: the content under review stays in place (commit it on
+  the reviewed branch, or leave it uncommitted as part of the recorded
+  state — never stash away the very change the wave reviews; a delivered
+  tree under §3's completion-claim audit above stays untouched, that
+  rule governs); WIP outside the reviewed content moves out (stash,
+  scratch copy). Record the dispatched state as content, not filenames:
+  the revision plus a saved diff or hash of every dirty path. Then hand
+  the wave an isolated snapshot (a copy or worktree pinned at that
+  state, write access withheld) — the snapshot is what lets your own
+  edits continue safely; no snapshot → freeze: hold your edits until the
+  wave returns. On return, diff the reviewed paths against the recorded
+  content: any delta you cannot account for, or a commit, HEAD, or index
+  motion not yours → the "read-only" wave wrote — verdict and tree are
+  suspect; restore the recorded baseline or cut a fresh snapshot before
+  re-dispatching. An endpoint match is detection of persistent drift
+  only, never proof the tree held still mid-read (a writer can restore
+  before returning) — prevention lives in the snapshot or the withheld
+  write access, and a live-tree wave that held write capability clears
+  nothing by matching (§4's discipline below governs that case).
+  ✅ "held my own edits until the wave returned and the reviewed paths
+  diffed clean against the recorded state, then applied them."
+  ❌ "kept fixing files while the critic was still reading them."
   ❌ "the tree matches what I intended, so the verdict stands" — the
   baseline is the dispatched state, not your intentions.
 - Review against the packet contract, not line-by-line theater. New bug class
@@ -336,9 +343,9 @@ fixed mid-dispatch and voted REFUTED on an already-confirmed bug, and a
 separate critic committed the reviewed worktree to a branch mid-review,
 leaving the requested end-state unreachable. Both observed in a private
 audit harness (contributor-verifiable, not linkable here); the fix
-(settle-or-snapshot, dependency-disjoint sharding, a recorded-state
-re-check on return) is the defensive split, not a mechanism finding,
-mirroring how the §4 silent-clobber bullet above
+(settle-in-place, snapshot-or-freeze, content-recorded dispatch state,
+return-time drift detection) is the defensive split, not a mechanism
+finding, mirroring how the §4 silent-clobber bullet above
 handles its own single-sandbox observation. Private evidence, cited as
 shape per the README covenant's second branch; no in-repo probe has
 run — in-body `unprobed` marker.
