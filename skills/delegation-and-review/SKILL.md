@@ -26,6 +26,20 @@ treat every returned result as a claim until verified.
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
   the environment at session time, not memory.
+- **A pinned model string does not pin behavior** (`unprobed` — private
+  incidents as shape; see Provenance). Hosted endpoints drift behind
+  identical slugs: in one week, one CLI's measured edge-guard rate collapsed
+  on re-measurement a single day later (same flag, same prompt battery,
+  forcing a published claim's retraction), and a second vendor's endpoint
+  inverted a reproduced infinite-loop failure into a fully guarded pass over
+  twelve days — model strings unchanged in both. So a measured behavioral
+  property of a hosted model — an edge-safety rate, a failure signature, a
+  latency class — is a measurement of a DAY, not of the string. Date-stamp
+  every such number where it is recorded, and when a routing or safety
+  decision depends on one, re-run the probe instead of reusing it; an
+  undated behavioral claim about a hosted endpoint is expired on arrival.
+  ❌ "we measured that model guarding this edge last week, so route the
+  edge-risky work to it."
 
 ## 2. The dispatch packet
 
@@ -301,5 +315,18 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
+The §1 pinned-string bullet (2026-07-22) generalizes two private incidents
+from one contributor's subordinate-CLI benchmarks: a pre-registered
+re-measurement of one CLI's unstated-edge guard rate, run one day after the
+original probe with the model flag and prompt battery unchanged, flipped
+the result enough to force retraction of the prior day's published
+regression claim; and a second vendor's endpoint, over twelve days behind
+unchanged model strings, inverted a reproduced infinite-loop failure into a
+fully guarded pass. Both are contributor-reported (private harnesses,
+verifiable by the contributor, not linkable here); numbers not restated per
+the README covenant — cited as shape, in-body `unprobed` marker. A probe
+would require a hosted endpoint that drifts on schedule, which nothing can
+fixture; the honest test is longitudinal re-measurement, recorded here as
+the debt.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
