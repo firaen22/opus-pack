@@ -94,6 +94,34 @@ artifact-producing step.
 ## 3. Provenance and decay
 
 - Date-stamp volatile facts (versions, flags, model names, defaults).
+- **Capability-negative claims rot the worst** (`unprobed` — private incident
+  as shape; see Provenance). About to write "no such flag", "only works
+  interactively", "the API can't do X" into an instruction file — or
+  about to act on one already there: these are version-scoped
+  observations that read as timeless
+  rules. A stale positive claim fails loud the first time someone follows
+  it; a stale negative fails silent — it steers every later session away
+  from a capability that now exists, and nothing ever exercises it to
+  expose the rot. One playbook's "model switching only works in the
+  interactive UI; no flag" was actively wrong at the tool's current version
+  and had been routing sessions into a degraded path. A negative about
+  a hosted model's BEHAVIOR is the one class a version pin cannot
+  hold — hosted endpoints drift behind unchanged strings; that class
+  follows delegation-and-review §1's pinned-string rule (date-stamp
+  the recorded claim; re-probe at decision time), not this protocol.
+  Writing a tool-interface negative: pin
+  it to the version and probe it was observed on. Acting on one: read
+  its pin; the tool's version has changed, or the pin is missing →
+  re-verify with one probe (`--help`, or a trial invocation exercising
+  the claimed-absent capability) before
+  obeying it; probe unavailable or inconclusive → the capability is
+  unknown, not absent — record that where the claim is used and do not
+  repeat the negative as fact. Done: writing — the claim carries its
+  version pin and the probe that observed it; acting — the pin is
+  matched to the current version, or re-probed, or recorded unknown.
+  ✅ "playbook says no flag (pinned v0.2.98); current binary v0.2.101 —
+  ran --help: the flag exists now; corrected the playbook in place."
+  ❌ "the playbook says there's no flag, so drive it through the UI."
 - Correct a stale rule in place — never append the correction below the old
   line. A zero-context reader obeys whichever sentence it reads first, not
   the latest one.
@@ -150,6 +178,62 @@ artifact-producing step.
 - One skill, one topic; no duplicate homes for a fact — cross-reference the
   sibling instead. Each skill states **when NOT to use it** and which sibling
   to use.
+- **Keyword-grep absence is not absence** (`unprobed` — private incidents as
+  shape; see Provenance). About to add a new fact or rule to an
+  instruction file, or to conclude one does not cover a fact
+  (wording-only and provenance edits are out of scope): an empty grep is
+  not the dup-check the no-duplicate-homes rule above needs — rules
+  phrased differently from the search term repeatedly produced false
+  "not covered" verdicts in the contributor's private log (see
+  Provenance), one a proposed addition whose content already sat in the
+  target file under other wording, caught only by reading the section at
+  drafting time. The check: grep the target file and its sibling skills
+  (the skills shipped beside it — list the parent skills directory,
+  don't recall it, and include each searched skill's references files
+  when the topic plausibly lives there; when the repo also carries
+  router or entry instruction files — CLAUDE.md, AGENTS.md, a memory
+  index — those join the search too, since a fact canonical in an
+  entry file makes any skill addition a second home; a router file
+  like CLAUDE.md as the TARGET has
+  no siblings — its "siblings" are the files it points into) for the
+  concept's name plus at least two alternates drawn from how the file
+  might phrase it (the outcome it produces, the operation's other names,
+  its domain jargon); list the actual section headings of the target AND
+  of every file searched; from that real outline — never from memory —
+  name the candidate homes (every section with a hit, plus every section
+  the fact would live in if it existed) and read each in full before any
+  verdict. A headingless file is read in full. When every search came
+  back empty, read every searched file in full before concluding
+  anything — the incidents' catch was the read, not the grep. Duplicate
+  found → no second home, wherever it lives: in the target, no addition;
+  in a sibling, cross-reference it — the "A cross-reference is not a
+  load" rule below still applies as written. Otherwise the change record
+  — the PR description or commit message when one is being created,
+  otherwise the completion report — carries the result line: the terms
+  searched, each file searched with what was read of it (named sections,
+  or "read in full"), and "not found under the searches and sections
+  listed". For a landing addition, the fresh-context reviewer (§6)
+  re-runs those searches against the pre-addition text (the file at the
+  revision the change branches from — never the edited working copy) and
+  reads at least one candidate of their own choosing — on empty
+  searches, one searched file in full; a standalone not-covered verdict
+  with no reviewer stays provisional in the report until a fresh-context
+  reader without the author's session confirms it there. A bare "not
+  covered" backed only by empty greps is the failure this rule exists to
+  stop; no plausible home in the outline for a fact the task says is
+  covered or being relocated, or doubt that the candidate list is
+  complete → the placement is unresolved — escalate it, and under those
+  conditions never assert absence.
+  ✅ "grep for 'revert', 'rollback', 'undo' across the playbook and its
+  two siblings returned nothing; read all three files end to end — the
+  rule exists in the playbook under 'restore': duplicate found, no
+  addition; cross-referenced the playbook's rule instead."
+  ✅ "all searches empty — read both searched files end to end; recorded
+  'not found under the searches and sections listed: revert, rollback,
+  undo; playbook.md (read in full), helpers.md (read in full)' — then
+  added the rule."
+  ❌ "grep returned nothing, so the file doesn't cover it."
+  ❌ "three synonyms, all empty — not covered" (no file was ever read).
 - **A cross-reference is not a load** (`unprobed` in-house; external
   evidence — see Provenance). On weak tiers, discovering that a sibling
   skill applies is a judgment act: fable-method published a smoke-grade
@@ -228,6 +312,66 @@ The sharpest usability probe is behavioral: give a fresh weaker-tier
 (zero-context) agent only the file plus one scenario, write the expected
 behavior down first, then patch the gaps the probe surfaces — not the ones
 you imagine.
+
+**A skill — or a plugin's instruction files — is under this section's
+review: verify the deployment runtime before the review concludes**
+(`unprobed` — private incident as shape; see Provenance). A skill
+verified only on the author's machine can pass every lens above and
+still be wrong where it will actually run: one reviewed-and-finalized
+skill was reworked wholesale when its real target — a sandboxed Linux
+VM, not the author's macOS — surfaced only after sign-off. §1's gate
+placement applies at authoring start: the target answer (or a recorded
+`user-must-provide`) is required before the first artifact-producing
+step; this review is the enforcement backstop, and it blocks adoption
+when the answer is missing. Confirm the review record — the same
+artifact class as the change record used elsewhere in this file: "the
+PR description or commit
+message when one is being created, otherwise the completion report" —
+names the target runtime(s): the execution environment (OS, container,
+sandbox) and any governing connector or tool instance. Not named →
+read the repo's own deployment manifests and docs first, then obtain
+what they cannot tell you from the requester; no answer → write
+`user-must-provide` in the record; adoption then proceeds ONLY under a
+recorded risk acceptance by whoever owns the deployment — that
+acceptance is an alternate Done which still requires the sweep below
+and every in-file label; without it the artifact stays blocked.
+Named or not, always run the sweep for assumptions that silently bind
+the file to the author's machine — this list is a floor, not the
+ceiling: an accidentally machine-local repository path gets §2's
+remedy, verbatim ("Anchor to the VCS root (`git rev-parse
+--show-toplevel`) and verify the path prefix before reading"), while
+an absolute path the target itself defines (a socket, device, mount)
+is a machine-bound assumption like the rest; OS-specific launchers and
+helpers (URL-scheme opens, clipboard or notification tools), host
+identity (a literal hostname or username), wall-clock or timezone
+assumptions (a hard-coded TZ, a locale), instance-specific tool
+identifiers (a connector's tool prefix can be unique to the author's
+instance), and — for anything that executes programs — architecture,
+interpreter and dependency availability, runtime versions, filesystem
+semantics, permissions, and network reach. `runtime-agnostic` may be
+recorded only for pure instruction text with no executable dependency;
+anything that runs programs names its dimensions instead. Each
+machine-bound assumption keeps a verified portable form, or stays
+behind a verified target-scoped dispatch — which satisfies a named
+target only when that target ALSO keeps a working path for every
+capability the file claims (a foreign-OS-only branch is not
+compatibility) — or carries a label naming the exact runtime or
+instance required, written IN the skill file beside the dependency
+(§2's embed-the-knowledge; the review record points to it), verified
+against that instance where reachable and marked `unverified` (§2)
+where not: a label records a limitation, never proves compatibility.
+Done when every target runtime named in the record is compatible with
+every assumption reachable on it — a labeled incompatibility with a
+named target blocks completion, and shrinking the supported scope can
+only exclude an optional target with the requester's explicit say — or
+when the recorded risk acceptance above stands in; and everything
+machine-bound carries its named label in the file.
+✅ "target: sandboxed Linux VM plus the team's shared connector
+instance; the macOS-only notify helper replaced with the project's CLI
+logger; the connector prefix labeled in-file 'requires the shared
+instance' and resolved against it."
+❌ "labeled the launcher 'requires macOS' and concluded — while the
+named target is a Linux VM."
 
 Fix what blocks, then read back the final files to confirm they landed
 complete. When mining sessions or external material into skills, strip
@@ -397,4 +541,35 @@ marker per the README covenant: the external measurement is of one
 skill's one gate, and whether placement generalizes across gate types is
 exactly what an in-house probe would test — that probe has not been run;
 the marker records the debt.
+The §5 keyword-grep-absence rule (2026-07-21) generalizes three private
+incidents in one week, each the same shape: a keyword grep of a rules file
+returned nothing, "not covered here" was concluded, and the content existed
+under different phrasing — including one proposed upstream addition whose
+substance was already in the target file, caught only by reading the
+section during drafting (contributor-reported; the private repos are
+verifiable by the contributor, not linkable here). It ships `unprobed` per
+the README covenant's second branch — no in-repo probe has run; the
+executable probe shape (seed a reworded twin of a rule, instruct a
+weak-tier agent to dup-check an addition, observe grep-only vs read) is
+noted here as the debt, not claimed as run.
+The §6 deployment-runtime rule (2026-07-21) comes from a private incident:
+a skill was authored, reviewed through the lenses above, and finalized for
+the author's local macOS environment, then rebuilt wholesale the same week
+when the user mentioned it would run inside a sandboxed Linux VM — host
+identity, launcher mechanism, and machine-local MCP tool-name assumptions
+all failed on the real target (contributor-reported; the private repo is
+verifiable by the contributor, not linkable here). Ships `unprobed` per the
+README covenant's second branch: no in-repo probe has run; the probe shape
+(give a weak-tier reviewer a machine-bound skill plus a named foreign
+runtime, observe whether the sweep fires) is recorded as debt.
+The §3 capability-negative rule (2026-07-22) comes from a private
+incident: a subordinate-CLI playbook asserted a capability did not exist
+("model switching only works interactively; no flag") — true when
+written, false at the tool's current version — and the stale negative had
+been silently steering sessions into a degraded interactive-only path
+until a review pass re-probed the binary. Private evidence, cited as
+shape per the README covenant's second branch; the executable probe —
+re-running recorded capability-negatives against the current binary on
+each version change and counting flips — has not been run as a standing
+check; the in-body `unprobed` marker records that debt.
 Stable method; no environment facts to re-verify.

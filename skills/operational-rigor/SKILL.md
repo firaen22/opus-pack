@@ -255,6 +255,38 @@ When rigor conflicts with finishing sooner, rigor wins.
 - Between failed fixes, return to a clean state; stacked half-fixes hide causes.
 - Reproduce reported bugs before fixing. Fix the observed failure, not the implied
   one. Refutation is valid: report confirmed non-bugs and ship nothing.
+- **A check's name is not its coverage** (`unprobed` — private incident as
+  shape; see Provenance). A named gate earns evidentiary weight from what
+  it asserts AND what it actually drives: one session cited a check whose
+  name implied it gated a model integration's behavior, then read its
+  source and found it exercised only a regex pre-filter in which the
+  model's name was a routing label — and had to correct a safety claim
+  already given to the user. Before citing a check, test, or CI job as
+  evidence of a property of a change (safe, correct, covered), trace
+  it through to its pass/fail oracle —
+  the assertions (or, for a linter or build job, its rule set and
+  inputs) inspected at the revision the cited run actually used, the
+  invocation path and setup that feed them, whether that path executed
+  in the cited run, and whether its assertions PASSED there with their
+  failure controlling the check's final status (a run is not a pass —
+  the runs/passes/correct line later in this section) — and assert only the properties
+  that trace established: whatever the check's NAME implies but the
+  trace did not show stays unverified — say so; two checks with
+  identical assertions differ when one drives the real integration and
+  the other a pre-filter. A trace you cannot inspect leaves that
+  coverage unverified — say so. "There is a check called X" is a claim
+  about naming, not behavior.
+  ✅ "traced check X at run 1234's revision: it asserts A and B against
+  the real adapter; the run's log shows that path executed and A, B
+  passed with failures propagating to the job status; nothing in its
+  path drives C — C is unverified."
+  ❌ "the change is safe, check X covers it" (named, never read).
+  ❌ "read the source — it asserts A — so the cited run covers A" (the
+  run had that test conditionally skipped; static coverage is not the
+  cited run's coverage).
+  ❌ "read it — it's a regex pre-filter, but the name says integration,
+  so the integration is covered" — a trace read and then overridden by
+  the name.
 - **A failing check has two suspects: the code and the check itself.** Before
   editing either, open the statement of intended behavior (spec, README,
   docstring, type) and confirm which side it backs; a disagreement is the
@@ -302,6 +334,29 @@ When rigor conflicts with finishing sooner, rigor wins.
   (contract holds under adversarial input). Only correct permits "done".
 - Never fabricate observations or report outputs not produced. Report skipped
   verification as skipped.
+- **Arming, enabling, relying on, or reviewing a recurring scheduled
+  process → the scheduled-process entry's headline holds, quoted: A
+  recurring schedule's own "completed" report is not evidence its side
+  effects landed — verify at the destinations, attributed to the
+  invocation** (that entry wins on disagreement) (`unprobed` —
+  private incident as shape; see Provenance). A
+  weekly task reported success for roughly three months while its write
+  step silently never executed, and a second output channel on the same
+  task was separately dead on a stale hardcoded credential the whole
+  time. The arming and audit protocol is the scheduled-process entry in
+  `references/external-systems.md` — load it before arming, enabling,
+  relying on, or reviewing one; on wording disagreement in the quoted
+  headline, that entry's headline is canonical (§2's authorization rules
+  are untouched by that winner clause). A green run history is evidence the runner reported
+  success, never that downstream received anything — and that holds for
+  the supervised test fire too: exit 0 there is evidence the process
+  ran, while its downstream still needs the destination-attributed
+  checks (the earlier exit-code line speaks to command execution, never
+  to a schedule's delivery).
+  ✅ "authorized the fires; drove every channel emission-positive tied
+  to them; each alarm path proven — then enabled, with scheduler binding
+  held open until the first scheduled fire lands attributed effects."
+  ❌ "the log shows 200/exit-0 every week, so it's working."
 - **Data-path integrity — fail loud on *unspecified* ambiguity, never emit a
   silently-wrong value.** Honor an explicit, documented contract (a declared
   default, precedence, or freshness window); what is forbidden is *silently*
@@ -317,16 +372,18 @@ When rigor conflicts with finishing sooner, rigor wins.
   - ✅ blank / `—` when genuinely unknown. ❌ "null rate → show 0% so the chart
     still renders."
 - **Building, configuring, or verifying work that crosses a boundary into an
-  external tool, cache, fallback chain, clock/timezone, or deploy target? Load
+  external tool, cache, fallback chain, clock/timezone, deploy target, or
+  recurring schedule? Load
   `references/external-systems.md`.** Each of those boundaries reports success
   while lying about it in a specific, incident-backed way; the reference holds
   the verify-before-trust rule for each — exit-code contracts (a tool that
   exits non-zero on success), success-latency tails (a timeout that aborts slow
   successes), three-state cache discipline (never cache an unvalidated empty),
   fallback-chain rot (a dead leg invisible until the primary fails), the
-  two-time-convention + calendar round-trip (Feb 30 normalizes silently), and
+  two-time-convention + calendar round-trip (Feb 30 normalizes silently),
   deploy-target contracts (serverless fire-and-forget after the response never
-  runs).
+  runs), and the scheduled-process protocol (a recurring schedule's green
+  history vs destination-attributed side effects).
 - **A clue about external data is a map, not a schema.** A field shape learned
   from docs, a blog, another repo's code, or memory tells you where to look,
   never what is there — sample the real shape on a real instance before writing a
@@ -538,6 +595,28 @@ the deployed path (contributor-reported shape; the private repo is verifiable by
 the contributor, not linkable here). It ships `unprobed` — the pack's private
 fixtures have no interactive arm to drive it (cf. the grill-pass note above); the
 marker records that debt, not an exemption.
+The §4 scheduled-process rule (2026-07-21) generalizes a private production
+incident: a weekly automation ran and reported completion for roughly three
+months while its write step silently never executed, every output file's mtime
+frozen from the date the path broke; a second, independent output channel on
+the same task was separately dead the entire time on a stale hardcoded
+credential (contributor-reported shape; the private repo is verifiable by the
+contributor, not linkable here). It ships `unprobed` — the pack's private
+fixtures have no long-running-schedule arm to drive it; the marker records
+that debt, not an exemption. The protocol body lives in
+`references/external-systems.md` (its scheduled-process entry) per the
+2026-07-14 split precedent — boundary-specific protocols out of the lean
+core; the §4 bullet keeps the trigger, the claim, the incident shape, and
+the pointer.
+The §4 check-name rule (2026-07-22) comes from a private incident: a
+session presented a named CI check as gating a model integration's
+behavior, then read the check's source and found it exercised only a
+regex pre-filter in which the model's name was merely a routing label,
+and had to correct the safety framing it had already given the user.
+Private evidence, cited as shape per the README covenant's second branch;
+the executable probe — sample a repo's named checks and diff name-implied
+vs actual assertion coverage — has not been run; the in-body `unprobed`
+marker records that debt.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands

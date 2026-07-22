@@ -21,11 +21,141 @@ treat every returned result as a claim until verified.
 - **Bounded fan-out:** launch no more agents than you can review/merge. If a wave
   depends on the last, accept/reject the last wave before the next; independent
   slices only need to stay within review capacity. Parallel writers get isolated
-  worktrees.
+  worktrees (a write-capable review critic needs more — an independent
+  copy per §3's settled-tree reference, not a linked worktree).
+- **Isolated trees do not isolate ports** (`unprobed` — private incident as
+  shape; see Provenance). When sibling sessions run servers sharing a
+  port namespace and a configured port, they contend for it; once one is
+  displaced (auto-port fallback, a restart elsewhere), any STATIC
+  reference meant for that session's server — a `localhost:<port>`
+  proxy, target, or env entry still naming the configured port — now
+  silently reaches the sibling's server: the page loads blank or shows
+  the wrong build while every request returns 200, which reads as a bug
+  in your own change. Defenses (pick one of the two, apply it fully —
+  what you persist differs by defense): (1) a unique fixed port per
+  worktree, run
+  with fallback disabled so a collision fails loud, the NUMBER
+  persisted and propagated to every session-local reference (proxy,
+  env, browser entry) — an explicit address-in-use bind error is the
+  contention diagnostic: then pick a different free unique port,
+  propagate, restart (any other bind error — permissions, bad
+  address, exhaustion — is its own failure, never a cue to switch
+  ports);
+  or (2) runtime derivation, where the MECHANISM is what persists — every
+  reference re-derived from the actually-bound port after every bind,
+  never a bound number frozen into a static ref. Auto-port fallback
+  alone is the displacement mechanism, never the repair; writing
+  today's fallback port into static references is the forbidden
+  ephemeral retarget — the next restart recreates the mismatch. To
+  repair a mismatch: choose a defense, apply its own persistence shape
+  as above, update every session-local reference, restart or reload
+  every consumer that read its target at startup, and never kill the
+  sibling's server — it is another session's work. Identity check
+  comes after every repair mutation (reference updates, restarts,
+  reloads): record the expected marker for THIS session first (the
+  worktree name it serves, a session nonce noted before the request —
+  a fresh nonce from the wrong sibling still looks fresh; a content
+  build id shared by same-revision worktrees does not discriminate),
+  then observe exact equality with that recorded value THROUGH every
+  relied session-local consumer path (the API proxy included, not
+  just the top page); a listener check (`lsof`-style) is port
+  discovery, never identity evidence. Marker cleanup is the one
+  mutation that follows the check — use a marker whose removal
+  restarts or reloads nothing (a static file, a debug endpoint's
+  echo), remove it, and verify the removal against the
+  pre-instrumentation state (tracked, untracked, and ignored files —
+  the declared persistent port configuration stays); a marker that
+  cannot be removed without a restart or reload is the wrong marker —
+  pick one that can be. Any restart or reload after the check — a cleanup that
+  broke the rule above included — voids the identity: re-prove it
+  (serve a fresh marker, check, clean up again) before relying on
+  the routing.
+  When a fanned-out preview misbehaves with all-green requests, check
+  cross-port references — references still naming the shared configured
+  port instead of this session's bound port — before debugging your own
+  code: stopping your preview cannot stop a sibling's server, so the
+  wrong upstream stays up. A reference to an intentionally shared local
+  service (one database for all worktrees) is not a cross-port defect;
+  the rule covers references meant for the displaced session-owned
+  server.
+  ✅ "each worktree pinned to its own persisted port, proxy and env
+  updated and reloaded; identity check: the page AND a request
+  through the API proxy both returned the nonce recorded for this
+  session; then the marker file removed — no reload needed — and its
+  removal verified."
+  ❌ "every request is 200, so the proxy target must be my server."
 - Route by task: mechanical clear-spec work → cheapest capable model; user-facing
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
   the environment at session time, not memory.
+- **A pinned model string does not pin behavior** (`unprobed` — private
+  incidents as shape; see Provenance). A routing or safety decision is
+  about to rely on a previously measured behavioral property of a
+  hosted model — an edge-safety rate, a failure signature, a latency
+  class: that property is not a durable attribute of the slug (hosted
+  endpoints drift behind identical strings — in the contributor's
+  harnesses, one CLI's edge-guard measurement flipped on re-measurement
+  with flag and battery unchanged, and a second vendor's reproduced
+  failure inverted to a pass days later, strings unchanged). Date-stamp
+  every such measurement where it is recorded; at decision time, re-run
+  the probe — its route first verified per the labels rule below (an
+  unattributed answer measures an unknown model, not the slug's) —
+  and cite the fresh result's timestamp and configuration —
+  the fresh result informs the routing, it never replaces §2's edge
+  specification and proof gate for the work itself, and no measurement
+  pins the endpoint's behavior on the next request. Probe unavailable
+  or failing → the property is unknown: route as if unguarded and spec
+  the edge per §2. Done when the decision record cites the fresh probe
+  (timestamp + configuration, its route attributed per the labels
+  rule below) or the unknown-property fallback — an
+  undated behavioral claim about a hosted endpoint is expired on
+  arrival, and an unattributed probe never satisfies the citation.
+  ✅ "re-ran the edge battery this session — the wrapper's route line
+  named the slug — cited its timestamp in the
+  routing note, and specced the edge in the packet anyway."
+  ❌ "we already measured that model guarding this edge, so route the
+  edge-risky work to it" — any prior measurement reused for a routing
+  or safety decision without a decision-time re-run, last week's or
+  this morning's.
+- **Labels are routes, listings are claims** (`unprobed` — private incidents
+  as shape; see Provenance). Two separate boundaries, each with its own
+  check. About to route work through a listed model: a lineup listing is
+  the tool's routing claim, not callability — across two independent
+  tools, a listed entry failed hard on first real invocation. Verify by
+  sending a fixed trivial prompt through the SAME wrapper, flags, auth,
+  and execution context the work will use; the pass is two observations
+  — a model ANSWER to that prompt, AND the wrapper's own route report
+  naming this route as what ANSWERED (a banner echoing the requested
+  slug is configuration, not attribution) — wrapper banners,
+  usage text, diagnostics, or error pages are not answers. A wrapper
+  WITH an attribution channel whose report is missing, ambiguous, or
+  names a silent fallback leaves the route unverified — like an error
+  or a non-answer, do not dispatch dependent work on it
+  (§4's retry/escalation ladder governs). A wrapper with NO
+  attribution channel by design can only ever yield a
+  reachability-only pass: the route stays unattributed — record that
+  limit wherever the pass is cited, and dependent dispatch on it
+  carries the recorded limitation, never a verified-route claim. A
+  pass expires with the
+  session — a later session re-runs the probe before dispatching on
+  it (re-reading the lineup, per the volatile-lineups rule above, is
+  a separate duty, never the re-verification). About to use a wrapper's model
+  string OUTSIDE the wrapper — a direct provider API call, a pricing or
+  quota lookup: the string is the wrapper's internal routing name, not
+  necessarily the provider's ID — and the same spelling existing on the
+  provider side proves nothing (an alias can collide with a different
+  provider model). Resolve the alias → provider-ID mapping from the
+  wrapper's OWN config, docs, or request trace, then validate that
+  resulting ID with the provider; mapping unresolved → the namespace
+  crossing stays blocked.
+  ✅ "sent 'reply OK' through the wrapper we dispatch with — the model
+  answered and the wrapper's route line named it; for the quota check,
+  read the wrapper config's alias map to get the provider ID, then
+  confirmed that ID in the provider's model list."
+  ❌ "the CLI lists it, so it's available — route tomorrow's batch to
+  it."
+  ❌ "the wrapper call worked and the alias exists in the provider's
+  list, so they're the same model."
 
 ## 2. The dispatch packet
 
@@ -33,9 +163,83 @@ Every packet names:
 
 - **Goal + motivation** — what and why.
 - **Owned scope + explicit non-scope** — files/modules it may and may not touch.
+  For a find-and-fix-every-instance sweep — a "purge every X", "replace
+  all Y", "no instance of Z survives" task — scope splits in two
+  (`unprobed` — private incident as shape; see Provenance). First branch
+  by what the invariant IS. Textual: the deliverable is literally the
+  string's absence from a declared corpus — the corpus is the packet's
+  readable scope, named explicitly, never the seed grep's hit list —
+  and the correctly scoped search over that corpus is the gate, claiming
+  corpus-level textual absence and nothing more. Behavioral: the TARGET
+  is the defect or effect to eliminate; a spelling is a probe. The
+  SEARCH scope is then every surface that can produce that target:
+  literals and direct references, shared/global definitions, helpers
+  that construct or return it. Hunt generators per §3's miss-is-costly
+  loop — its finders quoted verbatim: "Run axis-diverse finders — by-
+  container, by-content, by-entity, by-time — one axis per finder so
+  blind spots don't line up", with dedup against everything surfaced
+  and its two-consecutive-empty-rounds stop rule — and at least one
+  producer/effect axis (what shared definitions and constructors can
+  produce this kind of output) MUST run before the loop may close: a
+  spelling-only axis set is non-compliant however many rounds it ran (a
+  53-file styling sweep missed its defect in a shared utility class the
+  token grep never matched, and each review round surfaced another
+  category the prior round's pattern structurally excluded). Searching
+  stays inside the packet's readable scope: a surface outside it is a
+  reported gap, never a silent crossing. The packet carries the seed
+  inventory, the hunt method, and a per-round hunt-log duty — each
+  round's queries and results, empty ones included (a discovery
+  record, distinct from the recurring-campaign ledger field below);
+  the worker continues the loop to closure. It also names the value family (the
+  tiers/variants the target ranges over), closed only by a
+  verified-finite source (a sealed enum or const union read at its
+  `file:line` — an extensible registry or config is never closed), else
+  bounded per §3's "State anything you bounded" clause. Producer
+  surfaces or variation axes not closable from a verified-finite source
+  → the sweep returns a non-exhaustive outcome, as does any bounded or
+  gap-carrying run: reducing scope needs the dispatcher's explicit say,
+  and an every-instance claim with unobserved members is false. The
+  WRITE scope stays the owned files/modules explicitly listed above: a
+  generator discovered outside that WRITE scope is reported for
+  escalation, never edited on discovery.
+  ✅ "seed inventory: the 53-file hit list (reference search), the
+  shared class (style audit), the emitting helper (trace); tiers from
+  the sealed palette enum at its definition site; per-round hunt-log
+  in the packet."
+  ❌ "the inventory is the grep hit list — the shared utility never made
+  the list."
 - **Invariant** — property to close and properties to preserve.
 - **Proof gate** — concrete check that would fail under the broken behavior;
-  worker-chosen "tests pass" is not a gate.
+  worker-chosen "tests pass" is not a gate. For an every-instance sweep
+  whose target is behavior or rendered effect (`unprobed` — same
+  provenance as the sweep-scope field above), the gate is the observed
+  effect at every inventoried generator surface, across each declared
+  variation axis where the outcome can differ (tier, theme, locale —
+  untested combinations are unobserved, reported as such) — render or
+  run each inside a side-effect-contained harness with the effect's
+  producing condition driven true at that surface (the input, branch,
+  or state under which the defect appeared; a render on empty data or
+  a disabled branch observes nothing — that surface stays
+  unobserved); every outward
+  effect keeps operational-rigor §2's per-invocation authorization at
+  the moment it fires, and one you cannot safely and authorizedly
+  drive (a payment, a send, a delete) is reported unverified and
+  escalated, never fired for the gate. One observation may stand for a
+  declared equivalence class only when equivalence is verified across
+  the members' inputs, backing data, downstream context, AND the
+  producing implementation itself (two independent renderers are never
+  one class on shared inputs alone; branch-free control flow is not
+  equivalence — a table lookup differs per entry; "they share a
+  helper" is a claim, not evidence); unproved divergence forces
+  per-member observation, and anything unobserved is reported
+  unverified — never folded into an exhaustive claim. A zero-hit
+  search on a behavioral target is a report, not the gate: a clean
+  grep proves one spelling is gone, not that the defect is gone (the
+  textual branch above is the only search-as-gate case).
+  ✅ "each literal's site re-rendered, the shared class's consumers
+  re-rendered, every tier through the emitting helper — effect gone at
+  each observation point."
+  ❌ "the grep is clean across all 53 files, so the sweep is done."
 - **Output contract** — conclusions + `file:line` refs, each tagged
   `[verified: ran <cmd>]`, `[verified: read <file:line>]`, or
   `[unverified: <reason>]`; long artifacts go to files, return paths.
@@ -54,6 +258,27 @@ Every packet names:
 - **Cost asymmetry** — for reviewers/verifiers, name which failure direction is
   expensive (e.g. a missed unverified claim vs. a false alarm) so scrutiny is
   weighted toward it, not split evenly.
+- **Recurring dispatches carry ledgers** (`unprobed` — private incident as shape;
+  see Provenance). A field for RECURRING dispatches only — it never
+  blocks a one-off. Fresh-context reviewers re-litigate a campaign's
+  history: one re-raised a finding class an earlier round had refuted
+  against the dependency's own source; another flagged as a defect the
+  exact code a prior round had shipped as a fix. So a recurring packet
+  names the campaign's stable identifier and its durable ledger file
+  (a concrete repository-relative path in the dispatching side's own
+  repository — never inside a tree under review, whose settled or
+  delivered state review rules forbid mutating) holding four categories of
+  records — prior fixes, refuted finding-classes, open findings,
+  unresolved — reconciled against the enumerated prior-round reports;
+  the full lifecycle, entry requirements, and refutation-scope rules
+  are `references/recurring-sweep-ledgers.md`: load it when
+  dispatching or reviewing a recurring round. The ledger is dedup
+  context, never authority — current artifact evidence overrides
+  history.
+  ✅ "packet names styling-sweep-2026Q3 and reviews/styling-ledger.md,
+  reconciled item-by-item against rounds 1-2's reports."
+  ❌ "the reviewer gets fresh context each round, so the packet doesn't
+  need the sweep's history."
 - **Rules** — do not merge, weaken gates, or revert unrelated work; report
   blockers and failures plainly. Plausible success is worse than honest failure.
   For an implementation task, after bounded discovery (interfaces read, ambiguity
@@ -83,6 +308,27 @@ reviewers that they silently absorb as implementers.
   verdicts name the point nearest failure or they are rubber stamps.
 - Critic verdicts carry evidence: REFUTED needs a counterexample; untested
   assumptions are listed. Verify critics too; stale or missing review is not approval.
+- **A fresh-context critic wave is reading (or about to read) a tree that
+  can still move — settle it first: a verdict formed on a moving tree
+  describes a state that no longer exists** (`unprobed` — private
+  incidents as shape; see Provenance). One read-only critic re-read a
+  file the orchestrator had already fixed mid-review and voted REFUTED
+  on a bug already confirmed elsewhere; a separate critic committed the
+  very worktree it was reviewing, moving the tree out from under the
+  requested end-state. Neither is §4's silent-clobber below (a sandbox
+  restoring out-of-scope files on exit). The dispatch protocol — the
+  baseline over the whole protected read set, enforced-copy-or-frozen-
+  tree surfaces, the two return comparisons, and recovery — is
+  `references/settled-tree-review.md`: load it before dispatching a
+  review wave — read-only or write-capable — over a tree that you, a
+  hook, a user, or a sibling process may touch while it reads. Verdicts bind only the
+  exact state whose immutability was enforced; anything less runs
+  provisional — never a clean gate pass.
+  ✅ "loaded the reference, dispatched one enforced copy per critic,
+  applied the verdicts to the recorded baseline only."
+  ❌ "kept fixing files in the live tree the critic was reading."
+  ❌ "the tree matches what I intended, so the verdict stands" — a
+  moved tree voids the verdict; it does not re-bind to the baseline.
 - Review against the packet contract, not line-by-line theater. New bug class
   caught → sweep the codebase: one catch, one class, one sweep. The worker's
   sweep report obeys operational-rigor §5 (the canonical copy, verbatim:
@@ -90,7 +336,9 @@ reviewers that they silently absorb as implementers.
   'none')"). The reviewer re-runs that named search, never takes it on
   trust — then challenges its coverage with one differently-shaped query (a
   broader or structural pattern, or a class-aware check): re-running a
-  narrow pattern reproduces its hits AND its misses.
+  narrow pattern reproduces its hits AND its misses. (A
+  find-and-fix-every-instance sweep's dispatch scope and acceptance
+  gate are §2's sweep fields.)
 - **Machinery is not the user.** Tool completions, CI events, and agent statuses
   are state changes, not approval or proof. Open the artifact and verify.
 - **Auditing a completion claim** (an agent's or contractor's "done", a
@@ -301,5 +549,84 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
-Stable behavioral rules; re-check only
-worktree/agent mechanics against the current harness.
+The §3 settled-tree review bullet (2026-07-21) comes from a private
+mining pass over two independent incidents in the same review-fan-out
+harness: a refuter critic re-read a file the orchestrator had already
+fixed mid-dispatch and voted REFUTED on an already-confirmed bug, and a
+separate critic committed the reviewed worktree to a branch mid-review,
+leaving the requested end-state unreachable. Both observed in a private
+audit harness (contributor-verifiable, not linkable here); the fix
+(recorded baseline over the protected read set, enforced-copy-or-
+frozen-tree with write withheld and no third writer, two return
+comparisons that void a moved verdict) is the defensive split, not a
+mechanism finding, mirroring how the §4 silent-clobber bullet above
+handles its own single-sandbox observation. Private evidence, cited as
+shape per the README covenant's second branch; no in-repo probe has
+run — in-body `unprobed` marker. The protocol body lives in
+`references/settled-tree-review.md` per the pack's split precedent
+(protocol out of the lean core; the §3 bullet keeps the trigger, the
+claim, the incidents, and the pointer).
+The §2 sweep-scope additions (2026-07-21; search-scope/write-scope split,
+axis-diverse inventory closed per §3's discovery loop, effect-per-surface
+proof gate, and the §3 pointer) come from a private incident: a
+find-and-fix-every-instance styling sweep (53 files), three review rounds, and
+a merged fix all missed the actual defect — it lived in a shared global
+utility class the token grep pattern never touched, and each follow-up round's
+"still broken?" surfaced a different category (a color-tier band, a
+class-emitting helper function) the prior round's search structurally
+excluded. Private evidence, cited as shape per the README covenant's second
+branch; no in-repo probe has run — in-body `unprobed` marker.
+The §1 port-contention bullet (2026-07-21) comes from a private incident in
+a multi-worktree fan-out: a dev server displaced from its configured port
+by auto-port-fallback left a hardcoded same-port proxy in the app config
+pointing at a concurrent sibling session's server — blank app, all
+requests 200, roughly forty lines of in-your-own-code diagnosis before the
+cross-port reference was checked (contributor-reported; the private repo
+is verifiable by the contributor, not linkable here). Ships `unprobed` per
+the README covenant's second branch: no in-repo probe has run — a probe
+would need two live servers and a displaced port, a fixture this pack does
+not yet carry; the marker records that debt.
+The §1 pinned-string bullet (2026-07-22) generalizes two private incidents
+from one contributor's subordinate-CLI benchmarks: a pre-registered
+re-measurement of one CLI's unstated-edge guard rate, run one day after the
+original probe with the model flag and prompt battery unchanged, flipped
+the result enough to force retraction of the prior day's published
+regression claim; and a second vendor's endpoint, over twelve days behind
+unchanged model strings, inverted a reproduced infinite-loop failure into a
+fully guarded pass. Both are contributor-reported (private harnesses,
+verifiable by the contributor, not linkable here); benchmark rates are not
+restated, and the elapsed intervals are contributor-reported shape — cited
+per the README covenant, in-body `unprobed` marker. The executable probe
+debt is behavioral: fixture a stale dated measurement beside a changed
+same-slug probe result and observe whether a weak executor re-runs before
+routing — distinct from re-verifying the drift premise itself, which only
+longitudinal re-measurement of live endpoints can do.
+The §2 recurring-sweep ledgers rule (2026-07-22) comes from a private
+incident: across iterations of a repeated review sweep, one reviewer
+re-raised a finding class an earlier iteration had refuted against the
+dependency's source, and a second flagged as a defect the exact code an
+earlier iteration had shipped as a fix; a do-not-re-flag block already
+present in one packet prevented exactly this on its surfaces, and both
+misses occurred where the block was absent. Private evidence, cited as
+shape per the README covenant's second branch; the executable probe — the
+same sweep run with and without ledgers, counting re-litigated findings —
+has not been run; the in-body `unprobed` marker records that debt. The
+lifecycle body lives in `references/recurring-sweep-ledgers.md` per the
+pack's split precedent; the §2 field keeps the trigger, the claim, the
+category names, and the pointer.
+The §1 labels-and-listing rule (2026-07-22) comes from two private
+incidents in one contributor's subordinate tooling: a model entry listed
+by one wrapper CLI's lineup failed hard on its first real invocation (the
+second such ghost entry observed across two independent tools), and a
+session caught itself about to treat another wrapper's model strings as
+provider API IDs for a quota lookup before verifying they are the
+wrapper's internal routing names. Private evidence, cited as shape per
+the README covenant's second branch; two probes owed, one per boundary —
+invoke every listed model once and diff claimed-vs-callable (the listing
+half), and seed an alias-collision fixture and observe whether the
+mapping is resolved before a namespace crossing (the provider-ID half);
+neither has run in-repo, and the in-body `unprobed` marker stands until
+both have.
+Stable behavioral rules; re-check
+worktree/agent mechanics and any recorded hosted-endpoint behavioral
+claims against the current environment.
