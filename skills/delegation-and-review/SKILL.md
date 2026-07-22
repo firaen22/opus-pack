@@ -26,6 +26,16 @@ treat every returned result as a claim until verified.
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
   the environment at session time, not memory.
+- **Labels are routes, listings are claims** (`unprobed` — private incidents
+  as shape; see Provenance). A wrapper CLI's model strings are its internal
+  routing names, not necessarily the provider's API model IDs — pasting one
+  into a direct API call or a pricing/quota lookup queries a name that may
+  not exist on the provider's side. And a model's presence in a lineup
+  listing does not prove it is callable: across two independent tools, a
+  listed entry failed hard on first real invocation. The listing is the
+  tool's routing claim; before building on a model, invoke it once and see
+  output.
+  ❌ "the CLI lists it, so it's available — route tomorrow's batch to it."
 
 ## 2. The dispatch packet
 
@@ -301,5 +311,15 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
+The §1 labels-and-listing rule (2026-07-22) comes from two private
+incidents in one contributor's subordinate tooling: a model entry listed
+by one wrapper CLI's lineup failed hard on its first real invocation (the
+second such ghost entry observed across two independent tools), and a
+session caught itself about to treat another wrapper's model strings as
+provider API IDs for a quota lookup before verifying they are the
+wrapper's internal routing names. Private evidence, cited as shape per
+the README covenant's second branch; the executable probe — invoke every
+listed model once and diff claimed-vs-callable — has not been run
+in-repo; the in-body `unprobed` marker records that debt.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
