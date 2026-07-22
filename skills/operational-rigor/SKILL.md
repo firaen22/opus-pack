@@ -302,6 +302,29 @@ When rigor conflicts with finishing sooner, rigor wins.
   (contract holds under adversarial input). Only correct permits "done".
 - Never fabricate observations or report outputs not produced. Report skipped
   verification as skipped.
+- **Arming, enabling, relying on, or reviewing a recurring scheduled
+  process → the scheduled-process entry's headline holds, quoted: A
+  recurring schedule's own "completed" report is not evidence its side
+  effects landed — verify at the destinations, attributed to the
+  invocation** (that entry wins on disagreement) (`unprobed` —
+  private incident as shape; see Provenance). A
+  weekly task reported success for roughly three months while its write
+  step silently never executed, and a second output channel on the same
+  task was separately dead on a stale hardcoded credential the whole
+  time. The arming and audit protocol is the scheduled-process entry in
+  `references/external-systems.md` — load it before arming, enabling,
+  relying on, or reviewing one; on wording disagreement in the quoted
+  headline, that entry's headline is canonical (§2's authorization rules
+  are untouched by that winner clause). A green run history is evidence the runner reported
+  success, never that downstream received anything — and that holds for
+  the supervised test fire too: exit 0 there is evidence the process
+  ran, while its downstream still needs the destination-attributed
+  checks (the earlier exit-code line speaks to command execution, never
+  to a schedule's delivery).
+  ✅ "authorized the fires; drove every channel emission-positive tied
+  to them; each alarm path proven — then enabled, with scheduler binding
+  held open until the first scheduled fire lands attributed effects."
+  ❌ "the log shows 200/exit-0 every week, so it's working."
 - **Data-path integrity — fail loud on *unspecified* ambiguity, never emit a
   silently-wrong value.** Honor an explicit, documented contract (a declared
   default, precedence, or freshness window); what is forbidden is *silently*
@@ -317,16 +340,18 @@ When rigor conflicts with finishing sooner, rigor wins.
   - ✅ blank / `—` when genuinely unknown. ❌ "null rate → show 0% so the chart
     still renders."
 - **Building, configuring, or verifying work that crosses a boundary into an
-  external tool, cache, fallback chain, clock/timezone, or deploy target? Load
+  external tool, cache, fallback chain, clock/timezone, deploy target, or
+  recurring schedule? Load
   `references/external-systems.md`.** Each of those boundaries reports success
   while lying about it in a specific, incident-backed way; the reference holds
   the verify-before-trust rule for each — exit-code contracts (a tool that
   exits non-zero on success), success-latency tails (a timeout that aborts slow
   successes), three-state cache discipline (never cache an unvalidated empty),
   fallback-chain rot (a dead leg invisible until the primary fails), the
-  two-time-convention + calendar round-trip (Feb 30 normalizes silently), and
+  two-time-convention + calendar round-trip (Feb 30 normalizes silently),
   deploy-target contracts (serverless fire-and-forget after the response never
-  runs).
+  runs), and the scheduled-process protocol (a recurring schedule's green
+  history vs destination-attributed side effects).
 - **A clue about external data is a map, not a schema.** A field shape learned
   from docs, a blog, another repo's code, or memory tells you where to look,
   never what is there — sample the real shape on a real instance before writing a
@@ -538,6 +563,19 @@ the deployed path (contributor-reported shape; the private repo is verifiable by
 the contributor, not linkable here). It ships `unprobed` — the pack's private
 fixtures have no interactive arm to drive it (cf. the grill-pass note above); the
 marker records that debt, not an exemption.
+The §4 scheduled-process rule (2026-07-21) generalizes a private production
+incident: a weekly automation ran and reported completion for roughly three
+months while its write step silently never executed, every output file's mtime
+frozen from the date the path broke; a second, independent output channel on
+the same task was separately dead the entire time on a stale hardcoded
+credential (contributor-reported shape; the private repo is verifiable by the
+contributor, not linkable here). It ships `unprobed` — the pack's private
+fixtures have no long-running-schedule arm to drive it; the marker records
+that debt, not an exemption. The protocol body lives in
+`references/external-systems.md` (its scheduled-process entry) per the
+2026-07-14 split precedent — boundary-specific protocols out of the lean
+core; the §4 bullet keeps the trigger, the claim, the incident shape, and
+the pointer.
 Stable behavioral rules; the environment-specific facts to re-verify now travel
 with the rules that cite them — the external-systems set in
 `references/external-systems.md`, plus §2's mount-check commands
