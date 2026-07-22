@@ -151,57 +151,57 @@ artifact-producing step.
   sibling instead. Each skill states **when NOT to use it** and which sibling
   to use.
 - **Keyword-grep absence is not absence** (`unprobed` — private incidents as
-  shape; see Provenance). About to add a new fact or rule, or to
-  conclude a file does not cover one (wording-only and provenance edits
-  are out of scope): an empty grep is not the dup-check the
-  no-duplicate-homes rule above needs — rules phrased differently from
-  the search term repeatedly produced false "not covered" verdicts
-  (three in one week in the contributor's private log; see Provenance),
-  one a proposed addition whose content already sat in the target file
-  under other wording, caught only by reading the section at drafting
-  time. The check: grep the target file and its sibling skills (the
-  skills shipped beside it — list the parent skills directory, don't
-  recall it, and include each searched skill's references files when
-  the topic plausibly lives there; a router file like CLAUDE.md has no
-  siblings — its "siblings" are the files it points into, and a
-  headingless file is read in full) for the concept's name plus at
-  least two alternates drawn from how the file might phrase it (the
-  outcome it produces, the operation's other names, its domain jargon);
-  list the actual section headings of the target AND of every file
-  searched; from that real outline — never from memory — name the
-  candidate homes (every section with a hit, plus every section the
-  fact would live in if it existed) and read each in full before any
-  verdict — and when every search came back empty, read the whole
-  target file before concluding anything (the incident's catch was the
-  read, not the grep). Duplicate found → no second home, wherever it
-  lives: in the target, no addition; in a sibling, cross-reference it —
-  in either case the "A cross-reference is not a load" rule below still
-  applies as written (a cannot-miss clause is quoted verbatim at its
-  trigger site with the sync contract naming the winner). Otherwise the
-  change record — the PR description or commit message when one is
-  being created, otherwise the completion report — carries the result
-  line: the terms searched, the files searched, the file-qualified
-  sections read, and "not found under the searches and sections
+  shape; see Provenance). About to add a new fact or rule to an
+  instruction file, or to conclude one does not cover a fact
+  (wording-only and provenance edits are out of scope): an empty grep is
+  not the dup-check the no-duplicate-homes rule above needs — rules
+  phrased differently from the search term repeatedly produced false
+  "not covered" verdicts in the contributor's private log (see
+  Provenance), one a proposed addition whose content already sat in the
+  target file under other wording, caught only by reading the section at
+  drafting time. The check: grep the target file and its sibling skills
+  (the skills shipped beside it — list the parent skills directory,
+  don't recall it, and include each searched skill's references files
+  when the topic plausibly lives there; a router file like CLAUDE.md has
+  no siblings — its "siblings" are the files it points into) for the
+  concept's name plus at least two alternates drawn from how the file
+  might phrase it (the outcome it produces, the operation's other names,
+  its domain jargon); list the actual section headings of the target AND
+  of every file searched; from that real outline — never from memory —
+  name the candidate homes (every section with a hit, plus every section
+  the fact would live in if it existed) and read each in full before any
+  verdict. A headingless file is read in full. When every search came
+  back empty, read every searched file in full before concluding
+  anything — the incidents' catch was the read, not the grep. Duplicate
+  found → no second home, wherever it lives: in the target, no addition;
+  in a sibling, cross-reference it — the "A cross-reference is not a
+  load" rule below still applies as written. Otherwise the change record
+  — the PR description or commit message when one is being created,
+  otherwise the completion report — carries the result line: the terms
+  searched, each file searched with what was read of it (named sections,
+  or "read in full"), and "not found under the searches and sections
   listed". For a landing addition, the fresh-context reviewer (§6)
-  re-runs those searches against the pre-addition text and reads at
-  least one candidate section of their own choosing; a standalone
-  not-covered verdict with no reviewer stays provisional in the report
-  until an out-of-band read confirms it (§7's enforcement ladder). A
-  bare "not covered" backed only by empty greps is the failure this
-  rule exists to stop; no plausible home in the outline for a fact the
-  task says is covered or being relocated, or doubt that the candidate
-  list is complete → the placement is unresolved — escalate it, and
-  under those conditions never assert absence.
+  re-runs those searches against the pre-addition text (the file at the
+  revision the change branches from — never the edited working copy) and
+  reads at least one candidate of their own choosing — on empty
+  searches, one searched file in full; a standalone not-covered verdict
+  with no reviewer stays provisional in the report until a fresh-context
+  reader without the author's session confirms it there. A bare "not
+  covered" backed only by empty greps is the failure this rule exists to
+  stop; no plausible home in the outline for a fact the task says is
+  covered or being relocated, or doubt that the candidate list is
+  complete → the placement is unresolved — escalate it, and under those
+  conditions never assert absence.
   ✅ "grep for 'revert', 'rollback', 'undo' across the playbook and its
-  two siblings returned nothing; still read the playbook's 'State
-  recovery' and 'Cleanup' sections end to end — the rule exists under
-  'restore'; the change record lists all three terms and both sections."
-  ✅ "searches and all four candidate sections empty — recorded 'not
-  found under the searches and sections listed: revert, rollback, undo;
-  playbook §State recovery, playbook §Cleanup' — then added the rule."
+  two siblings returned nothing; read all three files end to end — the
+  rule exists in the playbook under 'restore'; the change record lists
+  the three terms and the three files, each 'read in full'."
+  ✅ "all searches empty — read both searched files end to end; recorded
+  'not found under the searches and sections listed: revert, rollback,
+  undo; playbook.md (read in full), helpers.md (read in full)' — then
+  added the rule."
   ❌ "grep returned nothing, so the file doesn't cover it."
-  ❌ "three synonyms, all empty — not covered" (no section was ever
-  read).
+  ❌ "three synonyms, all empty — not covered" (no file was ever read).
 - **A cross-reference is not a load** (`unprobed` in-house; external
   evidence — see Provenance). On weak tiers, discovering that a sibling
   skill applies is a judgment act: fable-method published a smoke-grade
