@@ -265,14 +265,19 @@ When rigor conflicts with finishing sooner, rigor wins.
   evidence a change is safe, trace it through to its pass/fail oracle —
   the assertions (or, for a linter or build job, its rule set and
   inputs), the invocation path and setup that feed them, and whether
-  that path executed in the cited run — and cite what the trace showed;
-  two checks with identical assertions differ when one drives the real
-  integration and the other a pre-filter. A trace you cannot inspect
-  leaves that coverage unverified — say so. "There is a check called X"
-  is a claim about naming, not behavior.
+  that path executed in the cited run — and assert only the properties
+  that trace established: whatever the check's NAME implies but the
+  trace did not show stays unverified, said so; two checks with
+  identical assertions differ when one drives the real integration and
+  the other a pre-filter. A trace you cannot inspect leaves that
+  coverage unverified — say so. "There is a check called X" is a claim
+  about naming, not behavior.
   ✅ "traced check X: it asserts A and B against the real adapter, but
   nothing in its path drives C — C is unverified."
   ❌ "the change is safe, check X covers it" (named, never read).
+  ❌ "read it — it's a regex pre-filter, but the name says integration,
+  so the integration is covered" — a trace read and then overridden by
+  the name.
 - **A failing check has two suspects: the code and the check itself.** Before
   editing either, open the statement of intended behavior (spec, README,
   docstring, type) and confirm which side it backs; a disagreement is the
