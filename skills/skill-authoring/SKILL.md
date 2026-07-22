@@ -229,49 +229,57 @@ The sharpest usability probe is behavioral: give a fresh weaker-tier
 behavior down first, then patch the gaps the probe surfaces — not the ones
 you imagine.
 
-**A skill or plugin is under this section's review — verify its
-deployment runtime before the review concludes** (`unprobed` — private
-incident as shape; see Provenance). A skill verified only on the
-author's machine can pass every lens above and still be wrong where it
-will actually run: one reviewed-and-finalized skill was reworked
-wholesale when its real target — a sandboxed Linux VM, not the author's
-macOS — surfaced only after sign-off. The target question belongs at
-authoring start (§1's gate placement: ask before the first
-artifact-producing step); this review cannot retro-place that ask — it
-verifies the answer exists and blocks adoption when it does not.
-Confirm the review record — the same artifact as §7's change record,
-verbatim: "the PR description or commit message when one is being
-created, otherwise the completion report" — names the target
-runtime(s): the execution environment (OS, container, sandbox) and any
-governing connector or tool instance; a sweep that finds nothing
-machine-bound may record `runtime-agnostic` as the named outcome. Not
-named → obtain it from the requester; no answer → write
-`user-must-provide` in the record, and adoption stays blocked until
-the requester either supplies the target or records an explicit
-risk-acceptance deferral — silence is neither, and an empty target
-list never satisfies the compatibility check below vacuously. Named or
-not, always run the sweep for assumptions that silently bind the file
-to the author's machine: an accidentally machine-local repository path
-gets §2's remedy, verbatim ("Anchor to the VCS root (`git rev-parse
+**A skill — or a plugin's instruction files — is under this section's
+review: verify the deployment runtime before the review concludes**
+(`unprobed` — private incident as shape; see Provenance). A skill
+verified only on the author's machine can pass every lens above and
+still be wrong where it will actually run: one reviewed-and-finalized
+skill was reworked wholesale when its real target — a sandboxed Linux
+VM, not the author's macOS — surfaced only after sign-off. §1's gate
+placement applies at authoring start: the target answer (or a recorded
+`user-must-provide`) is required before the first artifact-producing
+step; this review is the enforcement backstop, and it blocks adoption
+when the answer is missing. Confirm the review record — the same
+artifact as §7's change record, verbatim: "the PR description or commit
+message when one is being created, otherwise the completion report" —
+names the target runtime(s): the execution environment (OS, container,
+sandbox) and any governing connector or tool instance. Not named →
+read the repo's own deployment manifests and docs first, then obtain
+what they cannot tell you from the requester; no answer → write
+`user-must-provide` in the record; adoption then proceeds ONLY under a
+recorded risk acceptance by whoever owns the deployment — that
+acceptance is an alternate Done which still requires the sweep below
+and every in-file label; without it the artifact stays blocked.
+Named or not, always run the sweep for assumptions that silently bind
+the file to the author's machine — this list is a floor, not the
+ceiling: an accidentally machine-local repository path gets §2's
+remedy, verbatim ("Anchor to the VCS root (`git rev-parse
 --show-toplevel`) and verify the path prefix before reading"), while
-an absolute path the target itself defines (a socket, device, or
-mount) is a machine-bound assumption like the rest; OS-specific
-launchers and helpers (URL-scheme opens, clipboard or notification
-tools), host identity (a literal hostname or username), wall-clock or
-timezone assumptions (a hard-coded TZ, a locale), and
-instance-specific tool identifiers (a connector's tool prefix can be
-unique to the author's instance) each keep a verified portable form,
-or stay behind a verified target-scoped dispatch (an OS-conditional
-branch counts as compatible with targets that never reach it), or
-carry a label naming the exact runtime or instance required — written
-IN the skill file beside the dependency (§2's embed-the-knowledge; the
-review record points to it), verified against that instance where
-reachable and marked `unverified` (§2) where not: a label records a
-limitation, never proves compatibility. Done when every named target
-runtime is compatible with every assumption reachable on it — a
-labeled incompatibility with the actual deployment target blocks
-completion, and shrinking the supported scope can only exclude an
-optional target with the requester's explicit say — and everything
+an absolute path the target itself defines (a socket, device, mount)
+is a machine-bound assumption like the rest; OS-specific launchers and
+helpers (URL-scheme opens, clipboard or notification tools), host
+identity (a literal hostname or username), wall-clock or timezone
+assumptions (a hard-coded TZ, a locale), instance-specific tool
+identifiers (a connector's tool prefix can be unique to the author's
+instance), and — for anything that executes programs — architecture,
+interpreter and dependency availability, runtime versions, filesystem
+semantics, permissions, and network reach. `runtime-agnostic` may be
+recorded only for pure instruction text with no executable dependency;
+anything that runs programs names its dimensions instead. Each
+machine-bound assumption keeps a verified portable form, or stays
+behind a verified target-scoped dispatch — which satisfies a named
+target only when that target ALSO keeps a working path for every
+capability the file claims (a foreign-OS-only branch is not
+compatibility) — or carries a label naming the exact runtime or
+instance required, written IN the skill file beside the dependency
+(§2's embed-the-knowledge; the review record points to it), verified
+against that instance where reachable and marked `unverified` (§2)
+where not: a label records a limitation, never proves compatibility.
+Done when every target runtime named in the record is compatible with
+every assumption reachable on it — a labeled incompatibility with a
+named target blocks completion, and shrinking the supported scope can
+only exclude an optional target with the requester's explicit say — or
+when the recorded risk acceptance above stands in; and everything
 machine-bound carries its named label in the file.
 ✅ "target: sandboxed Linux VM plus the team's shared connector
 instance; the macOS-only notify helper replaced with the project's CLI
