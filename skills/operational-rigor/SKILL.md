@@ -256,15 +256,22 @@ When rigor conflicts with finishing sooner, rigor wins.
 - Reproduce reported bugs before fixing. Fix the observed failure, not the implied
   one. Refutation is valid: report confirmed non-bugs and ship nothing.
 - **A check's name is not its coverage** (`unprobed` — private incident as
-  shape; see Provenance). A named gate earns evidentiary weight only from
-  its assertion body: one session cited a check whose name implied it gated
-  a model integration's behavior, then read its source and found it
-  exercised only a regex pre-filter in which the model's name was a routing
-  label — and had to correct a safety claim already given to the user.
-  Before citing a check, test, or CI job as evidence a change is safe, read
-  what it actually asserts and cite that; "there is a check called X" is a
-  claim about naming, not behavior.
-  ✅ "read check X: it asserts A and B but never drives C — C is unverified."
+  shape; see Provenance). A named gate earns evidentiary weight from what
+  it asserts AND what it actually drives: one session cited a check whose
+  name implied it gated a model integration's behavior, then read its
+  source and found it exercised only a regex pre-filter in which the
+  model's name was a routing label — and had to correct a safety claim
+  already given to the user. Before citing a check, test, or CI job as
+  evidence a change is safe, trace it through to its pass/fail oracle —
+  the assertions (or, for a linter or build job, its rule set and
+  inputs), the invocation path and setup that feed them, and whether
+  that path executed in the cited run — and cite what the trace showed;
+  two checks with identical assertions differ when one drives the real
+  integration and the other a pre-filter. A trace you cannot inspect
+  leaves that coverage unverified — say so. "There is a check called X"
+  is a claim about naming, not behavior.
+  ✅ "traced check X: it asserts A and B against the real adapter, but
+  nothing in its path drives C — C is unverified."
   ❌ "the change is safe, check X covers it" (named, never read).
 - **A failing check has two suspects: the code and the check itself.** Before
   editing either, open the statement of intended behavior (spec, README,
