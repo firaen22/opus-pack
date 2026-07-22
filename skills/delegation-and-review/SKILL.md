@@ -33,7 +33,7 @@ treat every returned result as a claim until verified.
   the wrong build while every request returns 200, which reads as a bug
   in your own change. Defenses (pick one of the two, apply it fully —
   what you persist differs by defense): (1) a unique fixed port per
-  worktree, run
+  worktree or independent session tree, run
   with fallback disabled so a collision fails loud, the NUMBER
   persisted and propagated to every session-local reference (proxy,
   env, browser entry) — an explicit address-in-use bind error is the
@@ -188,8 +188,9 @@ Every packet names:
   SEARCH scope is then every surface that can produce that target:
   literals and direct references, shared/global definitions, helpers
   that construct or return it. Hunt generators per §3's miss-is-costly
-  loop — its finders quoted verbatim: "Run axis-diverse finders — by-
-  container, by-content, by-entity, by-time — one axis per finder so
+  loop — its finders quoted verbatim: "Run axis-diverse finders —
+  by-container, by-content, by-entity,
+  by-time — one axis per finder so
   blind spots don't line up", with its dedup clause verbatim — "Dedup
   new findings against everything ever surfaced, including ones
   already rejected: dedup against confirmed-only never converges" —

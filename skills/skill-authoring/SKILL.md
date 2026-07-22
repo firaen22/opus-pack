@@ -107,8 +107,10 @@ artifact-producing step.
   and had been routing sessions into a degraded path. A negative about
   a hosted model's BEHAVIOR is the one class a version pin cannot
   hold — hosted endpoints drift behind unchanged strings; that class
-  follows delegation-and-review §1's pinned-string rule (date-stamp
-  the recorded claim; re-probe at decision time), not this protocol.
+  follows delegation-and-review §1's pinned-string rule, not this
+  protocol: date-stamp the recorded claim where written, and any
+  session acting on it — routing decision or not — re-probes at
+  decision time before repeating or relying on the negative.
   Writing a tool-interface negative: pin
   it to the version and probe it was observed on. Acting on one: read
   its pin; the tool's version has changed, or the pin is missing →
@@ -217,9 +219,10 @@ artifact-producing step.
   revision the change branches from — never the edited working copy) and
   reads at least one candidate of their own choosing — on empty
   searches, one searched file in full; a batch landing multiple
-  additions to the same file also searches the merged result across
-  the added hunks (two additions can duplicate each other while
-  neither exists in the base); a standalone not-covered verdict
+  additions — to one file or across files in the search set (targets,
+  siblings, routers/entry files) — also searches the merged result
+  across all added hunks (two additions can duplicate each other
+  while neither exists in any base); a standalone not-covered verdict
   with no reviewer stays provisional in the report until a fresh-context
   reader without the author's session confirms it there. A bare "not
   covered" backed only by empty greps is the failure this rule exists to
