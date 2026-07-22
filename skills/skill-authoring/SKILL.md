@@ -151,39 +151,46 @@ artifact-producing step.
   sibling instead. Each skill states **when NOT to use it** and which sibling
   to use.
 - **Keyword-grep absence is not absence** (`unprobed` — private incidents as
-  shape; see Provenance). The no-duplicate-homes rule above needs a
-  dup-check before adding any new fact or rule (wording-only and
-  provenance edits are out of scope), and an empty grep is not that
-  check: rules phrased differently from the search term repeatedly
-  produced false "not covered" verdicts (three in one week in the
-  contributor's private log; see Provenance) — one a proposed addition
-  whose content already sat in the target file under other wording,
-  caught only by reading the section at drafting time. The check: grep
-  the target file and its sibling skills (the skills shipped beside it —
-  list the parent skills directory, don't recall it, and include a
-  skill's references files when the topic plausibly lives there) for the
-  headword plus at least two synonyms (outcome words, opposite
-  operations, domain jargon); list the actual section headings of the
-  target and of every file a hit landed in; from that real outline —
-  never from memory — name the candidate homes (every section with a
-  hit, plus every section the fact would live in if it existed) and read
-  each in full before any verdict. A duplicate found → the parent rule
-  governs: cross-reference the sibling, never re-add. Otherwise the
-  change record — the PR description or commit message when one is
-  being created, otherwise the completion report — carries the result
-  line: the terms searched, the sections read, and "not found under the
-  searches and sections listed"; the addition's reviewer re-runs those
-  searches and opens at least one candidate the record did not name
-  (absence-sensitive compliance never rests on the author's own line —
-  §7's ladder). A bare "not covered" backed only by empty greps is the
-  failure this rule exists to stop; an outline with no plausible home
-  for a fact that must have one, or doubt that the candidate list is
-  complete → the placement is unresolved — escalate it, never assert
-  absence.
+  shape; see Provenance). About to add a new fact or rule, or to
+  conclude a file does not cover one (wording-only and provenance edits
+  are out of scope): an empty grep is not the dup-check the
+  no-duplicate-homes rule above needs — rules phrased differently from
+  the search term repeatedly produced false "not covered" verdicts
+  (three in one week in the contributor's private log; see Provenance),
+  one a proposed addition whose content already sat in the target file
+  under other wording, caught only by reading the section at drafting
+  time. The check: grep the target file and its sibling skills (the
+  skills shipped beside it — list the parent skills directory, don't
+  recall it, and include a skill's references files when the topic
+  plausibly lives there) for the concept's name plus at least two
+  alternates drawn from how the file might phrase it (the outcome it
+  produces, the operation's other names, its domain jargon); list the
+  actual section headings of the target AND of every file searched;
+  from that real outline — never from memory — name the candidate homes
+  (every section with a hit, plus every section the fact would live in
+  if it existed) and read each in full before any verdict. Duplicate
+  found in the target → no addition needed; owned by a sibling →
+  cross-reference it — or, where §5's clause-travels-with-the-trigger
+  rule applies, quote it verbatim with its sync contract — never a
+  silent second home. Otherwise the change record — the PR description
+  or commit message when one is being created, otherwise the completion
+  report — carries the result line: the terms searched, the sections
+  read, and "not found under the searches and sections listed". The
+  addition's reviewer re-runs those searches against the pre-addition
+  text (the proposed lines excluded) and reads at least one candidate
+  section chosen independently of the record (out-of-band check — §7's
+  enforcement ladder). A bare "not covered" backed only by empty greps
+  is the failure this rule exists to stop; no plausible home in the
+  outline for a fact the task says is covered or being relocated, or
+  doubt that the candidate list is complete → the placement is
+  unresolved — escalate it, never assert absence.
   ✅ "grep for 'revert', 'rollback', 'undo' across the playbook and its
-  two siblings returned nothing; read the playbook's 'State recovery'
-  and 'Cleanup' sections end to end — the rule exists under 'restore';
-  the change record lists all three terms and both sections."
+  two siblings returned nothing; still read the playbook's 'State
+  recovery' and 'Cleanup' sections end to end — the rule exists under
+  'restore'; the change record lists all three terms and both sections."
+  ✅ "searches and all four candidate sections empty — recorded 'not
+  found under the searches and sections listed: revert, rollback, undo;
+  State recovery, Cleanup' — then added the rule."
   ❌ "grep returned nothing, so the file doesn't cover it."
 - **A cross-reference is not a load** (`unprobed` in-house; external
   evidence — see Provenance). On weak tiers, discovering that a sibling
