@@ -54,6 +54,19 @@ Every packet names:
 - **Cost asymmetry** — for reviewers/verifiers, name which failure direction is
   expensive (e.g. a missed unverified claim vs. a false alarm) so scrutiny is
   weighted toward it, not split evenly.
+- **Recurring sweeps carry ledgers** (`unprobed` — private incident as shape;
+  see Provenance). On repeated review sweeps over the same codebase, reviewers
+  re-litigate history: in one iteration, one reviewer re-raised a finding
+  class an earlier iteration had refuted against the dependency's own source,
+  and another flagged as a defect the exact code a prior iteration had shipped
+  as a fix — each costing a fresh reproduction cycle to re-refute. A packet
+  block listing known prior fixes ("do not re-flag") prevented exactly this
+  where it was present; the misses were on surfaces without one. So a
+  recurring-sweep packet carries two ledgers, each entry with a one-line
+  reason: prior fixes (do not re-flag) and refuted finding-classes (do not
+  re-raise without new evidence).
+  ❌ "the reviewer gets fresh context each round, so the packet doesn't need
+  the sweep's history."
 - **Rules** — do not merge, weaken gates, or revert unrelated work; report
   blockers and failures plainly. Plausible success is worse than honest failure.
   For an implementation task, after bounded discovery (interfaces read, ambiguity
@@ -301,5 +314,15 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
+The §2 recurring-sweep ledgers rule (2026-07-22) comes from a private
+incident: across iterations of a repeated review sweep, one reviewer
+re-raised a finding class an earlier iteration had refuted against the
+dependency's source, and a second flagged as a defect the exact code an
+earlier iteration had shipped as a fix; a do-not-re-flag block already
+present in one packet prevented exactly this on its surfaces, and both
+misses occurred where the block was absent. Private evidence, cited as
+shape per the README covenant's second branch; the executable probe — the
+same sweep run with and without ledgers, counting re-litigated findings —
+has not been run; the in-body `unprobed` marker records that debt.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
