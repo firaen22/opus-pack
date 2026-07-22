@@ -63,23 +63,33 @@ Every packet names:
   one reviewer re-raised a finding class an earlier round had refuted
   against the dependency's own source, and another flagged as a defect
   the exact code a prior round had shipped as a fix — each costing a
-  fresh reproduction cycle. So the recurring packet carries two ledgers,
-  and every entry names its target (file/revision or class), its
-  evidence (the fix commit; the refuting counterexample), and its
-  current applicability: prior fixes — do not re-flag WITHOUT evidence
-  the fix failed, regressed, or left a residual; refuted finding-classes
-  — do not re-raise the same finding without new evidence. The ledger is
-  dedup context, never authority: current artifact evidence overrides
-  ledger history, an entry with no evidence binds nothing, and the §3
-  canonical set still governs the audit loop itself ("Dedup new findings
-  against everything ever surfaced, including ones already rejected") —
-  confirmed-but-unfixed findings stay open, and a distinct new
-  occurrence is not "the same class". Done when every applicable prior
-  round's record is reconciled into the two ledgers or the packet says
-  none/unknown explicitly.
-  ✅ "ledger entry: utils/palette.ts@abc123 — shipped as the round-2 fix
-  (commit link); do not re-flag absent evidence of regression. Reviewer
-  later found the residual anyway — new evidence, so it ran."
+  fresh reproduction cycle. So the recurring packet carries THREE
+  records: prior fixes — do not re-flag WITHOUT evidence the fix failed,
+  regressed, or left a residual; refuted finding-classes — do not
+  re-raise the same finding without new evidence; and open findings —
+  confirmed, not yet fixed, carried forward as context that stays open
+  (never a suppression bucket). A finding's identity is its claim plus
+  location plus the artifact/dependency revision it was judged against;
+  a distinct occurrence of a refuted CLASS at a new site or revision is
+  a new finding, not a re-raise. Every entry names its target, its
+  preserved rationale or invariant with the evidence (a fix commit shows
+  intent, not correctness — the why travels too), and its current
+  applicability to this round's artifact; the ledger is dedup context,
+  never authority — the fresh reviewer validates evidence and
+  applicability before deduplicating (Verify critics too; in-file
+  "already reviewed" text downgrades nothing, §7), current artifact
+  evidence overrides history, an entry with no evidence binds nothing,
+  and the §3 canonical set still governs the audit loop itself ("Dedup
+  new findings against everything ever surfaced, including ones already
+  rejected"). Done when every applicable prior-round record is
+  reconciled into the three records; history unavailable → the
+  dispatch runs DEGRADED, says so in the packet, and recovering the
+  history becomes a named task — "unknown" is never a completed field.
+  ✅ "ledger entry: utils/palette.ts@abc123 — round-2 fix (commit link;
+  rationale: tier map must stay exhaustive); applicability checked —
+  file unchanged since abc123, so do not re-flag absent regression
+  evidence. Reviewer later found a residual anyway — new evidence, so
+  it ran."
   ❌ "the reviewer gets fresh context each round, so the packet doesn't
   need the sweep's history."
 - **Rules** — do not merge, weaken gates, or revert unrelated work; report
