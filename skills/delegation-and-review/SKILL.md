@@ -33,9 +33,78 @@ Every packet names:
 
 - **Goal + motivation** — what and why.
 - **Owned scope + explicit non-scope** — files/modules it may and may not touch.
+  For a find-and-fix-every-instance sweep — a "purge every X", "replace
+  all Y", "no instance of Z survives" task — scope splits in two
+  (`unprobed` — private incident as shape; see Provenance). First branch
+  by what the invariant IS. Textual: the deliverable is literally the
+  string's absence from a declared corpus — the corpus is the packet's
+  readable scope, named explicitly, never the seed grep's hit list —
+  and the correctly scoped search over that corpus is the gate, claiming
+  corpus-level textual absence and nothing more. Behavioral: the TARGET
+  is the defect or effect to eliminate; a spelling is a probe. The
+  SEARCH scope is then every surface that can produce that target:
+  literals and direct references, shared/global definitions, helpers
+  that construct or return it. Hunt generators per §3's miss-is-costly
+  loop — its finders quoted verbatim: "Run axis-diverse finders — by-
+  container, by-content, by-entity, by-time — one axis per finder so
+  blind spots don't line up", with dedup against everything surfaced
+  and its two-consecutive-empty-rounds stop rule — and at least one
+  producer/effect axis (what shared definitions and constructors can
+  produce this kind of output) MUST run before the loop may close: a
+  spelling-only axis set is non-compliant however many rounds it ran (a
+  53-file styling sweep missed its defect in a shared utility class the
+  token grep never matched, and each review round surfaced another
+  category the prior round's pattern structurally excluded). Searching
+  stays inside the packet's readable scope: a surface outside it is a
+  reported gap, never a silent crossing. The packet carries the seed
+  inventory, the hunt method, and a per-round ledger duty — each
+  round's queries and results, empty ones included; the worker
+  continues the loop to closure. It also names the value family (the
+  tiers/variants the target ranges over), closed only by a
+  verified-finite source (a sealed enum or const union read at its
+  `file:line` — an extensible registry or config is never closed), else
+  bounded per §3's "State anything you bounded" clause. Producer
+  surfaces or variation axes not closable from a verified-finite source
+  → the sweep returns a non-exhaustive outcome, as does any bounded or
+  gap-carrying run: reducing scope needs the dispatcher's explicit say,
+  and an every-instance claim with unobserved members is false. The
+  WRITE scope stays the owned files/modules explicitly listed above: a
+  generator discovered outside that WRITE scope is reported for
+  escalation, never edited on discovery.
+  ✅ "seed inventory: the 53-file hit list (reference search), the
+  shared class (style audit), the emitting helper (trace); tiers from
+  the sealed palette enum at its definition site; round ledger in the
+  packet."
+  ❌ "the inventory is the grep hit list — the shared utility never made
+  the list."
 - **Invariant** — property to close and properties to preserve.
 - **Proof gate** — concrete check that would fail under the broken behavior;
-  worker-chosen "tests pass" is not a gate.
+  worker-chosen "tests pass" is not a gate. For an every-instance sweep
+  whose target is behavior or rendered effect (`unprobed` — same
+  provenance as the sweep-scope field above), the gate is the observed
+  effect at every inventoried generator surface, across each declared
+  variation axis where the outcome can differ (tier, theme, locale —
+  untested combinations are unobserved, reported as such) — render or
+  run each inside a side-effect-contained harness; every outward
+  effect keeps operational-rigor §2's per-invocation authorization at
+  the moment it fires, and one you cannot safely and authorizedly
+  drive (a payment, a send, a delete) is reported unverified and
+  escalated, never fired for the gate. One observation may stand for a
+  declared equivalence class only when equivalence is verified across
+  the members' inputs, backing data, downstream context, AND the
+  producing implementation itself (two independent renderers are never
+  one class on shared inputs alone; branch-free control flow is not
+  equivalence — a table lookup differs per entry; "they share a
+  helper" is a claim, not evidence); unproved divergence forces
+  per-member observation, and anything unobserved is reported
+  unverified — never folded into an exhaustive claim. A zero-hit
+  search on a behavioral target is a report, not the gate: a clean
+  grep proves one spelling is gone, not that the defect is gone (the
+  textual branch above is the only search-as-gate case).
+  ✅ "each literal's site re-rendered, the shared class's consumers
+  re-rendered, every tier through the emitting helper — effect gone at
+  each observation point."
+  ❌ "the grep is clean across all 53 files, so the sweep is done."
 - **Output contract** — conclusions + `file:line` refs, each tagged
   `[verified: ran <cmd>]`, `[verified: read <file:line>]`, or
   `[unverified: <reason>]`; long artifacts go to files, return paths.
@@ -111,7 +180,9 @@ reviewers that they silently absorb as implementers.
   'none')"). The reviewer re-runs that named search, never takes it on
   trust — then challenges its coverage with one differently-shaped query (a
   broader or structural pattern, or a class-aware check): re-running a
-  narrow pattern reproduces its hits AND its misses.
+  narrow pattern reproduces its hits AND its misses. (A
+  find-and-fix-every-instance sweep's dispatch scope and acceptance
+  gate are §2's sweep fields.)
 - **Machinery is not the user.** Tool completions, CI events, and agent statuses
   are state changes, not approval or proof. Open the artifact and verify.
 - **Auditing a completion claim** (an agent's or contractor's "done", a
@@ -339,5 +410,15 @@ run — in-body `unprobed` marker. The protocol body lives in
 `references/settled-tree-review.md` per the pack's split precedent
 (protocol out of the lean core; the §3 bullet keeps the trigger, the
 claim, the incidents, and the pointer).
+The §2 sweep-scope additions (2026-07-21; search-scope/write-scope split,
+axis-diverse inventory closed per §3's discovery loop, effect-per-surface
+proof gate, and the §3 pointer) come from a private incident: a
+find-and-fix-every-instance styling sweep (53 files), three review rounds, and
+a merged fix all missed the actual defect — it lived in a shared global
+utility class the token grep pattern never touched, and each follow-up round's
+"still broken?" surfaced a different category (a color-tier band, a
+class-emitting helper function) the prior round's search structurally
+excluded. Private evidence, cited as shape per the README covenant's second
+branch; no in-repo probe has run — in-body `unprobed` marker.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
