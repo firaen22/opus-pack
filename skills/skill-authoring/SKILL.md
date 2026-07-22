@@ -94,6 +94,19 @@ artifact-producing step.
 ## 3. Provenance and decay
 
 - Date-stamp volatile facts (versions, flags, model names, defaults).
+- **Capability-negative claims rot the worst** (`unprobed` — private incident
+  as shape; see Provenance). "No such flag", "only works interactively",
+  "the API can't do X" are version-scoped observations that read as timeless
+  rules. A stale positive claim fails loud the first time someone follows
+  it; a stale negative fails silent — it steers every later session away
+  from a capability that now exists, and nothing ever exercises it to
+  expose the rot. One playbook's "model switching only works in the
+  interactive UI; no flag" was actively wrong at the tool's current version
+  and had been routing sessions into a degraded path. Pin every
+  capability-negative to the version it was observed on, and re-verify it
+  (one `--help` or probe call) when the tool's version changes, before
+  repeating it.
+  ❌ "the playbook says there's no flag, so drive it through the UI."
 - Correct a stale rule in place — never append the correction below the old
   line. A zero-context reader obeys whichever sentence it reads first, not
   the latest one.
@@ -397,4 +410,14 @@ marker per the README covenant: the external measurement is of one
 skill's one gate, and whether placement generalizes across gate types is
 exactly what an in-house probe would test — that probe has not been run;
 the marker records the debt.
+The §3 capability-negative rule (2026-07-22) comes from a private
+incident: a subordinate-CLI playbook asserted a capability did not exist
+("model switching only works interactively; no flag") — true when
+written, false at the tool's current version — and the stale negative had
+been silently steering sessions into a degraded interactive-only path
+until a review pass re-probed the binary. Private evidence, cited as
+shape per the README covenant's second branch; the executable probe —
+re-running recorded capability-negatives against the current binary on
+each version change and counting flips — has not been run as a standing
+check; the in-body `unprobed` marker records that debt.
 Stable method; no environment facts to re-verify.
