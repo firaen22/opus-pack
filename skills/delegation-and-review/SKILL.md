@@ -83,51 +83,59 @@ reviewers that they silently absorb as implementers.
   verdicts name the point nearest failure or they are rubber stamps.
 - Critic verdicts carry evidence: REFUTED needs a counterexample; untested
   assumptions are listed. Verify critics too; stale or missing review is not approval.
-- **Settle the tree before a read-only review dispatch** — a fresh-context
-  critic wave reading a tree that can still move returns a verdict about
-  a state that no longer exists (`unprobed` — private incidents as shape;
-  see Provenance). One read-only critic re-read a file the orchestrator
-  had already fixed mid-review and voted REFUTED on a bug already
-  confirmed elsewhere; a separate critic committed the very worktree it
-  was reviewing, moving the tree out from under the requested end-state.
-  Neither is §4's write-write clobber below (a subordinate overwriting
-  concurrent edits with no conflict signal): the first is a read verdict
-  going stale mid-read, the second a "read-only" reviewer writing anyway.
-  The defensive split: (1) settle the content under review in place —
-  commit it on the reviewed branch, or capture it restorably: the
-  reviewed paths' working content, index state, and untracked files,
-  plus the HEAD/ref position — and never stash away the very change the
-  wave reviews (a delivered tree under §3's completion-claim audit below
-  is settled by copying only — that rule forbids mutating it). (2) Give
-  the wave an immutable read: a full copy verified against that capture
-  before dispatch (a worktree pinned at a revision omits dirty content
-  unless the capture is applied into it), or the live tree with your own
-  edits frozen until return; withhold the wave's write access —
-  "read-only" is a claim, not a property — and where the harness cannot
-  withhold it, record that gap at dispatch: the wave's verdict is then
-  provisional evidence at best, never a clean gate pass. (3) On return,
-  check by read surface. Wave read the copy: inspect the copy across
-  every captured dimension (content, index, untracked, HEAD/ref) — any
-  change there means the copy was written: discard it, void the verdict,
-  re-cut and re-dispatch; otherwise the verdict describes the capture,
-  and paths that moved in the live tree since dispatch are re-gated
-  before the verdict is applied to them. Wave read the live tree: any
-  change to the reviewed paths' captured dimensions — your own edits
-  included — voids the verdict; re-dispatch against a settled tree,
-  never re-attribute it to the capture. Motion you did not make is not
-  proof the wave wrote: a user, hook, or sibling process may own it —
-  quarantine your own post-dispatch edits and investigate who moved what
-  before restoring anything (§4's edit-conflict rule protects a
-  concurrent editor's work). An endpoint match is detection of
-  persistent drift only — a write-capable wave can mutate and restore
-  mid-read without a trace; prevention is the verified copy or the
-  frozen tree, with write withheld.
-  ✅ "held my own edits until the wave returned and the reviewed paths
-  diffed clean against the capture, then applied them — the applied
-  edits are the next change to review, not part of the approved one."
+- **A fresh-context critic wave is reading (or about to read) a tree that
+  can still move — settle it first: a verdict formed on a moving tree
+  describes a state that no longer exists** (`unprobed` — private
+  incidents as shape; see Provenance). One read-only critic re-read a
+  file the orchestrator had already fixed mid-review and voted REFUTED
+  on a bug already confirmed elsewhere; a separate critic committed the
+  very worktree it was reviewing, moving the tree out from under the
+  requested end-state. Neither is §4's write-write clobber below (a
+  subordinate overwriting concurrent edits): the first is a read verdict
+  going stale mid-read, the second a "read-only" reviewer writing
+  anyway. (1) Settle in place and record the baseline: commit the
+  content under review on the reviewed branch and note the resulting
+  revision, or capture it restorably — working content, index state,
+  untracked files, HEAD/ref position — verifying the capture holds
+  everything under review; never stash away the very change the wave
+  reviews (a delivered tree under §3's completion-claim audit below is
+  settled by copying only — that rule forbids mutating it). (2) Choose
+  the read surface by what you can enforce: a full copy verified against
+  the baseline before dispatch (a worktree pinned at a revision omits
+  dirty content unless the capture is applied into it) — required
+  whenever the wave's write access cannot be withheld, or when any other
+  writer (a user, a hook, a sibling process) can touch the live tree
+  mid-read; the live tree only when your edits are frozen until return
+  AND the wave's write access is withheld AND no other writer can move
+  the reviewed paths ("read-only" is a claim, not a property). Neither
+  enforceable → the review runs labeled provisional; its verdict is
+  never a clean gate pass. (3) On return, compare every baseline
+  dimension (content, index, untracked, HEAD/ref). Copy written →
+  quarantine the copy for attribution (never delete it unexamined — the
+  motion may be another actor's work), void the verdict, make a fresh
+  verified copy from the settled tree, re-dispatch. Live reviewed paths
+  moved → the verdict is void; re-dispatch against a settled tree,
+  never re-attribute it to the baseline. Live tree moved while the wave
+  read a clean copy → the verdict describes the baseline only; the
+  moved paths and everything that depends on them are UNREVIEWED —
+  fresh-context re-review covers them, not the orchestrator's own
+  glance (the author is not the judge). Motion you did not make is
+  never proof the wave wrote — investigate ownership before restoring
+  anything (§4's edit-conflict rule protects a concurrent editor's
+  work). An endpoint match detects only persistent drift — a
+  write-capable reader can mutate and restore without a trace;
+  prevention is the enforced copy, or the frozen tree with write
+  withheld and no third writer.
+  ✅ "committed the slice, noted the revision, dispatched a verified
+  copy with write withheld, kept editing the live tree; on return the
+  copy's four dimensions matched — the verdict holds for the baseline,
+  and my later edits go to the next review."
+  ✅ "held my own edits until the wave returned and the reviewed paths'
+  four dimensions diffed clean against the baseline, then applied them
+  — the applied edits are the next change to review."
   ❌ "kept fixing files in the live tree the critic was reading."
   ❌ "the tree matches what I intended, so the verdict stands" — a
-  moved tree voids the verdict; it does not re-bind to the capture.
+  moved tree voids the verdict; it does not re-bind to the baseline.
 - Review against the packet contract, not line-by-line theater. New bug class
   caught → sweep the codebase: one catch, one class, one sweep. The worker's
   sweep report obeys operational-rigor §5 (the canonical copy, verbatim:
@@ -353,10 +361,10 @@ fixed mid-dispatch and voted REFUTED on an already-confirmed bug, and a
 separate critic committed the reviewed worktree to a branch mid-review,
 leaving the requested end-state unreachable. Both observed in a private
 audit harness (contributor-verifiable, not linkable here); the fix
-(restorable capture, verified-copy-or-frozen-tree with write withheld,
-read-surface-aware return checks that void a moved verdict) is the
-defensive split, not a mechanism finding, mirroring how the §4
-silent-clobber bullet above
+(recorded baseline, enforced-copy-or-frozen-tree with write withheld
+and no third writer, read-surface-aware return checks that void a
+moved verdict) is the defensive split, not a mechanism finding,
+mirroring how the §4 silent-clobber bullet above
 handles its own single-sandbox observation. Private evidence, cited as
 shape per the README covenant's second branch; no in-repo probe has
 run — in-body `unprobed` marker.
