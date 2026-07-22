@@ -33,22 +33,29 @@ Every packet names:
 
 - **Goal + motivation** — what and why.
 - **Owned scope + explicit non-scope** — files/modules it may and may not touch.
-  For a find-and-fix-every-instance sweep, scope means every surface that can
-  generate the target pattern, not one search pattern: a 53-file styling sweep,
-  three review rounds, and a merged fix all missed the actual defect because it
-  lived in a shared utility class the token grep never matched, and each
-  follow-up round found a different category (a color-tier band, a
-  class-emitting helper function) the prior round's pattern structurally
-  excluded (`unprobed` — private incident as shape; see Provenance). Before
-  dispatching or accepting such a sweep, enumerate every generator (literals,
-  shared/global definitions, helper functions returning the pattern) and the
-  full value space (every tier/variant in the family, not a sample), and gate
-  acceptance on observing the effect (render it, run it) rather than on the
-  search returning zero — a clean grep proves one spelling is gone, not that
-  the defect is.
+  For a find-and-fix-every-instance sweep, scope splits in two
+  (`unprobed` — private incident as shape; see Provenance): the SEARCH
+  scope is every surface that can generate the target — literals,
+  shared/global definitions, helpers that construct or return it —
+  inventoried from the definition surfaces themselves, never from the
+  token grep (a 53-file styling sweep missed its defect in a shared
+  utility class the token grep never matched, and each review round
+  surfaced another category the prior round's pattern structurally
+  excluded); the WRITE scope stays this field, and a generator discovered
+  outside it is reported for escalation, never edited on discovery. Name
+  the value family and close it (every tier/variant listed), or declare
+  the bound per §3's bounded-sweep clause — an unresolved discovery gap
+  blocks any exhaustive claim.
 - **Invariant** — property to close and properties to preserve.
 - **Proof gate** — concrete check that would fail under the broken behavior;
-  worker-chosen "tests pass" is not a gate.
+  worker-chosen "tests pass" is not a gate. For an every-instance sweep,
+  the gate is the observed effect on every inventoried generator surface
+  and value tier (render or run each; a declared coverage partition with
+  its gaps stated is the only shortcut) — a zero-hit search is a report,
+  not the gate: a clean grep proves one spelling is gone, not that the
+  defect is gone.
+  ✅ "every tier rendered through the shared helper path — effect gone."
+  ❌ "the grep is clean across all 53 files, so the sweep is done."
 - **Output contract** — conclusions + `file:line` refs, each tagged
   `[verified: ran <cmd>]`, `[verified: read <file:line>]`, or
   `[unverified: <reason>]`; long artifacts go to files, return paths.
@@ -103,7 +110,9 @@ reviewers that they silently absorb as implementers.
   'none')"). The reviewer re-runs that named search, never takes it on
   trust — then challenges its coverage with one differently-shaped query (a
   broader or structural pattern, or a class-aware check): re-running a
-  narrow pattern reproduces its hits AND its misses.
+  narrow pattern reproduces its hits AND its misses. (An every-instance
+  sweep's dispatch scope and acceptance gate are §2's sweep fields —
+  generator inventory and effect-per-surface, never search-zero.)
 - **Machinery is not the user.** Tool completions, CI events, and agent statuses
   are state changes, not approval or proof. Open the artifact and verify.
 - **Auditing a completion claim** (an agent's or contractor's "done", a
@@ -314,7 +323,9 @@ enforcement or a defect in that sandbox is unestablished, so the rule
 prescribes only the defensive split. Private evidence, cited as shape per
 the README covenant's second branch; no in-repo probe has run — in-body
 `unprobed` marker.
-The §2 sweep-scope bullet (2026-07-21) comes from a private incident: a
+The §2 sweep-scope additions (2026-07-21; search-scope/write-scope split,
+definition-surface inventory, effect-per-surface proof gate, and the §3
+pointer) come from a private incident: a
 find-and-fix-every-instance styling sweep (53 files), three review rounds, and
 a merged fix all missed the actual defect — it lived in a shared global
 utility class the token grep pattern never touched, and each follow-up round's
