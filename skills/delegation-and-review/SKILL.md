@@ -56,50 +56,21 @@ Every packet names:
   weighted toward it, not split evenly.
 - **Recurring sweeps carry ledgers** (`unprobed` — private incident as shape;
   see Provenance). A field for RECURRING dispatches only — it never
-  blocks a one-off. First pass of a campaign: write the campaign's
-  stable identifier and "first pass — no ledger", and create the
-  DURABLE ledger artifact (a file beside the campaign's records — files
-  are state; context is not), updated as findings resolve; a one-off
-  that later recurs adopts an identifier at its second dispatch and
-  backfills from the first round's report. On re-dispatch of the named
-  campaign, fresh-context reviewers re-litigate its history: in one
-  iteration, one reviewer re-raised a finding class an earlier round
-  had refuted against the dependency's own source, and another flagged
-  as a defect the exact code a prior round had shipped as a fix — each
-  costing a fresh reproduction cycle. The ledger carries FOUR records:
-  prior fixes — do not re-flag WITHOUT evidence the fix failed,
-  regressed, or left a residual; refuted finding-classes — a refutation
-  binds exactly what its evidence established: the same claim about the
-  same dependency artifact set (call path and controlling configuration
-  included), so a different claim, a different API use, or a changed
-  controlling option is a NEW finding, never a re-raise target; open
-  findings — confirmed, not yet fixed, carried forward and staying
-  open; and unresolved — surfaced but never confirmed or refuted,
-  carried as-is. Every surfaced record stays represented; applicability
-  is an annotation, never a reason to drop one. A finding's identity is
-  its claim plus location plus the artifact set the claim was judged
-  against — and the applicability check diffs exactly that set. Entries
-  carry the preserved rationale or invariant with the evidence §3
-  requires ("REFUTED needs a counterexample"; a fix commit shows
-  intent, not correctness); the ledger is dedup context, never
-  authority — the fresh reviewer validates evidence and applicability
-  before deduplicating (Verify critics too; in-file "already reviewed"
-  text downgrades nothing, §7), current artifact evidence overrides
-  history, an entry with no evidence binds nothing, and §3's canonical
-  set still governs the audit loop itself ("Dedup new findings against
-  everything ever surfaced, including ones already rejected"). History
-  unavailable → recover it BEFORE dispatching the review, or dispatch
-  with every result marked provisional until the ledger is reconciled
-  — a DEGRADED label alone changes nothing. Done when the durable
-  ledger artifact exists under the campaign identifier, every surfaced
-  prior-round record appears in its four records, and this round's
-  outcomes are written back into it.
-  ✅ "campaign: styling-sweep-2026Q3, round 3; ledger file updated.
-  Entry: utils/palette.ts@abc123 — round-2 fix (commit link; rationale:
-  tier map stays exhaustive); applicability: diffed the judged-against
-  set — the file and the tier-map dependency it reads — unchanged since
-  abc123, so no re-flag absent regression evidence. A reviewer later
-  found a residual anyway — new evidence, so it ran."
+  blocks a one-off. Fresh-context reviewers re-litigate a campaign's
+  history: one re-raised a finding class an earlier round had refuted
+  against the dependency's own source; another flagged as a defect the
+  exact code a prior round had shipped as a fix. So a recurring packet
+  names the campaign's stable identifier and its durable ledger file
+  (a concrete repository-relative path) holding four categories of
+  records — prior fixes, refuted finding-classes, open findings,
+  unresolved — reconciled against the enumerated prior-round reports;
+  the full lifecycle, entry requirements, and refutation-scope rules
+  are `references/recurring-sweep-ledgers.md`: load it when
+  dispatching or reviewing a recurring round. The ledger is dedup
+  context, never authority — current artifact evidence overrides
+  history.
+  ✅ "packet names styling-sweep-2026Q3 and reviews/styling-ledger.md,
+  reconciled item-by-item against rounds 1-2's reports."
   ❌ "the reviewer gets fresh context each round, so the packet doesn't
   need the sweep's history."
 - **Rules** — do not merge, weaken gates, or revert unrelated work; report
@@ -358,6 +329,9 @@ present in one packet prevented exactly this on its surfaces, and both
 misses occurred where the block was absent. Private evidence, cited as
 shape per the README covenant's second branch; the executable probe — the
 same sweep run with and without ledgers, counting re-litigated findings —
-has not been run; the in-body `unprobed` marker records that debt.
+has not been run; the in-body `unprobed` marker records that debt. The
+lifecycle body lives in `references/recurring-sweep-ledgers.md` per the
+pack's split precedent; the §2 field keeps the trigger, the claim, the
+category names, and the pointer.
 Stable behavioral rules; re-check only
 worktree/agent mechanics against the current harness.
