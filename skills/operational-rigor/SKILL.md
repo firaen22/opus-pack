@@ -266,9 +266,11 @@ When rigor conflicts with finishing sooner, rigor wins.
   it through to its pass/fail oracle —
   the assertions (or, for a linter or build job, its rule set and
   inputs) inspected at the revision the cited run actually used —
-  which must itself contain the change under review: a green run on a
-  revision without the change is evidence about that revision, never
-  the change — the
+  and the run attributable to the change under review: the tested
+  artifact built from a revision containing it (a commit id, an image
+  digest), while the oracle itself may live at its own stable
+  revision; a green run on an artifact without the change is evidence
+  about that artifact, never the change — the
   invocation path and setup that feed them, whether that path executed
   in the cited run, and whether its assertions PASSED there with their
   failure controlling the check's final status (a run is not a pass —

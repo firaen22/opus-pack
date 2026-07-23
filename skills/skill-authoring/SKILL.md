@@ -116,8 +116,15 @@ artifact-producing step.
   answer never satisfies it); on any wording disagreement, the
   pinned-string rule wins.
   Writing a tool-interface negative: pin
-  it to the version and probe it was observed on. Acting on one: read
-  its pin; the tool's version has changed, or the pin is missing →
+  it to the version and probe it was observed on — and a capability
+  controlled server-side (an API feature, an account rollout, a
+  remote configuration) additionally pins the instance/account and
+  observation date, because it can flip with no version change.
+  Acting on one: read
+  its pin; the tool's version has changed, the pin is missing, or the
+  capability is server-side and any pinned dimension (instance,
+  account, configuration, or simply time since the dated
+  observation) may have drifted →
   re-verify with one probe (`--help`, or a trial invocation exercising
   the claimed-absent capability) before
   obeying it; probe unavailable or inconclusive → the capability is
@@ -224,7 +231,11 @@ artifact-producing step.
   reads at least one candidate of their own choosing — on empty
   searches, one searched file in full; a batch landing multiple
   additions — to one file or across files in the search set (targets,
-  siblings, routers/entry files) — also searches the merged result
+  siblings, routers/entry files) — also READS each added rule body
+  against the other additions in the batch, searches alone never
+  discharging it (two additions can express one doctrine with
+  disjoint vocabulary, exactly the empty-grep blind spot this rule
+  opens with), plus searches the merged result
   across all added hunks (two additions can duplicate each other
   while neither exists in any base); a standalone not-covered verdict
   with no reviewer stays provisional in the report until a fresh-context

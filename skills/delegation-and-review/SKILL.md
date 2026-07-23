@@ -105,8 +105,10 @@ treat every returned result as a claim until verified.
   the fresh result informs the routing, it never replaces §2's edge
   specification and proof gate for the work itself, and no measurement
   pins the endpoint's behavior on the next request. Probe unavailable
-  or failing → the property is unknown: route as if the property were
-  absent (no edge guard, no latency class, no failure signature) and spec
+  or failing → the property is unknown: assume the ADVERSE plausible
+  state for this decision — a protective property (an edge guard, a
+  latency class you rely on) treated as absent, a hazardous one (a
+  known failure signature) treated as present — and spec
   the edge per §2. Done when the decision record cites the fresh probe
   (timestamp + configuration, its route attributed per the labels
   rule below) or the unknown-property fallback — an

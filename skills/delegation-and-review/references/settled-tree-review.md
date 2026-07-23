@@ -9,8 +9,11 @@ you, a hook, a user, or a sibling process may touch while it reads.
 **Definitions.** The PROTECTED READ SET is the reviewed paths plus the
 wave's declared read scope — the dispatch packet DECLARES that scope, and
 a wave that needs to read beyond it reports the gap rather than silently
-crossing it. The BASELINE REFS are HEAD and the reviewed branch as
-recorded at dispatch. WITHHELD means harness-enforced (a sandbox or
+crossing it. The BASELINE REFS are HEAD, the reviewed branch, and every
+other ref the wave's declared read scope compares against (a base
+branch, a tag, a submodule pin), each resolved to its object ID as
+recorded at dispatch — a comparison base a sibling fetch can advance
+mid-review is otherwise motion the two ref comparisons never see. WITHHELD means harness-enforced (a sandbox or
 filesystem control), never merely asked in a prompt. A wave's writes are
 legitimate only in scratch locations predeclared in its packet, outside
 the protected read set; scratch feeding back into a reviewed input voids

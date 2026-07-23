@@ -58,7 +58,12 @@ REFUTED FINDING-CLASSES carrying the counterexample; a PRIOR-FIXES
 entry re-flagged this round with evidence the fix failed, regressed,
 or left a residual spawns a NEW OPEN finding carrying that evidence,
 the historical entry staying put with a pointer to it; everything else
-stays where it is. Write-backs of one campaign serialize: a round's
+stays where it is. Outcomes with no existing entry are INSERTED at the
+same write-back: a newly confirmed finding into OPEN FINDINGS (fixed
+the same round, into PRIOR FIXES with its evidence); a newly refuted
+class into REFUTED FINDING-CLASSES with its counterexample; anything
+surfaced but neither confirmed nor refuted into UNRESOLVED — a round
+that surfaced anything never closes on an unchanged ledger. Write-backs of one campaign serialize: a round's
 write-back completes before the next round dispatches; concurrent
 writers over one ledger follow §4's edit-conflict rule (re-read,
 re-anchor — never last-writer-wins).
