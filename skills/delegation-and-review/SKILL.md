@@ -113,8 +113,13 @@ treat every returned result as a claim until verified.
   or failing → the property is unknown: assume the ADVERSE plausible
   state for this decision — a protective property (an edge guard, a
   latency class you rely on) treated as absent, a hazardous one (a
-  known failure signature) treated as present — and spec
-  the edge per §2. Done when the decision record cites the fresh probe
+  known failure signature) treated as present — and the unknown BINDS
+  the decision exactly as an adverse fresh result would: work that
+  needed the protective property present, or the hazardous one
+  absent, does not go to that model (hold it, route
+  it elsewhere, or escalate); recording "adverse assumed" while still
+  routing as if the property held is the exact failure this clause
+  forbids. Spec the edge per §2 either way. Done when the decision record cites the fresh probe
   (timestamp + configuration, its route attributed per the labels
   rule below) or the unknown-property fallback — an
   undated behavioral claim about a hosted endpoint is expired on
@@ -643,7 +648,17 @@ per the README covenant, in-body `unprobed` marker. The executable probe
 debt is behavioral: fixture a stale dated measurement beside a changed
 same-slug probe result and observe whether a weak executor re-runs before
 routing — distinct from re-verifying the drift premise itself, which only
-longitudinal re-measurement of live endpoints can do.
+longitudinal re-measurement of live endpoints can do. The
+decision-binding sentence in the unknown-fallback (2026-07-23)
+repairs a clause a private smoke fixture caught under-binding: the fixture's
+probe-unavailable cell caught a ruled weak-tier arm writing
+"adverse-assumption-applied" while still routing the risky batch on
+the dated note's authority (costume adverse); re-run with the binding
+sentence, the same tier held the batch and routed away (n=1 each arm,
+private fixture — smoke grade, recorded in the private probes ledger;
+the probe is private, so per the covenant's second branch this
+clause too remains `unprobed` — the observation is cited as shape,
+never as a shipped in-repo probe).
 The §2 recurring-sweep ledgers rule (2026-07-22) comes from a private
 incident: across iterations of a repeated review sweep, one reviewer
 re-raised a finding class an earlier iteration had refuted against the
