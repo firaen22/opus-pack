@@ -268,7 +268,9 @@ When rigor conflicts with finishing sooner, rigor wins.
   inputs) inspected at the revision the cited run actually used —
   and the run attributable to the change under review: the tested
   artifact built from a revision containing it (a commit id, an image
-  digest), while the oracle itself may live at its own stable
+  digest — or, for a run against uncommitted work, an exact recorded
+  working-tree capture identity such as the settled-tree baseline),
+  while the oracle itself may live at its own stable
   revision; a green run on an artifact without the change is evidence
   about that artifact, never the change — the
   invocation path and setup that feed them, whether that path executed

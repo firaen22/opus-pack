@@ -59,10 +59,13 @@ treat every returned result as a claim until verified.
   then observe exact equality with that recorded value THROUGH every
   relied session-local consumer path (the API proxy included, not
   just the top page); a listener check (`lsof`-style) is port
-  discovery, never identity evidence. Marker cleanup is the one
+  discovery, never identity evidence — and the marker is state
+  installed only in THIS session's tree (a static file it serves, a
+  server-held value), never a caller-supplied echo: a
+  request-reflecting endpoint returns your nonce from the wrong
+  sibling too. Marker cleanup is the one
   mutation that follows the check — use a marker whose removal
-  restarts or reloads nothing (a static file, a debug endpoint's
-  echo), remove it, and verify the removal against the
+  restarts or reloads nothing (a static file), remove it, and verify the removal against the
   pre-instrumentation state (tracked, untracked, and ignored files —
   the declared persistent port configuration stays); a marker that
   cannot be removed without a restart or reload is the wrong marker —
@@ -145,7 +148,12 @@ treat every returned result as a claim until verified.
   never emitting attribution yields the
   reachability-only pass: the route stays unattributed — record that
   limit wherever the pass is cited, and dependent dispatch on it
-  carries the recorded limitation, never a verified-route claim.
+  carries the recorded limitation, never a verified-route claim. And
+  a callability pass clears the ROUTE, not the work: where the
+  channel exists, each dependent response's own route report is
+  checked on receipt — the preflight is answer-plus-route for that
+  trivial probe alone, and a capacity-pressured or long-context work
+  request can fall back where the probe did not.
   ✅ "wrapper docs define no route field and no invocation has ever
   emitted one — recorded 'reachability-only, route unattributed' in
   the dispatch note and proceeded on that recorded limit."

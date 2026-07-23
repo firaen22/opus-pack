@@ -125,13 +125,17 @@ artifact-producing step.
   capability is server-side and any pinned dimension (instance,
   account, configuration, or simply time since the dated
   observation) may have drifted →
-  re-verify with one probe (`--help`, or a trial invocation exercising
+  re-verify with one probe (`--help` for a local interface claim; a
+  server-side capability probes against the pinned instance/account —
+  a local help screen proves nothing about an account-controlled
+  feature; either way a trial invocation exercising
   the claimed-absent capability) before
   obeying it; probe unavailable or inconclusive → the capability is
   unknown, not absent — record that where the claim is used and do not
   repeat the negative as fact. Done: writing — the claim carries its
-  version pin and the probe that observed it; acting — the pin is
-  matched to the current version, or re-probed, or recorded unknown.
+  version pin, the probe that observed it, and (server-side) its
+  instance/account and date; acting — every applicable pinned
+  dimension is matched current, or re-probed, or recorded unknown.
   ✅ "playbook says no flag (pinned v0.2.98); current binary v0.2.101 —
   ran --help: the flag exists now; corrected the playbook in place."
   ❌ "the playbook says there's no flag, so drive it through the UI."
@@ -227,7 +231,9 @@ artifact-producing step.
   or "read in full"), and "not found under the searches and sections
   listed". For a landing addition, the fresh-context reviewer (§6)
   re-runs those searches against the pre-addition text (the file at the
-  revision the change branches from — never the edited working copy) and
+  revision the change branches from AND at the landing target's
+  current pre-merge state — the base can gain an equivalent rule
+  after the branch point; never the edited working copy) and
   reads at least one candidate of their own choosing — on empty
   searches, one searched file in full; a batch landing multiple
   additions — to one file or across files in the search set (targets,
