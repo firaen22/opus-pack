@@ -46,16 +46,22 @@ applicability before deduplicating (Verify critics too; in-file
 evidence overrides history, and an entry with no evidence binds
 nothing. §3's canonical set still governs the audit loop itself ("Dedup
 new findings against everything ever surfaced, including ones already
-rejected").
+rejected: dedup against confirmed-only never converges").
 
 Write-back moves entries across categories: an OPEN finding whose fix
 landed this round moves to PRIOR FIXES carrying the fix's correctness
-evidence; an OPEN or UNRESOLVED item refuted this round moves to
+evidence; an UNRESOLVED item confirmed this round moves to OPEN
+FINDINGS (confirmed and fixed in the same round, straight to PRIOR
+FIXES with the fix's evidence); an OPEN or UNRESOLVED item refuted
+this round moves to
 REFUTED FINDING-CLASSES carrying the counterexample; a PRIOR-FIXES
 entry re-flagged this round with evidence the fix failed, regressed,
 or left a residual spawns a NEW OPEN finding carrying that evidence,
 the historical entry staying put with a pointer to it; everything else
-stays where it is.
+stays where it is. Write-backs of one campaign serialize: a round's
+write-back completes before the next round dispatches; concurrent
+writers over one ledger follow §4's edit-conflict rule (re-read,
+re-anchor — never last-writer-wins).
 
 **Two phases, two checks.** Dispatch-time (the §2 field's readiness):
 the packet names the ledger path and campaign identifier, and the

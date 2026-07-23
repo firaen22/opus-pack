@@ -265,7 +265,10 @@ When rigor conflicts with finishing sooner, rigor wins.
   evidence of a property of a change (safe, correct, covered), trace
   it through to its pass/fail oracle —
   the assertions (or, for a linter or build job, its rule set and
-  inputs) inspected at the revision the cited run actually used, the
+  inputs) inspected at the revision the cited run actually used —
+  which must itself contain the change under review: a green run on a
+  revision without the change is evidence about that revision, never
+  the change — the
   invocation path and setup that feed them, whether that path executed
   in the cited run, and whether its assertions PASSED there with their
   failure controlling the check's final status (a run is not a pass —
@@ -451,6 +454,8 @@ When rigor conflicts with finishing sooner, rigor wins.
   whenever a new owed-line rule ships): the `AUTH:` line; the twin-search
   line; the skipped-prescribed-follow-up naming; the `Decisions note:`
   line; the compaction word-diff record (skill-authoring §7); the
+  dup-check result line (skill-authoring §5); the target-runtime line
+  of a skill review record (skill-authoring §6); the
   residual-risk statement. For each
   owed line that is missing, first confirm the underlying work actually
   happened — if it did, add the line; if it did not, do the work now or
