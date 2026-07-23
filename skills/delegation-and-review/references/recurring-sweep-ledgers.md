@@ -50,7 +50,10 @@ rejected: dedup against confirmed-only never converges").
 
 Write-back moves entries across categories: an OPEN finding whose fix
 landed this round moves to PRIOR FIXES carrying the fix's correctness
-evidence; an OPEN or UNRESOLVED item refuted this round moves to
+evidence; an UNRESOLVED item confirmed this round moves to OPEN
+FINDINGS (confirmed and fixed in the same round, straight to PRIOR
+FIXES with the fix's evidence); an OPEN or UNRESOLVED item refuted
+this round moves to
 REFUTED FINDING-CLASSES carrying the counterexample; a PRIOR-FIXES
 entry re-flagged this round with evidence the fix failed, regressed,
 or left a residual spawns a NEW OPEN finding carrying that evidence,

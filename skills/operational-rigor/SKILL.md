@@ -454,6 +454,8 @@ When rigor conflicts with finishing sooner, rigor wins.
   whenever a new owed-line rule ships): the `AUTH:` line; the twin-search
   line; the skipped-prescribed-follow-up naming; the `Decisions note:`
   line; the compaction word-diff record (skill-authoring §7); the
+  dup-check result line (skill-authoring §5); the target-runtime line
+  of a skill review record (skill-authoring §6); the
   residual-risk statement. For each
   owed line that is missing, first confirm the underlying work actually
   happened — if it did, add the line; if it did not, do the work now or
