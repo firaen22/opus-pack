@@ -161,7 +161,9 @@ treat every returned result as a claim until verified.
     and the remedies differ (fix your account vs. wait out an
     outage). Any other pattern
     yields no target verdict — a failed gateway check is your side or
-    the shared path, fixed first; a silent alternate leaves the
+    the shared path, fixed first (unless the work-path differential
+    completed anyway: evidence from the path the work actually takes
+    outranks the auxiliary screen); a silent alternate leaves the
     differential incomplete (the alternate can carry its own block);
     either way an incomplete diagnosis, no-usable-alternate included,
     is recorded UNRESOLVED, never dead.
@@ -194,9 +196,10 @@ treat every returned result as a claim until verified.
   ✅ "re-probed raw (ruled out my own parser), confirmed the key with a
   200 on /models, then sent the same canary to a different model on
   the same key — it answered, the target's evidenced attempt still got
-  no response: route-isolated; the attributed status showed no quota
-  or entitlement block, so recorded as an outage, not an account
-  problem."
+  no response: route-isolated; the attributed status was a server-side
+  failure, not an account or request block (quota, entitlement,
+  parameters), so recorded as an outage — a nondiagnostic status would
+  have stayed UNRESOLVED."
   ❌ "the output file was empty, so the model is dead" (one observation,
   no differential, no re-run).
 - **Labels are routes, listings are claims** (`unprobed` — private incidents
