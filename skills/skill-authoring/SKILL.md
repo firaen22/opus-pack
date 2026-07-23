@@ -207,13 +207,19 @@ artifact-producing step.
   superseded term(s) and their aliases — an empty grep is not a clean
   sweep (§5's keyword-grep-absence rule: a stale verdict can phrase the
   incumbent without the term), so read every verdict-bearing block —
-  and tag every stale verdict block explicitly
-  ("SUPERSEDED `<date>` — see `<new order's anchor>`; this block is
-  provenance, its verdict is no longer the order") rather than deleting
-  it — history stays legible, but only one verdict reads as current.
+  and neutralize each stale verdict IN PLACE: rewrite the verdict line
+  itself, never a note appended below it (§3's correct-in-place rule —
+  a zero-context reader, or a retrieved chunk that starts at the old
+  bold line, obeys whichever sentence it reads first). The old
+  imperative stops being one: "KEEP X AS DEFAULT" becomes "SUPERSEDED
+  `<date>` — was: keep X as default — see `<new order's anchor>`; this
+  block is provenance, its verdict is no longer the order". Rewrite
+  rather than delete — history stays legible, but only one verdict
+  reads as current.
   ✅ "promoted the new default at the top, then grepped the file for the
-  old model's name — found two older 'KEEP AS DEFAULT' blocks, tagged
-  both SUPERSEDED with the date and a pointer to the new order."
+  old model's name — found two older 'KEEP AS DEFAULT' blocks, rewrote
+  both verdict lines in place as SUPERSEDED-with-date pointing at the
+  new order."
   ❌ "updated the current-state summary; the old benchmark write-up down
   below is just history, nobody reads that far" (a weaker executor does).
 - **Two-strike promotion trigger:** the second time a lesson's trigger

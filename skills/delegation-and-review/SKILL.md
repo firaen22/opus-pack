@@ -151,7 +151,11 @@ treat every returned result as a claim until verified.
     below), seconds apart. Only a controlled differential — the
     alternate answers, the target still doesn't, everything else held
     equal — isolates a model-specific outage from an auth, gateway,
-    or self-inflicted request/parsing failure. Any other pattern
+    or self-inflicted request/parsing failure; the target ATTEMPT
+    itself must be evidenced (a status or error attributed to the
+    target's route, not silence alone — a wrapper that silently
+    rerouted or dropped the call leaves the target UNKNOWN, not
+    dead). Any other pattern
     points away from the model — a failed gateway check or a silent
     alternate is your side or the shared path, fixed first; a
     diagnosis you cannot complete (no alternate model on the key) is
@@ -160,13 +164,17 @@ treat every returned result as a claim until verified.
     battery before concluding anything. If the empty slot *shifts*
     between runs (different task empty each time), the failure is
     intermittent — transport, serving, or another nondeterministic
-    cause, not a stable per-task gap: the model is capable but unfit
-    for an unattended single-shot chain with no retry; demote it to
-    supervised or retry-wrapped use rather than dropping it from the
-    pool outright. If the same task stays empty run after run, that
-    is a stable per-task failure — rule out your own parsing of that
-    task's output (the raw re-probe above, per task) before recording
-    it as a capability gap. Two runs are the floor, not proof; extend
+    cause, not a stable per-task gap: treat the model as usable but
+    unreliable — unfit for an unattended single-shot chain with no
+    retry; demote it to supervised or retry-wrapped use rather than
+    dropping it from the pool outright (for any work relying on a
+    probed property, the binding sentence below still holds it). If
+    the same task stays empty run after run, that is a stable
+    per-task failure — rule out your own side for that task first:
+    parsing (the raw re-probe above, per task), a per-task limit (a
+    token cap that empties the same long task every run), collection
+    loss — before recording it as a capability gap. Two runs are the
+    floor, not proof; extend
     the re-runs when the decision is load-bearing. A single run
     cannot tell these apart, and routing on the wrong read either
     burns budget on a broken transport or drops a usable model from
@@ -470,8 +478,12 @@ reviewers that they silently absorb as implementers.
   sandbox, not the change) or — worse — teaches the next session to treat
   RED gates as noise. Re-run the claimed failing check yourself, outside
   the subordinate's environment (in your own, per the isolated-copy
-  discipline above), before reverting, escalating, or otherwise trusting
-  the verdict; a RED you cannot re-run yourself stays an unverified
+  discipline above — and in the environment the gate's contract actually
+  targets: green in a non-target environment dismisses nothing, and an
+  environment split is itself a finding to record), before reverting or
+  otherwise treating the verdict as established — escalation needs no
+  prior re-run; it is the outlet for the unresolved case below; a RED
+  you cannot re-run yourself stays an unverified
   claim: record the gap and treat the gate's state as UNKNOWN — it
   neither licenses a revert (not a proven failure) nor a clean ship
   (unknown is never green; the caveated-verdict path above applies) —
