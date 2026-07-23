@@ -128,6 +128,35 @@ treat every returned result as a claim until verified.
   edge-risky work to it" — any prior measurement reused for a routing
   or safety decision without a decision-time re-run, last week's or
   this morning's.
+- **Empty or dead-looking output from a live probe needs a differential
+  diagnosis before it becomes a routing decision** — one observation
+  cannot distinguish an intermittent transport flake from a genuine
+  capability gap, and they demand opposite responses (keep routing to
+  it vs. stop). Two situations, two ladders:
+  - **A single endpoint returns empty/no bytes.** Before declaring it
+    dead: (1) re-probe raw, ruling out your own parsing (a grep pattern
+    against the wrong response shape reads as "empty" too); (2) verify
+    the key/gateway itself with a cheap call (e.g. a models-list
+    endpoint returning 200); (3) call a *different* model on the same
+    key and transport, seconds apart. Only a differential — the
+    alternate model answers, the target still doesn't, same key and
+    transport — isolates a model-specific outage from an auth,
+    gateway, or self-inflicted parsing failure.
+  - **A model returns empty on some tasks in a batch.** Re-run the
+    battery before concluding anything. If the empty slot *shifts*
+    between runs (different task empty each time), it is an
+    intermittent transport/serving flake — the model is capable but
+    unfit for a single-shot chain with no retry, so demote it to
+    supervised use rather than blocking it outright. If the same task
+    stays empty run after run, that is a genuine capability gap on
+    that task. A single run cannot tell these apart, and routing on
+    the wrong read either burns budget on a broken transport or drops
+    a usable model from the pool.
+  ✅ "re-probed raw (ruled out my own parser), confirmed the key with a
+  200 on /models, then PONG'd a different model on the same key —
+  it answered, the target still returned HTTP 000: genuine outage."
+  ❌ "the output file was empty, so the model is dead" (one observation,
+  no differential, no re-run).
 - **Labels are routes, listings are claims** (`unprobed` — private incidents
   as shape; see Provenance). Two separate boundaries, each with its own
   check. About to route work through a listed model: a lineup listing is
