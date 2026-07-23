@@ -156,8 +156,10 @@ A generic green test is not proof. A gate is real only if:
    The two-sided proof above validates a grader for ONE invocation shape at
    ONE time — reusing it later (a new run, a different candidate pool, hours
    later in the same session) is a fresh claim, not an inherited one. Before
-   reuse: re-run against both the known-good and known-bad references again,
-   diffing the score against the value ON RECORD from the prior validation —
+   reuse: re-run the two-sided proof — the known-good references (both
+   structurally distinct valid solutions, per the bar above) and the
+   known-bad — diffing each score against the value ON RECORD from the
+   prior validation —
    any drift is stop-the-line, never "still mostly failing, close enough."
    A wrong invocation shape (a file path fed where the grader expects a
    directory, a stale flag) can make the harness fail to load the candidate

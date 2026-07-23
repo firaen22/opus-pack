@@ -200,10 +200,14 @@ artifact-producing step.
   summary or the newest
   paragraph is not enough: an older evidence block can still carry its
   own bold imperative verdict ("KEEP X AS DEFAULT") lower in the same
-  file, and a future reader — or a weaker model executing the file
-  top-to-bottom — can hit that older verdict first and follow the
+  file, and a future reader — or a weaker model that greps by the old
+  term, lands mid-file on a retrieved chunk, or reads a bottom-appended
+  log in order — can meet that older verdict first and follow the
   superseded order. After any default/order flip: grep the file for the
-  superseded term(s) and tag every stale verdict block explicitly
+  superseded term(s) and their aliases — an empty grep is not a clean
+  sweep (§5's keyword-grep-absence rule: a stale verdict can phrase the
+  incumbent without the term), so read every verdict-bearing block —
+  and tag every stale verdict block explicitly
   ("SUPERSEDED `<date>` — see `<new order's anchor>`; this block is
   provenance, its verdict is no longer the order") rather than deleting
   it — history stays legible, but only one verdict reads as current.

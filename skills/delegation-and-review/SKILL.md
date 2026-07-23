@@ -138,28 +138,45 @@ treat every returned result as a claim until verified.
   incidents as shape; see Provenance) — one observation (the
   decision-time re-probe the rule above demands can itself come back
   empty) cannot distinguish an intermittent transport flake from a
-  genuine capability gap, and they demand opposite responses (keep
-  routing to it vs. stop). Two situations, two ladders:
+  genuine capability gap, and the reads route differently (demote to
+  supervised use, drop from the pool, or fix your own side first). Two
+  situations, two ladders:
   - **A single endpoint returns empty/no bytes.** Before declaring it
     dead: (1) re-probe raw, ruling out your own parsing (a grep pattern
     against the wrong response shape reads as "empty" too); (2) verify
     the key/gateway itself with a cheap call (e.g. a models-list
     endpoint returning 200); (3) call a *different* model on the same
-    key and transport, seconds apart. Only a differential — the
-    alternate model answers, the target still doesn't, same key and
-    transport — isolates a model-specific outage from an auth,
-    gateway, or self-inflicted parsing failure.
+    key, transport, and request shape (same canary prompt and
+    parameters, the answer route-attributed per the labels rule
+    below), seconds apart. Only a controlled differential — the
+    alternate answers, the target still doesn't, everything else held
+    equal — isolates a model-specific outage from an auth, gateway,
+    or self-inflicted request/parsing failure. Any other pattern
+    points away from the model — a failed gateway check or a silent
+    alternate is your side or the shared path, fixed first; a
+    diagnosis you cannot complete (no alternate model on the key) is
+    recorded UNRESOLVED, never dead.
   - **A model returns empty on some tasks in a batch.** Re-run the
     battery before concluding anything. If the empty slot *shifts*
-    between runs (different task empty each time), it is an
-    intermittent transport/serving flake — the model is capable but
-    unfit for an unattended single-shot chain with no retry: demote it
-    to supervised or retry-wrapped use rather than dropping it from
-    the pool outright. If the same task
-    stays empty run after run, that is a genuine capability gap on
-    that task. A single run cannot tell these apart, and routing on
-    the wrong read either burns budget on a broken transport or drops
-    a usable model from the pool.
+    between runs (different task empty each time), the failure is
+    intermittent — transport, serving, or another nondeterministic
+    cause, not a stable per-task gap: the model is capable but unfit
+    for an unattended single-shot chain with no retry; demote it to
+    supervised or retry-wrapped use rather than dropping it from the
+    pool outright. If the same task stays empty run after run, that
+    is a stable per-task failure — rule out your own parsing of that
+    task's output (the raw re-probe above, per task) before recording
+    it as a capability gap. Two runs are the floor, not proof; extend
+    the re-runs when the decision is load-bearing. A single run
+    cannot tell these apart, and routing on the wrong read either
+    burns budget on a broken transport or drops a usable model from
+    the pool.
+  Either way, for a routing or safety decision the ladders refine the
+  DIAGNOSIS, never the binding above: an empty, flaky, or unresolved
+  probe of a property leaves that property UNKNOWN, and work relying
+  on it still does not route to that model — the differential decides
+  transport-vs-model and what to fix, not whether unverified work may
+  route.
   ✅ "re-probed raw (ruled out my own parser), confirmed the key with a
   200 on /models, then PONG'd a different model on the same key —
   it answered, the target still returned HTTP 000: genuine outage."
@@ -455,7 +472,11 @@ reviewers that they silently absorb as implementers.
   the subordinate's environment (in your own, per the isolated-copy
   discipline above), before reverting, escalating, or otherwise trusting
   the verdict; a RED you cannot re-run yourself stays an unverified
-  claim, recorded as a gap, never acted on as a verdict. (Incident: a subordinate CLI's
+  claim: record the gap and treat the gate's state as UNKNOWN — it
+  neither licenses a revert (not a proven failure) nor a clean ship
+  (unknown is never green; the caveated-verdict path above applies) —
+  escalate the unresolved gate rather than assuming it away in either
+  direction. (Incident: a subordinate CLI's
   sandboxed run reported a verbatim "GATES RED — do not ship" with a
   specific failure reason — its test runner could not create IPC pipes
   under that sandbox's restrictions; the same gate re-run on the host was
