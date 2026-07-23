@@ -160,10 +160,11 @@ treat every returned result as a claim until verified.
     one target the same way — the attributed status decides which,
     and the remedies differ (fix your account vs. wait out an
     outage). Any other pattern
-    points away from the model — a failed gateway check or a silent
-    alternate is your side or the shared path, fixed first; a
-    diagnosis you cannot complete (no alternate model on the key) is
-    recorded UNRESOLVED, never dead.
+    yields no target verdict — a failed gateway check is your side or
+    the shared path, fixed first; a silent alternate leaves the
+    differential incomplete (the alternate can carry its own block);
+    either way an incomplete diagnosis, no-usable-alternate included,
+    is recorded UNRESOLVED, never dead.
   - **A model returns empty on some tasks in a batch.** Re-run the
     battery before concluding anything, then classify each TASK
     separately, never the run as a whole — one battery can carry both
@@ -191,8 +192,11 @@ treat every returned result as a claim until verified.
   transport-vs-model and what to fix, not whether unverified work may
   route.
   ✅ "re-probed raw (ruled out my own parser), confirmed the key with a
-  200 on /models, then PONG'd a different model on the same key —
-  it answered, the target still returned HTTP 000: genuine outage."
+  200 on /models, then sent the same canary to a different model on
+  the same key — it answered, the target's evidenced attempt still got
+  no response: route-isolated; the attributed status showed no quota
+  or entitlement block, so recorded as an outage, not an account
+  problem."
   ❌ "the output file was empty, so the model is dead" (one observation,
   no differential, no re-run).
 - **Labels are routes, listings are claims** (`unprobed` — private incidents
@@ -487,7 +491,10 @@ reviewers that they silently absorb as implementers.
   targets: green in a non-target environment dismisses nothing, and an
   unexplained environment split is a finding that leaves the gate
   UNKNOWN), before reverting or
-  otherwise treating the verdict as established — escalation needs no
+  otherwise treating the verdict as established — and one green re-run
+  refutes a deterministic RED, not an intermittent one: RED-then-green
+  with no identified cause is a flake finding to record, never noise
+  to ship over — escalation needs no
   prior re-run; it is the outlet for the unresolved case below; a RED
   you cannot re-run yourself stays an unverified
   claim: record the gap and treat the gate's state as UNKNOWN — it
@@ -778,10 +785,10 @@ The §1 empty-output differential rule (2026-07-23) comes from two
 contributor incidents in one day's sessions: a probe's empty output
 file was traced through a raw re-probe (no response at the transport),
 a gateway check (a models-list call answering 200), and a successful
-call to a different model on the same key before being recorded as a
-model-specific outage; and a batch bench where one model's empty slot
-MOVED between two runs (intermittent flake) while another model's
-same-task failure reproduced identically (capability gap)
+call to a different model on the same key before the failure was
+isolated to the target's route; and a batch bench where one model's
+empty slot MOVED between two runs (intermittent) while another model's
+same-task failure reproduced identically (a stable per-task failure)
 (contributor-reported; the private repos are verifiable by the
 contributor, not linkable here). Ships `unprobed` per the README
 covenant's second branch; the executable probe — fixture a dead
