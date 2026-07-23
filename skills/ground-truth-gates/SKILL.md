@@ -158,10 +158,13 @@ A generic green test is not proof. A gate is real only if:
    later in the same session) is a fresh claim, not an inherited one. Before
    reuse: re-run the two-sided proof — the known-good references (both
    structurally distinct valid solutions, per the bar above) and the
-   known-bad — diffing each score against the value ON RECORD from the
-   prior validation (a record that carries per-reference scores AND the
-   exact invocation — command, arguments, configuration — so drift in
-   either is visible) —
+   known-bad — diffing each outcome against the record of the prior
+   validation (per-CASE outcomes, not an aggregate score — the same 2/6
+   with different cases passing is drift; the exact invocation —
+   command, arguments, configuration — and the reference-corpus
+   identity, so drift in any is visible; no record on hand → reuse
+   stops, the two-sided proof runs fresh and its record is written
+   before any scoring) —
    any drift is stop-the-line, never "still mostly failing, close enough."
    A wrong invocation shape (a file path fed where the grader expects a
    directory, a stale flag) can make the harness fail to load the candidate

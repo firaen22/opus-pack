@@ -150,31 +150,36 @@ treat every returned result as a claim until verified.
     parameters, the answer route-attributed per the labels rule
     below), seconds apart. Only a controlled differential — the
     alternate answers, the target still doesn't, everything else held
-    equal — isolates a model-specific outage from an auth, gateway,
-    or self-inflicted request/parsing failure; the target ATTEMPT
+    equal — isolates the failure to the target's route, away from
+    shared auth/gateway and your own parsing; the target ATTEMPT
     itself must be evidenced (a status or error attributed to the
     target's route, not silence alone — a wrapper that silently
     rerouted or dropped the call leaves the target UNKNOWN, not
-    dead). Any other pattern
+    dead). Route-isolated is not yet "model down": a per-model block
+    on your side (entitlement, quota, unsupported parameters) silences
+    one target the same way — the attributed status decides which,
+    and the remedies differ (fix your account vs. wait out an
+    outage). Any other pattern
     points away from the model — a failed gateway check or a silent
     alternate is your side or the shared path, fixed first; a
     diagnosis you cannot complete (no alternate model on the key) is
     recorded UNRESOLVED, never dead.
   - **A model returns empty on some tasks in a batch.** Re-run the
-    battery before concluding anything. If the empty slot *shifts*
-    between runs (different task empty each time), the failure is
-    intermittent — transport, serving, or another nondeterministic
-    cause, not a stable per-task gap: treat the model as usable but
-    unreliable — unfit for an unattended single-shot chain with no
-    retry; demote it to supervised or retry-wrapped use rather than
-    dropping it from the pool outright (for any work relying on a
-    probed property, the binding sentence below still holds it). If
-    the same task stays empty run after run, that is a stable
-    per-task failure — rule out your own side for that task first:
-    parsing (the raw re-probe above, per task), a per-task limit (a
-    token cap that empties the same long task every run), collection
-    loss — before recording it as a capability gap. Two runs are the
-    floor, not proof; extend
+    battery before concluding anything, then classify each TASK
+    separately, never the run as a whole — one battery can carry both
+    kinds ({A,B} empty then {A,C} empty is a stable failure on A plus
+    intermittent noise on B and C). A task empty in some runs but not
+    others is intermittent — transport, serving, or another
+    nondeterministic cause, not a stable gap: the model is usable but
+    unreliable there — unfit for an unattended single-shot chain with
+    no retry; demote it to supervised or retry-wrapped use rather
+    than dropping it from the pool outright (for any work relying on
+    a probed property, the binding sentence below still holds it). A
+    task empty in EVERY run is a stable per-task failure — rule out
+    your own side for that task first: parsing (the raw re-probe
+    above, per task), a per-task limit (a token cap that empties the
+    same long task every run), collection loss — before recording it
+    as a capability gap. Two runs are the floor, not proof; extend
     the re-runs when the decision is load-bearing. A single run
     cannot tell these apart, and routing on the wrong read either
     burns budget on a broken transport or drops a usable model from
@@ -480,7 +485,8 @@ reviewers that they silently absorb as implementers.
   the subordinate's environment (in your own, per the isolated-copy
   discipline above — and in the environment the gate's contract actually
   targets: green in a non-target environment dismisses nothing, and an
-  environment split is itself a finding to record), before reverting or
+  unexplained environment split is a finding that leaves the gate
+  UNKNOWN), before reverting or
   otherwise treating the verdict as established — escalation needs no
   prior re-run; it is the outlet for the unresolved case below; a RED
   you cannot re-run yourself stays an unverified
