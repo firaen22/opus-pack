@@ -155,7 +155,7 @@ A generic green test is not proof. A gate is real only if:
    read-narrow evidence discipline will disarm the fixture.
    The two-sided proof above validates a grader for ONE invocation shape at
    ONE time — reusing it later (a new run, a different candidate pool, hours
-   on in the same session) is a fresh claim, not an inherited one. Before
+   later in the same session) is a fresh claim, not an inherited one. Before
    reuse: re-run against both the known-good and known-bad references again,
    diffing the score against the value ON RECORD from the prior validation —
    any drift is stop-the-line, never "still mostly failing, close enough."
@@ -172,7 +172,7 @@ A generic green test is not proof. A gate is real only if:
    `MODULE_NOT_FOUND` before its code ever ran; the known-bad reference
    scored 2/6 against a recorded 0/6, and the 2 passes were exactly the two
    capacity-edge cases whose accepted-throw branch swallowed the harness's
-   own error.)
+   own error.) (`unprobed` — private incident as shape; see Provenance.)
 3. The **easy fake pass is named** and closed — hardcoded expected value,
    weakened assertion, testing the mock, a test that compiled but was never
    registered/run, a permanently `#[ignore]`/`.skip`ped backlog test that reads
@@ -345,5 +345,18 @@ shell dialect with nullglob, and the guard "passed" while scanning zero
 files, including the one its outage check existed for. Private evidence,
 cited as shape per the README covenant's second branch; no in-repo probe
 has run, so the shape carries an in-body `unprobed` marker.
+The rule-2 reuse-time re-validation clause (2026-07-23) comes from a
+contributor incident: before a new batch, a grader re-validation fed a
+directory to a grader that takes a file path; the harness threw a
+module-load error for every case before any candidate code ran, the
+known-bad reference scored 2/6 against a recorded 0/6, and the two
+spurious passes were exactly the two capacity-edge cases whose
+accepted-throw branch absorbed the harness's own load failure
+(contributor-reported; the private harness is verifiable by the
+contributor, not linkable here). Ships `unprobed` per the README
+covenant's second branch; the executable probe — seed an
+invocation-shape mismatch against a two-sided-proven grader and observe
+whether reuse-time re-validation catches it before scoring — has not
+run; the in-body marker records that debt.
 `template/` scripts are self-contained (Node + bash, zero deps) and were run
 green on 2026-07-06 with Node v23; re-verify with `bash template/run-all.sh`.

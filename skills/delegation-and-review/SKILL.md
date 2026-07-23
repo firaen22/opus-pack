@@ -134,10 +134,12 @@ treat every returned result as a claim until verified.
   or safety decision without a decision-time re-run, last week's or
   this morning's.
 - **Empty or dead-looking output from a live probe needs a differential
-  diagnosis before it becomes a routing decision** — one observation
-  cannot distinguish an intermittent transport flake from a genuine
-  capability gap, and they demand opposite responses (keep routing to
-  it vs. stop). Two situations, two ladders:
+  diagnosis before it becomes a routing decision** (`unprobed` — private
+  incidents as shape; see Provenance) — one observation (the
+  decision-time re-probe the rule above demands can itself come back
+  empty) cannot distinguish an intermittent transport flake from a
+  genuine capability gap, and they demand opposite responses (keep
+  routing to it vs. stop). Two situations, two ladders:
   - **A single endpoint returns empty/no bytes.** Before declaring it
     dead: (1) re-probe raw, ruling out your own parsing (a grep pattern
     against the wrong response shape reads as "empty" too); (2) verify
@@ -151,8 +153,9 @@ treat every returned result as a claim until verified.
     battery before concluding anything. If the empty slot *shifts*
     between runs (different task empty each time), it is an
     intermittent transport/serving flake — the model is capable but
-    unfit for a single-shot chain with no retry, so demote it to
-    supervised use rather than blocking it outright. If the same task
+    unfit for an unattended single-shot chain with no retry: demote it
+    to supervised or retry-wrapped use rather than dropping it from
+    the pool outright. If the same task
     stays empty run after run, that is a genuine capability gap on
     that task. A single run cannot tell these apart, and routing on
     the wrong read either burns budget on a broken transport or drops
@@ -442,14 +445,17 @@ reviewers that they silently absorb as implementers.
   The delivered tree stays untouched — no edits, no new files; findings
   go in the reply, not the tree.
 - **A reported FAILURE is a claim too, exactly like a reported success —
-  reproduce it before acting on it.** A subordinate's own execution
+  reproduce it before acting on it** (`unprobed` — private incident as
+  shape; see Provenance). A subordinate's own execution
   environment can fabricate a RED gate as easily as a model fabricates a
   green one: a sandbox restriction masquerading as a code defect. Acting
   on an unreproduced RED either reverts working code (the failure was the
   sandbox, not the change) or — worse — teaches the next session to treat
   RED gates as noise. Re-run the claimed failing check yourself, outside
-  the subordinate's environment, before reverting, escalating, or
-  otherwise trusting the verdict. (Incident: a subordinate CLI's
+  the subordinate's environment (in your own, per the isolated-copy
+  discipline above), before reverting, escalating, or otherwise trusting
+  the verdict; a RED you cannot re-run yourself stays an unverified
+  claim, recorded as a gap, never acted on as a verdict. (Incident: a subordinate CLI's
   sandboxed run reported a verbatim "GATES RED — do not ship" with a
   specific failure reason — its test runner could not create IPC pipes
   under that sandbox's restrictions; the same gate re-run on the host was
@@ -729,6 +735,32 @@ half), and seed an alias-collision fixture and observe whether the
 mapping is resolved before a namespace crossing (the provider-ID half);
 neither has run in-repo, and the in-body `unprobed` marker stands until
 both have.
+The §1 empty-output differential rule (2026-07-23) comes from two
+contributor incidents in one day's sessions: a probe's empty output
+file was traced through a raw re-probe (no response at the transport),
+a gateway check (a models-list call answering 200), and a successful
+call to a different model on the same key before being recorded as a
+model-specific outage; and a batch bench where one model's empty slot
+MOVED between two runs (intermittent flake) while another model's
+same-task failure reproduced identically (capability gap)
+(contributor-reported; the private repos are verifiable by the
+contributor, not linkable here). Ships `unprobed` per the README
+covenant's second branch; the executable probe — fixture a dead
+endpoint beside a healthy sibling on one key, plus a moving-slot
+battery, and observe whether a weak-tier agent runs the ladders before
+routing — has not run; the in-body marker records that debt.
+The §3 reported-failure rule (2026-07-23) comes from a contributor
+incident: a sandboxed subordinate CLI reported a verbatim "GATES RED —
+do not ship" because its test runner could not create IPC pipes under
+the sandbox's restrictions; the same gate re-run on the host was green
+both times, and the subordinate's own report had disclosed the sandbox
+limitation honestly — the risk was a reader trusting the RED verdict
+without reading that far (contributor-reported; the private repo is
+verifiable by the contributor, not linkable here). Ships `unprobed`
+per the README covenant's second branch; the executable probe — a
+fixture whose subordinate report carries a sandbox-caused RED over
+green code, observing whether the orchestrator re-runs the gate before
+reverting — has not run; the in-body marker records that debt.
 Stable behavioral rules; re-check
 worktree/agent mechanics and any recorded hosted-endpoint behavioral
 claims against the current environment.

@@ -193,14 +193,18 @@ artifact-producing step.
   record of why. Retrieval re-derives the answer every session; compilation
   pays once.
 - **Flipping a current-state order does not retire the old one on its
-  own — sweep the whole file.** Updating the top summary or the newest
+  own — sweep the whole file** (`unprobed` — private incident as shape;
+  see Provenance). The instruction-file analog of operational-rigor §3's
+  call-site sweep: a flipped default is an interface change whose call
+  sites are every older verdict block in the same file. Updating the top
+  summary or the newest
   paragraph is not enough: an older evidence block can still carry its
   own bold imperative verdict ("KEEP X AS DEFAULT") lower in the same
   file, and a future reader — or a weaker model executing the file
   top-to-bottom — can hit that older verdict first and follow the
   superseded order. After any default/order flip: grep the file for the
   superseded term(s) and tag every stale verdict block explicitly
-  ("⤷ SUPERSEDED `<date>` — see `<new order's anchor>`; this block is
+  ("SUPERSEDED `<date>` — see `<new order's anchor>`; this block is
   provenance, its verdict is no longer the order") rather than deleting
   it — history stays legible, but only one verdict reads as current.
   ✅ "promoted the new default at the top, then grepped the file for the
@@ -635,4 +639,16 @@ shape per the README covenant's second branch; the executable probe —
 re-running recorded capability-negatives against the current binary on
 each version change and counting flips — has not been run as a standing
 check; the in-body `unprobed` marker records that debt.
+The §4 superseded-verdict sweep (2026-07-23) comes from a contributor
+incident: after promoting a new default in a playbook, a whole-file
+grep found two older evidence blocks still carrying bold
+keep-the-old-default verdicts from earlier benchmark rounds — each
+would read as current to a reader (or a weaker executor) reaching it
+before the new summary; both were tagged superseded-with-date rather
+than deleted (contributor-reported; the private repo is verifiable by
+the contributor, not linkable here). Ships `unprobed` per the README
+covenant's second branch; the executable probe — seed a flipped
+default above an untagged stale verdict block and observe whether a
+weak-tier executor follows the stale order — has not run; the in-body
+marker records that debt.
 Stable method; no environment facts to re-verify.
