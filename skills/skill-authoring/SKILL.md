@@ -159,17 +159,24 @@ artifact-producing step.
   command for anything that may drift. A skill without a re-verification path
   decays into exactly the stale-instruction problem it was meant to solve.
 - **A merged upstream integration is not necessarily the end of the
-  campaign** (`unprobed` — incident verifiable in this repo's own PR
-  history; see Provenance). Before diff-verifying a local file against
-  "upstream final" and closing the sync, check for PRs merged AFTER the
-  integration PR in hand that TOUCH the files being synced — a
-  maintainer's review round can continue in follow-up PRs rather than
-  concluding in the one that first merged. Treating an intermediate
-  merge as terminal ports a state that is already stale and owes a
-  follow-up fold once the later rounds land. List merged PRs newer than
-  the one being synced against and check their changed files; "upstream
-  final" is a safe anchor only when none of them touches the synced
-  surfaces (newer merges elsewhere in the repo do not block the sync).
+  campaign** (`unprobed` — the upstream half of the incident is
+  verifiable in this repo's PR history, the sync half
+  contributor-reported; see Provenance). Before diff-verifying a local
+  file against "upstream final" and closing the sync, check for
+  continuation on the synced surfaces — a maintainer's review can
+  continue in follow-up PRs rather than concluding in the one that
+  first merged, and at sync time those rounds may not have merged YET.
+  The synced surfaces are every file the sync contract couples (the
+  change-X-update-Y pairs), not only the file in hand. Check BOTH: PRs
+  merged after the one in hand (by MERGE TIME, not PR number — e.g.
+  `gh pr list --state merged` with merge dates) and OPEN PRs, filtered
+  to those touching the synced surfaces. Any hit → do not close the
+  sync as final: re-anchor to the newest touching merged state and
+  re-run the check, or — when touching rounds are still open — record
+  the sync as provisional with the follow-up fold owed. Done when the
+  sync record cites the check (command + date) with an empty touching
+  list — which makes the anchor safe AS OF that check, never forever —
+  or carries the provisional label.
 - When two files must agree, write the sync contract down ("change X → update
   Y") in the canonical file. Prose inventories rot; prefer "read the
   directory" over hand-kept lists, and pin unavoidable lists with a rule or test.
@@ -505,8 +512,15 @@ default; an AI rewrite does not launder a derivative).
   content that already extracted everything extractable. After a
   compaction pass: if every remaining line still traces to a live
   trigger, record the new line count as the new baseline IN the log
-  entry that carried the debt (retiring its owes-line); only future
-  wording or detail growth against *that* number counts as debt.
+  entry that carried the debt (retiring its owes-line) — recorded only
+  ALONGSIDE that pass's word-diff artifact (the bullet below): a
+  re-baseline without the pass artifact is the phantom-debt inversion,
+  declaring extraction complete on self-judgment. Any remaining line
+  that traces to NO live trigger → the owes-line stays. Thereafter the
+  compaction trigger above reads against the recorded baseline: it
+  re-fires on growth beyond that number, not on the old one. Only
+  future wording or detail growth against the recorded baseline counts
+  as debt.
 - **A compaction or extraction pass needs a word-diff, not a structure check**
   (verification-time counterpart to §3's don't-paraphrase rule above, which
   guards the writing, not the later edit). Grepping that anchors, pointers,
