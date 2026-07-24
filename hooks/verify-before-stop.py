@@ -37,7 +37,9 @@ Known limits (mechanically unfixable; do not treat this hook as omniscient):
 - Double-Stop escape: after a block, replying anything and stopping again
   passes (the relief valve). The audit log is the only compensation.
 - The window covers only tool calls after the last real user prompt.
-- Env-var-prefixed commands (FOO=1 pytest) are not matched.
+- Env-var-prefixed commands (FOO=1 pytest) are not matched; neither are
+  option-prefixed interpreter forms (bash -e test-x.sh, python3 -u
+  checks.py) — the wrapper allowlist (time/npx/uv run/...) is literal.
 """
 
 import datetime
@@ -70,7 +72,9 @@ TEST_CMD_RE = re.compile(
     r"mvn\s+test|gradle\s+test|\.\/gradlew\s+test|"
     r"rspec|bundle\s+exec\s+rspec|"
     r"dotnet\s+test|swift\s+test|phpunit|ctest|mix\s+test|"
-    r"bash\s+checks/run-all\.sh"
+    r"bash\s+\S*run-all\.sh|"      # gtg convention: checks/ or template/ run-all.sh
+    r"bash\s+\S*test-[\w.-]+\.sh|"  # test-*.sh suites; \S* tolerates false-allows (mytest-/contest- prefixes) — presence heuristic, cheap direction
+    r"python3?\s+\S*checks\.py"     # repo check scripts (.github/checks.py)
     r")\b",
     re.IGNORECASE,
 )
@@ -92,7 +96,8 @@ BLOCK_REASON = (
     "Per operational-rigor §4: \"Verify by execution wherever possible. If "
     "impossible, say so and state what the user must run.\"\n"
     "Pick one before finishing: run the relevant tests or gates "
-    "(e.g. bash checks/run-all.sh) and show the output; dispatch a "
+    "(e.g. bash checks/run-all.sh, or the project's own test suite) and "
+    "show the output; dispatch a "
     "fresh-context verification subagent (delegation-and-review §3); or, if "
     "this change genuinely needs no test (e.g. config-only, verified another "
     "way), state that reason explicitly in the final report."
