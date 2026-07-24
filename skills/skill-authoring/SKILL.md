@@ -182,14 +182,23 @@ artifact-producing step.
   decided from each candidate's CHANGED FILES read mechanically (e.g.
   `gh pr view <n> --json files` or `gh pr diff <n> --name-only`),
   never from titles or bodies — a continuation PR's title may carry
-  no path token while it edits the synced file. Any touching hit → do
-  not close the sync as final: re-anchor to the newest touching
-  merged state and re-run the check, or — when touching rounds are
-  still open — record the sync as provisional with the follow-up fold
-  owed. Done when the sync record cites BOTH checks (commands + date
-  + totals) and the file-level touch determinations, all empty —
-  which makes the anchor safe AS OF that check, never forever — or
-  carries the provisional label.
+  no path token while it edits the synced file. File enumeration has
+  its own caps (gh's files query returns the first 100; hosted diffs
+  truncate around 300): verify the retrieved file count equals the
+  PR's changedFiles total, and when completeness cannot be proven,
+  treat that PR as TOUCHING (conservative) or keep the sync
+  provisional. After the MERGED query, RE-RUN the OPEN check — a PR
+  opened between the first open query and the merged query is caught
+  by the recheck (one that also merged inside that window is already
+  in the merged list). Any touching hit → do not close the sync as
+  final: re-anchor to the newest touching merged state, RE-DIFF the
+  local files against that new state, and re-run the checks, or —
+  when touching rounds are still open — record the sync as
+  provisional with the follow-up fold owed. Done when the sync record
+  cites the checks (commands + date + totals) with ZERO TOUCHING HITS
+  — the candidate lists may be nonempty — and the local diff against
+  the anchor state; that makes the anchor safe AS OF the check, never
+  forever; otherwise it carries the provisional label.
 - When two files must agree, write the sync contract down ("change X → update
   Y") in the canonical file. Prose inventories rot; prefer "read the
   directory" over hand-kept lists, and pin unavoidable lists with a rule or test.
@@ -765,6 +774,7 @@ incident, not a probe; the executable probe — fixture a repo whose
 sync target has newer merged PRs touching the synced files and observe
 whether a weak-tier executor checks before declaring the sync final —
 has not run; the in-body marker records that debt.
-Re-verify against current tooling: the §3 campaign-continuation
-check's CLI examples (`gh pr list` flags and its default page size)
-drift with the tool; everything else is stable method.
+Re-verify against current tooling: `gh pr list --limit 1 >/dev/null
+&& gh pr view --help | grep -c json` (the §3 campaign-continuation
+check's CLI flags, default page size, and files-query caps drift with
+the tool); everything else is stable method.
