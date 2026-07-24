@@ -518,6 +518,12 @@ This pack distills and adapts ideas from:
   [`TheColliny/FableClaudeMDForOpus`](https://github.com/TheColliny/FableClaudeMDForOpus);
   event-phrased routing, adapted as the state-phrased trigger rule in
   `skill-authoring` §5. Ideas only; no code taken.
+- **hamanpaul** —
+  [`hamanpaul/testpilot-core`](https://github.com/hamanpaul/testpilot-core);
+  its tier-2 environment-recovery design — the escalation counter driven by
+  the orchestrator's own verify gate rather than a worker's self-report, and
+  the intervention marker kept distinct from a passed gate — adapted into
+  `delegation-and-review` §4. MIT, ideas only; no code taken.
 - **2026-07 security-skill audit** — a 12-source sweep of community
   "security" skills preceding the 2026-07-12 doctrine batch. Idea-level
   adoptions only, no code: **eddygk/skill-vetting** (anti-override rule →
