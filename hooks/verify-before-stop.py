@@ -19,6 +19,17 @@ Behavior:
 - stop_hook_active (the second Stop) always passes — relief valve so a
   blocked turn cannot deadlock; the pass is logged for audit.
 - Fail-open: any internal error passes, with the traceback logged.
+- Quiet-degradation telemetry (2026-07-24, after Miguok/fable-harness
+  b6f794e fixed the same defect class upstream): every silent no-op path
+  now attempts to leave a log line (best-effort — _log swallows its own
+  failures to preserve fail-open), so a harness schema drift cannot
+  disable the gate invisibly for weeks. Levels (checked after the relief
+  valve — a second Stop logs its own PASS first): missing transcript_path
+  = ERROR (schema drift); a transcript with user entries but no real prompt = PASS with
+  reason (known degenerate shape — sampled 2026-07-24: real sessions carry
+  61-209 user entries, mostly list-content tool results); a transcript
+  with NO user-type entries at all (or empty) = WARN (unknown shape,
+  possible drift).
 
 Known limits (mechanically unfixable; do not treat this hook as omniscient):
 - It checks that a test command / verify agent APPEARED, not that tests
@@ -122,13 +133,24 @@ def is_real_user_prompt(entry):
 
 
 def analyze(entries):
-    """Return (edited_code, verification_seen) for the last turn."""
+    """Return (edited_code, verification_seen, status) for the last turn.
+
+    status: "ok" — a real user prompt anchored the window;
+    "promptless-with-user-entries" — user entries exist but none is a real
+    prompt (known degenerate shape: local-command/compaction edges);
+    "no-user-entries" — no user-type entry at all, or an empty transcript
+    (unknown shape — likely schema drift).
+    """
     last_idx = None
     for i, entry in enumerate(entries):
         if is_real_user_prompt(entry):
             last_idx = i
     if last_idx is None:
-        return False, False  # degenerate transcript — fail-open by design
+        has_user = any(
+            isinstance(e, dict) and e.get("type") == "user" for e in entries
+        )
+        status = "promptless-with-user-entries" if has_user else "no-user-entries"
+        return False, False, status  # fail-open by design; caller logs why
 
     edited_code = False
     verification_seen = False
@@ -152,7 +174,7 @@ def analyze(entries):
                 text = " ".join(str(tool_input.get(k) or "") for k in ("prompt", "description"))
                 if VERIFY_INTENT_RE.search(text):
                     verification_seen = True
-    return edited_code, verification_seen
+    return edited_code, verification_seen, "ok"
 
 
 def main():
@@ -167,12 +189,25 @@ def main():
 
         transcript_path = data.get("transcript_path")
         if not transcript_path:
+            # Schema drift: without this field the gate can never run again.
+            # Silent return here is how the upstream gate died unnoticed for
+            # days (Miguok/fable-harness b6f794e) — leave a postmortem line.
+            _log("ERROR schema-drift: hook payload has no transcript_path — gate cannot run (fail-open)")
             return 0
 
-        edited_code, verification_seen = analyze(load_transcript(transcript_path))
+        edited_code, verification_seen, status = analyze(load_transcript(transcript_path))
+        if status == "promptless-with-user-entries":
+            _log("PASS degenerate transcript: user entries but no real user prompt (known shape) — fail-open by design")
+        elif status == "no-user-entries":
+            _log("WARN unknown transcript shape: no user-type entries at all — possible schema drift; gate cannot window (fail-open)")
         if edited_code and not verification_seen:
             _log("BLOCK code edited with no test command / verification agent")
-            print(json.dumps({"decision": "block", "reason": BLOCK_REASON}))
+            # json.dumps keeps ensure_ascii=True (default): stdout stays pure
+            # ASCII, so a legacy-codepage console (e.g. Windows cp950) cannot
+            # crash the print and silently kill the gate — the exact upstream
+            # incident (Miguok ebb9621). Do not "fix" this to ensure_ascii=False.
+            print(json.dumps({"decision": "block", "reason": BLOCK_REASON},
+                             ensure_ascii=True))
         return 0
     except Exception:
         _log("ERROR " + traceback.format_exc().replace("\n", " | "))

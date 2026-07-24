@@ -104,4 +104,94 @@ assert_block "Write without verification blocks" "$(run_hook "$tmp/t7.jsonl" fal
 } > "$tmp/t8.jsonl"
 assert_pass "edits before the last user prompt are out of window" "$(run_hook "$tmp/t8.jsonl" false)"
 
+# --- quiet-degradation telemetry (2026-07-24, Miguok b6f794e lineage) ---
+# Every silent no-op path must leave a log line; these fail on the pre-fix
+# hook by the line's ABSENCE (runtime assertion on the log the hook wrote,
+# never a grep of the hook's source).
+
+hook_log="$tmp/.claude/hooks/hooks.log"
+
+# Command substitution ($(...)) would strip trailing newlines and drop the
+# exit status, so fail-open assertions here capture stdout to a FILE and
+# assert rc==0 AND byte-empty output explicitly.
+assert_failopen_raw() {
+  # $1 = test name; $2 = raw stdin payload (may omit fields / be malformed)
+  name="$1"; payload="$2"; outfile="$tmp/failopen.out"
+  if printf '%s' "$payload" | HOME="$tmp" python3 "$root/hooks/verify-before-stop.py" > "$outfile" \
+     && [ ! -s "$outfile" ]; then
+    echo "PASS $name"
+  else
+    echo "FAIL $name: expected rc 0 + byte-empty stdout; rc=$? size=$(wc -c < "$outfile")" >&2
+    exit 1
+  fi
+}
+
+assert_failopen_transcript() {
+  # $1 = test name; $2 = transcript path
+  name="$1"; tpath="$2"; outfile="$tmp/failopen.out"
+  if TRANSCRIPT="$tpath" ACTIVE=false python3 - <<'PY' | HOME="$tmp" python3 "$root/hooks/verify-before-stop.py" > "$outfile" \
+     && [ ! -s "$outfile" ]; then
+import json, os
+print(json.dumps({"transcript_path": os.environ["TRANSCRIPT"], "stop_hook_active": False}))
+PY
+    echo "PASS $name"
+  else
+    echo "FAIL $name: expected rc 0 + byte-empty stdout; size=$(wc -c < "$outfile")" >&2
+    exit 1
+  fi
+}
+
+assert_log_line() {
+  name="$1"; marker="$2"
+  if [ -f "$hook_log" ] && grep -qF "$marker" "$hook_log"; then
+    echo "PASS $name"
+  else
+    echo "FAIL $name: expected log line containing: $marker" >&2
+    [ -f "$hook_log" ] && sed 's/^/  log: /' "$hook_log" >&2
+    exit 1
+  fi
+}
+
+# t9: payload without transcript_path → fail-open AND an ERROR postmortem
+rm -f "$hook_log"
+assert_failopen_raw "missing transcript_path still fails open (rc0, byte-empty)" '{"stop_hook_active": false}'
+assert_log_line "missing transcript_path leaves schema-drift telemetry" "ERROR schema-drift: hook payload has no transcript_path"
+
+# t10: user entries but no real prompt (local-command only) → pass + reason
+rm -f "$hook_log"
+{
+  printf '%s\n' '{"type":"user","message":{"content":"<local-command-stdout></local-command-stdout>"}}'
+  printf '{"type":"assistant","message":{"content":[%s]}}\n' "$EDIT_PY"
+} > "$tmp/t10.jsonl"
+assert_failopen_transcript "promptless transcript (user entries present) fails open" "$tmp/t10.jsonl"
+assert_log_line "promptless-with-user-entries logs a PASS reason" "PASS degenerate transcript: user entries but no real user prompt"
+
+# t11: no user-type entries at all → pass + WARN (unknown shape)
+rm -f "$hook_log"
+printf '{"type":"assistant","message":{"content":[%s]}}\n' "$EDIT_PY" > "$tmp/t11.jsonl"
+assert_failopen_transcript "no-user-entries transcript fails open" "$tmp/t11.jsonl"
+assert_log_line "no-user-entries logs a WARN" "WARN unknown transcript shape: no user-type entries"
+
+# t11b: empty JSONL file → same unknown-shape WARN branch, named fixture
+rm -f "$hook_log"
+: > "$tmp/t11b.jsonl"
+assert_failopen_transcript "empty transcript file fails open" "$tmp/t11b.jsonl"
+assert_log_line "empty transcript logs the unknown-shape WARN" "WARN unknown transcript shape: no user-type entries"
+
+# t12 (characterization, old-and-new): malformed stdin still fails open,
+# and the except path leaves its (pre-existing) ERROR record
+rm -f "$hook_log"
+assert_failopen_raw "malformed stdin fails open" 'not json at all'
+assert_log_line "malformed stdin leaves the except-path ERROR" "ERROR "
+
+# t13: block JSON survives a legacy-codepage stdout (the Miguok ebb9621
+# incident class) — ensure_ascii output must not crash under cp950
+transcript_with "$tmp/t13.jsonl" "$EDIT_PY"
+out=$(TRANSCRIPT="$tmp/t13.jsonl" ACTIVE=false python3 - <<'PY' | HOME="$tmp" PYTHONIOENCODING=cp950 python3 "$root/hooks/verify-before-stop.py"
+import json, os
+print(json.dumps({"transcript_path": os.environ["TRANSCRIPT"], "stop_hook_active": False}))
+PY
+)
+assert_block "block JSON survives cp950 stdout encoding" "$out"
+
 echo "OK: all verify-before-stop tests passed"
