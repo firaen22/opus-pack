@@ -392,7 +392,10 @@ you imagine.
 
 **A skill — or a plugin's instruction files — is under this section's
 review: verify the deployment runtime before the review concludes**
-(`unprobed` — private incident as shape; see Provenance). A skill
+(probed in part — the review-stage rows are covered by a discriminating
+private-suite cell at n=3, results cited as shape; the taxonomy-recall,
+in-file labeling/remediation, authoring-start-gate, and
+risk-acceptance-alternate rows remain `unprobed`; see Provenance). A skill
 verified only on the author's machine can pass every lens above and
 still be wrong where it will actually run: one reviewed-and-finalized
 skill was reworked wholesale when its real target — a sandboxed Linux
@@ -635,10 +638,20 @@ the author's local macOS environment, then rebuilt wholesale the same week
 when the user mentioned it would run inside a sandboxed Linux VM — host
 identity, launcher mechanism, and machine-local MCP tool-name assumptions
 all failed on the real target (contributor-reported; the private repo is
-verifiable by the contributor, not linkable here). Ships `unprobed` per the
-README covenant's second branch: no in-repo probe has run; the probe shape
-(give a weak-tier reviewer a machine-bound skill plus a named foreign
-runtime, observe whether the sweep fires) is recorded as debt.
+verifiable by the contributor, not linkable here). Probed in part
+(2026-07-24): the private suite's round-4 scored campaign ran exactly the
+recorded probe shape — a weak-tier reviewer given a machine-bound skill
+plus a named foreign runtime — as its one cell that discriminated at
+n=3 under fully mechanical scoring (transcript-verified arming, verbatim
+reply capture, frozen fixtures/oracles: bare arm 0/3 PASS, ruled arm
+3/3 PASS; the checker binds the named-target engagement, the
+assumption-sweep firing on a target-inferable plant, the
+BLOCKED-without-risk-acceptance disposition, and the
+no-blanket-flagging control). The suite is private, so the results are
+cited as shape, never as a shipped in-repo probe. The rows that cell
+does not bind — taxonomy recall, in-file labeling/remediation, the §1
+authoring-start gate, the risk-acceptance alternate Done — remain
+`unprobed`, and the in-body marker names both halves.
 The §3 capability-negative rule (2026-07-22) comes from a private
 incident: a subordinate-CLI playbook asserted a capability did not exist
 ("model switching only works interactively; no flag") — true when
