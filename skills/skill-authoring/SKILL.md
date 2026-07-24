@@ -170,17 +170,24 @@ artifact-producing step.
   change-X-update-Y pairs), not only the file in hand. Check BOTH
   lists, each with its own invocation, on the SAME upstream repo and
   target branch lineage (a backport into another release branch is not
-  a hit): PRs merged after the one in hand (by MERGE TIME, not PR
-  number — e.g. `gh pr list --state merged`) AND open PRs (e.g.
-  `gh pr list --state open`), each enumerated COMPLETELY over the
-  interval (the tool's default page size — gh's is 30 — silently
-  truncates; raise the limit or date-bound the query and record the
-  bound), both filtered to those touching the synced surfaces. Any
-  hit → do not close the sync as final: re-anchor to the newest
-  touching merged state and re-run the check, or — when touching
-  rounds are still open — record the sync as provisional with the
-  follow-up fold owed. Done when the sync record cites BOTH checks
-  (commands + date + enumeration bound) with empty touching lists —
+  a hit) — OPEN first, then MERGED, so a PR that merges between the
+  two queries leaves the first set only by entering the second: ALL
+  currently-open PRs (no creation-time bound — a follow-up opened
+  BEFORE the anchor merged still counts; e.g. `gh pr list --state
+  open`), then PRs merged after the anchor by MERGE TIME, not PR
+  number (e.g. `gh pr list --state merged`). Each list is enumerated
+  to EXHAUSTION — the tool's default page size (gh's is 30) silently
+  truncates, and a date bound does not lift the cap: paginate until
+  the last page is short, and record the total counted. "Touching" is
+  decided from each candidate's CHANGED FILES read mechanically (e.g.
+  `gh pr view <n> --json files` or `gh pr diff <n> --name-only`),
+  never from titles or bodies — a continuation PR's title may carry
+  no path token while it edits the synced file. Any touching hit → do
+  not close the sync as final: re-anchor to the newest touching
+  merged state and re-run the check, or — when touching rounds are
+  still open — record the sync as provisional with the follow-up fold
+  owed. Done when the sync record cites BOTH checks (commands + date
+  + totals) and the file-level touch determinations, all empty —
   which makes the anchor safe AS OF that check, never forever — or
   carries the provisional label.
 - When two files must agree, write the sync contract down ("change X → update
@@ -516,15 +523,17 @@ default; an AI rewrite does not launder a derivative).
   new baseline. Confusing the two produces a maintenance log that
   carries the same "still owes an extraction pass" line for months on
   content that already extracted everything extractable. After a
-  compaction pass: if every remaining line still traces to a live
-  trigger, record the new line count as the new baseline IN the log
-  entry that carried the debt (retiring its owes-line) — recorded only
-  ALONGSIDE that pass's word-diff artifact (the bullet below): a
-  re-baseline without the pass artifact is the phantom-debt inversion,
-  declaring extraction complete on self-judgment. Any remaining line
-  that traces to NO live trigger → the owes-line stays. No
-  carried-debt entry exists (a first pass) → create the baseline line
-  in the maintenance/fix-log entry recording that pass. Thereafter the
+  compaction pass, in order: (1) produce the pass's word-diff
+  artifact (the bullet below) — no artifact, no accounting; (2) test
+  every remaining line against a live trigger; (3) any line traces to
+  NO live trigger → the debt STANDS: the owes-line stays, or on a
+  first pass one is CREATED in the maintenance/fix-log entry
+  recording the pass — never a baseline; (4) only when the artifact
+  exists AND every remaining line is live, record the new line count
+  as the new baseline in the entry that carried the debt (retiring
+  its owes-line), or on a first pass in the entry recording the pass.
+  A baseline without steps 1-2 is the phantom-debt inversion —
+  declaring extraction complete on self-judgment. Thereafter the
   LINE-COUNT arm of the compaction trigger above reads against the
   recorded baseline — re-firing on growth beyond that number, not on
   the old one; the trigger's other arms (description mismatch, index
