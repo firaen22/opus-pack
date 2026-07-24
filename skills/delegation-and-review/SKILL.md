@@ -586,7 +586,7 @@ reviewers that they silently absorb as implementers.
   resolve to pass/fail (an infra or UNKNOWN error) is not a pass — it fails
   closed, resets nothing, and if it recurs so the gate simply cannot run,
   that is a blocked-worker condition: escalate per the blocked-workers
-  bullet below, never loop on UNKNOWN. Trust a self-report as progress
+  bullet above, never loop on UNKNOWN. Trust a self-report as progress
   instead and an
   optimistic-but-wrong worker pins you in the low tier forever: it keeps
   reporting success, the count never climbs, the real failure never
