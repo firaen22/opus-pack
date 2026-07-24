@@ -173,9 +173,13 @@ artifact-producing step.
   a hit) — OPEN first, then MERGED, so a PR that merges between the
   two queries leaves the first set only by entering the second: ALL
   currently-open PRs (no creation-time bound — a follow-up opened
-  BEFORE the anchor merged still counts; e.g. `gh pr list --state
-  open`), then PRs merged after the anchor by MERGE TIME, not PR
-  number (e.g. `gh pr list --state merged`). Each list is enumerated
+  BEFORE the anchor merged still counts; e.g. `gh pr list --repo
+  <upstream> --base <branch> --state open`), then PRs merged after
+  the anchor by MERGE TIME, not PR number (e.g. `gh pr list --repo
+  <upstream> --base <branch> --state merged --json
+  number,mergedAt` — the repo/base flags and the mergedAt field are
+  load-bearing: an unflagged query can read the wrong fork or
+  default branch, and PR numbers do not order by merge time). Each list is enumerated
   to EXHAUSTION — the tool's default page size (gh's is 30) silently
   truncates, and a date bound does not lift the cap: paginate until
   the last page is short, and record the total counted. "Touching" is
@@ -189,11 +193,14 @@ artifact-producing step.
   treat that PR as TOUCHING (conservative) or keep the sync
   provisional. One OPEN+MERGED pass is a snapshot with
   blind windows at its edges — a PR can change state between any two
-  queries — so REPEAT the pass until a full OPEN+MERGED pass adds NO
-  new candidate versus the previous pass (each pass's merged query
-  re-covers whatever the prior open query lost to a merge); still
-  unstable after three passes → record the sync provisional, no
-  further queries owed. A rename touches when EITHER path side
+  queries — so REPEAT the pass until a full OPEN+MERGED pass adds NO new
+  TOUCHING-OR-UNCLASSIFIED candidate versus the previous pass — every
+  newcomer gets its changed-files classification, but a newcomer
+  classified non-touching does not destabilize the loop (else a busy
+  repo livelocks into provisional despite zero synced-surface hits);
+  each pass's merged query re-covers whatever the prior open query
+  lost to a merge. Still unstable after three passes → record the
+  sync provisional, no further queries owed. A rename touches when EITHER path side
   matches a synced surface — path-oriented file listings can hide the
   old path, so where the tool does not expose both sides, treat
   renames conservatively as touching. Any touching hit → do not close
