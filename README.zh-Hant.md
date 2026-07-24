@@ -277,6 +277,17 @@ Hooks 現已具備放行/擋下兩路單元測試,但行為層(實測 arm)尚未
 測的是 `opus-pack` 的紀律 skill;`design-pack` 晚於它,帶有自己的 smoke 等級
 probe 紀錄,在[它自己的區塊](#design-pack設計-skill)裡。)
 
+Round-4 更新(2026-07-24):接班套件在弱模型層(haiku)完成一輪預先註冊的
+scored campaign(12 個 fixture cell、bare 對 ruled 兩臂僅差內嵌規則摘錄、
+transcript 機械驗證 arming、逐字 reply 擷取、凍結的 fixtures 與 oracle、
+每臂 n=3)。上方前沿層的 null 結論不變。弱模型層恰有一個 cell 達成判別
+(bare 0/3 對 ruled 3/3)——該規則的標記已改為 probed-in-part
+(skill-authoring §6);另有一項 smoke 輪發現(n=1 smoke 等級,與 scored cells 有別)促成本包第一個
+probe-backed 教條修復(delegation-and-review §1 的 decision-binding fallback);其餘
+cell 在預先註冊的判定表下分別 floor、飽和、觸發 saturation-veto、在延伸
+slot 後判為 NOT-DISCRIMINATED、或不可計分。請把它讀成
+「量測機制在運作」,不是分數提升:結果存於私有 ledger,僅以形狀引用。
+
 本包公約(2026-07-16,採自 fable-method 的「prime directive」——見致謝):
 新的行為規則出貨時,必須附上「沒有這條就會失敗」的 probe 或 trap;做不到
 就明確標記 `unprobed`。公約的量具是私有套件的接班輪——自 fable-method

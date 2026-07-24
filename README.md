@@ -410,6 +410,21 @@ an enforcement substrate, not a proven score boost. (This round measured
 `opus-pack`'s discipline skills; `design-pack` postdates it and carries its own
 smoke-grade probe record in [its section](#design-pack-the-design-skills).)
 
+Round-4 update (2026-07-24): the successor suite ran a pre-registered
+scored campaign at the weak tier (haiku; 12 fixture cells, bare-vs-ruled
+arms differing only by an inlined rule excerpt, mechanical
+transcript-verified arming, verbatim reply capture, frozen
+fixtures/oracles, n=3 per arm). The frontier-tier null above stands
+untouched. At the weak tier, exactly ONE cell discriminated (bare 0/3
+vs ruled 3/3) — its rule's marker is now labeled probed-in-part
+(skill-authoring §6) — and one smoke-round finding (n=1 smoke grade, distinct from the
+scored cells) produced the pack's first probe-backed doctrine repair
+(the decision-binding fallback in delegation-and-review §1); every other cell floored, saturated, hit the
+saturation-veto, resolved NOT-DISCRIMINATED on its extension slots, or
+was unscoreable under the pre-registered verdict table. Read it as
+measurement working, not as a score boost: results live in the private
+ledger and are cited as shape.
+
 House covenant (2026-07-16, adopted from fable-method's "prime directive"
 — see acknowledgements): a new behavioral rule ships with the probe or
 trap that would have failed without it, or it ships explicitly labeled

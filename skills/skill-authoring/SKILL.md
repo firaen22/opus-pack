@@ -722,10 +722,14 @@ under different phrasing — including one proposed upstream addition whose
 substance was already in the target file, caught only by reading the
 section during drafting (contributor-reported; the private repos are
 verifiable by the contributor, not linkable here). It ships `unprobed` per
-the README covenant's second branch — no in-repo probe has run; the
-executable probe shape (seed a reworded twin of a rule, instruct a
-weak-tier agent to dup-check an addition, observe grep-only vs read) is
-noted here as the debt, not claimed as run.
+the README covenant's second branch — no in-repo probe has run. The
+recorded probe shape (seed a reworded twin of a rule, instruct a
+weak-tier agent to dup-check an addition, observe grep-only vs read)
+HAS since run privately: the round-4 scored campaign (2026-07-24,
+n=3 per arm, mechanical arming) ran exactly it and did not
+discriminate at the weak tier — the bare arm sometimes found the twin
+by reading unprompted (saturation-veto), so the marker stands;
+results live in the private ledger, cited as shape.
 The §6 deployment-runtime rule (2026-07-21) comes from a private incident:
 a skill was authored, reviewed through the lenses above, and finalized for
 the author's local macOS environment, then rebuilt wholesale the same week

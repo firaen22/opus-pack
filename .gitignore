@@ -5,3 +5,4 @@ guideline *.txt
 evals/
 internal/
 skills-staging/
+pack-eval-artifacts/
