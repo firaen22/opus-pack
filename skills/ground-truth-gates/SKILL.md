@@ -246,6 +246,30 @@ A generic green test is not proof. A gate is real only if:
    agreement separately (two models agreeing is one lens, not two). A metric
    clearing a threshold is *evidence*, never *authorization*: keep the go/no-go a
    separate recorded decision.
+6. **A gate over hardcoded facts asserts the facts, not just the shape — and
+   the cross-check that established them belongs IN the fixture, not in the
+   chat** (`unprobed` — private incident as shape; see Provenance). When code
+   embeds domain constants (holiday dates, a tax rate, a fee schedule, the set
+   of valid states), a suite that checks structure — the array is non-empty,
+   each entry parses, the shape is right — passes identically whether the
+   values are correct or a later edit corrupted one. Those values were usually
+   cross-checked once, against an authority or several independent sources or a
+   reviewer's recall — but that check happened in the conversation and
+   evaporates when the session ends, so the next bad edit sails through a
+   shape-only gate. Anchor the fact: assert the specific load-bearing values
+   (a fixed holiday falls on its known date, the standard rate equals the
+   published number), from the authority you already consulted, so a future
+   silent change to a constant fails. This *extends* item 2's carve-out —
+   from an output-interface string to an embedded input constant — and is NOT
+   item 3's "hardcoded expected value" fake pass: the anchor's value comes from
+   an external authority, not copied back from the code's own output. Item 3's
+   tautology asserts the source is the source; this asserts the source matches
+   the world. A fact that legitimately changes gets the value versioned (the
+   regenerate-and-diff rule below), an always-fixed one is cheap to anchor
+   permanently.
+   ❌ "the holiday tests pass" — they assert the list has the right count and
+   types, never that any date is the right day; a fat-fingered edit to one
+   date stays green.
 
 **A red result is not automatically a real defect** — but ruling one
 "environmental" is a gate change, not the worker's call (rule 4): quarantine it
@@ -389,5 +413,13 @@ and the change-detector trap — failure shapes the two-sided protocol alone
 cannot screen, since a source-echo test genuinely fails the old arm and
 passes the new one. Ships `unprobed` per the covenant; its probe joins the
 private round-5 queue.
+Rule 6 (fact-anchoring; 2026-07-24) is class-distilled from a mining pass
+over the owner's own sessions (no code taken): hardcoded public-holiday dates
+were cross-checked against four independent sources, but a cross-model
+reviewer noted the suite validated structure only — "tests check shape, not
+date-truth" — so the truth evidence lived in the conversation, not the gate;
+the fix added anchor-date assertions as a regression guard against a future
+bad edit. Ships `unprobed` per the covenant; its probe joins the private
+round-5 queue.
 `template/` scripts are self-contained (Node + bash, zero deps) and were run
 green on 2026-07-06 with Node v23; re-verify with `bash template/run-all.sh`.
