@@ -781,9 +781,15 @@ wrapper's internal routing names. Private evidence, cited as shape per
 the README covenant's second branch; two probes owed, one per boundary —
 invoke every listed model once and diff claimed-vs-callable (the listing
 half), and seed an alias-collision fixture and observe whether the
-mapping is resolved before a namespace crossing (the provider-ID half);
-neither has run in-repo, and the in-body `unprobed` marker stands until
-both have.
+mapping is resolved before a namespace crossing (the provider-ID half).
+Neither has run in-repo. The provider-ID shape HAS since run privately:
+the round-4 scored campaign (2026-07-24, n=3, mechanical arming) seeded
+exactly that alias-collision fixture and it SATURATED at the weak tier
+(the bare arm resolved the two-hop mapping unprompted) — no
+discrimination, so the marker stands; results in the private ledger,
+cited as shape. The listing half's inventory probe remains unrun, and
+the in-body `unprobed` marker stands until both boundaries have
+discriminating coverage.
 The §1 empty-output differential rule (2026-07-23) comes from two
 contributor incidents in one day's sessions: a probe's empty output
 file was traced through a raw re-probe (no response at the transport),
