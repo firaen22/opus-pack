@@ -184,6 +184,26 @@ rm -f "$hook_log"
 assert_failopen_raw "malformed stdin fails open" 'not json at all'
 assert_log_line "malformed stdin leaves the except-path ERROR" "ERROR "
 
+# t14-t17: TEST_CMD_RE coverage of this pack's own entrypoints (2026-07-24:
+# the hook blocked its own repo's sessions twice while real verification ran
+# — bash hooks/test-*.sh and python3 .github/checks.py were invisible to it)
+BASH_HOOK_SUITE='{"type":"tool_use","name":"Bash","input":{"command":"bash hooks/test-verify-before-stop.sh"}}'
+PY_CHECKS='{"type":"tool_use","name":"Bash","input":{"command":"python3 .github/checks.py"}}'
+BASH_TEMPLATE_RUNALL='{"type":"tool_use","name":"Bash","input":{"command":"bash template/run-all.sh --min 0.9"}}'
+BASH_CAT_SUITE='{"type":"tool_use","name":"Bash","input":{"command":"cat hooks/test-verify-before-stop.sh"}}'
+
+transcript_with "$tmp/t14.jsonl" "$EDIT_PY" "$BASH_HOOK_SUITE"
+assert_pass "bash hooks/test-*.sh counts as verification" "$(run_hook "$tmp/t14.jsonl" false)"
+
+transcript_with "$tmp/t15.jsonl" "$EDIT_PY" "$PY_CHECKS"
+assert_pass "python3 .github/checks.py counts as verification" "$(run_hook "$tmp/t15.jsonl" false)"
+
+transcript_with "$tmp/t16.jsonl" "$EDIT_PY" "$BASH_TEMPLATE_RUNALL"
+assert_pass "bash template/run-all.sh counts as verification" "$(run_hook "$tmp/t16.jsonl" false)"
+
+transcript_with "$tmp/t17.jsonl" "$EDIT_PY" "$BASH_CAT_SUITE"
+assert_block "cat of a test script is not verification" "$(run_hook "$tmp/t17.jsonl" false)"
+
 # t13: block JSON survives a legacy-codepage stdout (the Miguok ebb9621
 # incident class) — ensure_ascii output must not crash under cp950
 transcript_with "$tmp/t13.jsonl" "$EDIT_PY"
