@@ -584,7 +584,10 @@ reviewers that they silently absorb as implementers.
   on a verified PASS of it; a claimed fix with no verified pass neither
   resets it nor counts as progress, and a re-verification that cannot
   resolve to pass/fail (an infra or UNKNOWN error) is not a pass — it fails
-  closed and resets nothing. Trust a self-report as progress instead and an
+  closed, resets nothing, and if it recurs so the gate simply cannot run,
+  that is a blocked-worker condition: escalate per the blocked-workers
+  bullet below, never loop on UNKNOWN. Trust a self-report as progress
+  instead and an
   optimistic-but-wrong worker pins you in the low tier forever: it keeps
   reporting success, the count never climbs, the real failure never
   surfaces. So re-run your gate after a claimed fix and count the next real
@@ -594,8 +597,9 @@ reviewers that they silently absorb as implementers.
   result, labelled as intervention and never as a pass: a gate green only
   after intervention is not a clean pass, so it does not qualify for item
   5's downgrade until a later verification passes with NO intervention
-  (shipping honesty for such a pass is operational-rigor §5; the worker
-  never rewrites the gate — ground-truth-gates rule 4). Done: every ladder
+  (shipping honesty for such a pass is operational-rigor §5;
+  ground-truth-gates rule 4 governs who may touch the gate). Done: every
+  ladder
   transition rests on a verified outcome, every intervention is recorded as
   intervention, and no reset rests on an unverified claim.
   ✅ "worker said the env was repaired; re-ran my gate — still red: verified
