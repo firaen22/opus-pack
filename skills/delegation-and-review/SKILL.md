@@ -747,7 +747,13 @@ per the README covenant, in-body `unprobed` marker. The executable probe
 debt is behavioral: fixture a stale dated measurement beside a changed
 same-slug probe result and observe whether a weak executor re-runs before
 routing — distinct from re-verifying the drift premise itself, which only
-longitudinal re-measurement of live endpoints can do. The
+longitudinal re-measurement of live endpoints can do. That fixture shape
+HAS since run privately (round-4 scored campaign, 2026-07-24, n=3,
+mechanical arming): the bare arm never re-ran the probe in any run — the
+predicted failure mode, reproduced — while the ruled arm re-ran with full
+citation discipline in one of three; no discrimination at the
+pre-registered bar, so the marker stands (results in the private ledger,
+cited as shape). The
 decision-binding sentence in the unknown-fallback (2026-07-23)
 repairs a clause a private smoke fixture caught under-binding: the fixture's
 probe-unavailable cell caught a ruled weak-tier arm writing
@@ -757,7 +763,12 @@ sentence, the same tier held the batch and routed away (n=1 each arm,
 private fixture — smoke grade, recorded in the private probes ledger;
 the probe is private, so per the covenant's second branch this
 clause too remains `unprobed` — the observation is cited as shape,
-never as a shipped in-repo probe).
+never as a shipped in-repo probe). The round-4 scored campaign
+(2026-07-24) then re-ran the probe-unavailable cell at n=3: the
+decision BOUND in every ruled run — the risky batch never routed to
+the flagged model — while the cell FLOORed on the evidence-trail duty
+(the invocation-attempt record), so the clause stays `unprobed`; the
+binding behavior itself is the positive signal, cited as shape.
 The §2 recurring-sweep ledgers rule (2026-07-22) comes from a private
 incident: across iterations of a repeated review sweep, one reviewer
 re-raised a finding class an earlier iteration had refuted against the
