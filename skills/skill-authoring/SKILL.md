@@ -614,6 +614,34 @@ default; an AI rewrite does not launder a derivative).
   clauses" in the commit message.
   ❌ "the extracted file still has a heading for this section, so the content
   made it" — headings survive; the sentence under them doesn't have to.
+- **A compression cut is a falsifiable bet — probe the pressure case, not
+  the happy path** (`unprobed` — external measurement cited as shape; see
+  Provenance). The word-diff above shows what TEXT disappeared; it cannot
+  prove that retained or reworded text preserves the dropped words'
+  behavioral force. Argument/rebuttal prose guarding a
+  rule can be load-bearing under exactly the pressure it rebuts: one
+  upstream library measured a compression that kept every rule, deleted
+  only its "why", and lost 3-in-10 of pressure-case compliance across two
+  model families. So when a cut removes argument, rebuttal, or persuasion
+  text: fold the rebuttal into the rule line where the excuse fires rather
+  than deleting it, and where probe infrastructure exists, probe the cut at
+  the decision point the cut prose guarded, under pressure framing — a cut
+  that degrades the probe is reworked, not shipped.
+  ❌ "the rule survived the compaction, only the justification went" — the
+  justification was the pressure armor.
+- **Restructuring probe-tuned text takes a move map** (`unprobed` — adapted
+  external design; see Provenance). When a doc whose sentences were probe-
+  or eval-tuned is restructured (split, merged, re-homed), tuned sentences
+  move VERBATIM; every rewording is enumerated in a move map — source
+  line-range AT A NAMED REVISION → new location, per-row disposition
+  (verbatim / reworded-with-old-and-new-wording-shown + probe status) —
+  and the review checks every row to a resolved state. Documenting a rewording does not validate it: a
+  reworded tuned rule is re-probed, or its marker downgrades to
+  `unprobed` with the debt queued per the covenant.
+  Paraphrase drift on tuned prose is otherwise unreviewable: the reviewer
+  sees fluent text, not the tuned sentence it silently replaced.
+  ❌ "improved the wording while moving it" — an untested regression on a
+  tuned sentence.
 - A rule that misfired once is not yet wrong: reproduce the incident and
   check whether the executor actually followed the rule before editing it.
   A rule that is repeatedly **read but still violated** is at the wrong
@@ -805,3 +833,13 @@ Re-verify against current tooling: `gh pr list --help | grep -i
 drifts — re-read the §3 campaign-continuation check's pagination
 language then), and re-check the hosted diff/file-listing caps in the
 forge's current limits docs; everything else is stable method.
+The §7 pressure-probe and move-map rules (2026-07-24) adapt obra/
+superpowers v6.2.0's skills-compression method and SDD-redesign global
+constraints (MIT, ideas only; see README acknowledgements): their commit
+b9e75dd's measured deletion regression (control 8/10 → treatment 5/10
+under the exact pressure the deleted section rebutted, corroborated on two
+model families — their numbers, cited as shape per the covenant, never as
+this pack's evidence) and their verbatim-move rule + row-by-row move map
+for eval-tuned prose. Both ship `unprobed`; the pressure-probe rule's own
+probe is exactly the shape it prescribes and joins the private round-5
+queue with the move-map rule's.

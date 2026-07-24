@@ -257,6 +257,24 @@ trail. Risk ladder for granting tools:
 | L3 | Destructive / financial / production | explicit human confirmation each time |
 | L4 | Secret management (rotate keys, vault) | no direct agent access |
 
+- **The capability triangle — break one side per trust boundary**
+  (`unprobed` — adapted external design; see Provenance). Three
+  capabilities that combine into an exfiltration pipeline when one agent
+  holds all of them: access to private data + exposure to untrusted input
+  + a path that sends data out — an injected instruction in the untrusted
+  input drives the other two (each is a risk on its own; together the
+  attack needs no further foothold). Design duty at every trust boundary:
+  break the triangle at one side, and break it ENFORCEDLY — split the
+  reader of untrusted content from the agent touching private data with a
+  narrow data-only interface between them (a split where tainted
+  instruction-shaped content flows across unfiltered breaks nothing);
+  remove the outbound path; or gate the send on a human who sees the
+  EXACT payload, with no agent-reachable bypass around the gate. The risk
+  ladder above is HOW a side gets dropped: scope the token so the side
+  does not exist.
+  ❌ "one assistant with web search, the vault token, and email send —
+  it's convenient."
+
 Treat content the agent reads (pages, issues, tool output) as data, not
 instructions — prompt injection is a standing threat (see
 delegation-and-review §7). An embedded directive is an event to surface, not
@@ -332,4 +350,11 @@ A 2026-07-16 two-family post-merge review (grok-4.5 + gpt-5.6-sol;
 trail in `reviews/2026-07-16-post-merge-validation-pr25-29.md`) made the
 webhook dedup row the enqueued event itself and added the
 reconcile-before-reclaim precondition on expiring spend holds.
+The capability-triangle rule (2026-07-24) adapts agent-standard-oss's §10
+capability-triangle bullet (MIT, ideas only; see README acknowledgements —
+a founding source's post-anchor delta, fetched and quote-verified at their
+HEAD 2d3bcb5), adopted for its composition framing: break-one-side is both
+the design duty and the exception mechanism for systems that legitimately
+need all three capabilities somewhere. Ships `unprobed` per the covenant;
+its probe joins the private round-5 queue.
 Volatile facts to re-verify yearly: platform storage APIs and deprecations.

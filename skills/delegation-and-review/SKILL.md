@@ -91,6 +91,26 @@ treat every returned result as a claim until verified.
   output → high-taste model; reviews and hard debugging → strongest available.
   Tie-break intelligence > taste > cost. Model lineups are volatile facts: read
   the environment at session time, not memory.
+- **A dispatch names its model; consumption signals weigh in only where
+  observable** (`unprobed` — two-source synthesis; see Provenance). Where
+  the harness exposes a per-dispatch model choice, choose it explicitly and
+  name agent type + model in the dispatch's visible description (where one
+  exists) — first read the current harness's unset-field semantics: where
+  blank means inherit, bulk work silently runs on the orchestrator's own
+  often-most-expensive model, and an unlabeled dispatch is unauditable (in
+  one source's harness, a scan agent silently billed the ceiling model
+  exactly this way). For cost, prefer the lowest-cost configuration —
+  model × effort tier — DEMONSTRATED CAPABLE for the role; a known-
+  incapable route is false economy (it burns the tokens anyway, failing),
+  and dialing a capable model's effort down is one such configuration, not
+  a universally preferred move. Where a quota/pressure signal is
+  OBSERVABLE (a provider's quota error naming a reset time, a dashboard
+  the user relays), treat it as a routing input; never estimate or
+  fabricate an unobservable quota. No dial and no signal → this rule is a
+  no-op, never a guess.
+  ✅ "scan repo (Explore + cheapest capable model)" in the visible description.
+  ❌ model field left blank "to keep the call short" — the orchestrator's
+  flagship quietly does grunt work.
 - **A pinned model string does not pin behavior** (`unprobed` — private
   incidents as shape; see Provenance). A routing or safety decision is
   about to rely on a previously measured behavioral property of a
@@ -570,6 +590,24 @@ reviewers that they silently absorb as implementers.
 5. Pattern solved → downgrade batch application to cheaper model with example;
    spot-check random ~20% (minimum 2) plus flagged items. One miss → verify all.
 
+- **At the ceiling, the ladder inverts** (`unprobed` — adapted external
+  design; see Provenance). The advice-mode rung above assumes a tier exists
+  above the executor. When the ORCHESTRATOR is observably the ceiling
+  model, the stronger-tier rung is unavailable (a model cannot serve as
+  its own stronger arbiter) — item 3's same-tier fresh-context retry
+  remains valid and unchanged — and
+  the ladder runs downward only — DELEGATEABLE BULK goes to cheaper tiers
+  as the first move rather than being executed at the ceiling, blank model
+  inheritance is at its most expensive (every subagent silently runs the
+  ceiling model — the §1 dispatch rule), and where a consumption/usage
+  signal is observable it is reported at phase ends so the user can call a
+  downgrade (no signal → no-op). The inversion does NOT override §1's
+  do-it-yourself triggers — a delta smaller than the prompt, a decision
+  needing full local context, a twice-failed agent finished manually — and
+  with no viable delegate (a solo session, a task not safely separable)
+  the ceiling model executes rather than deadlocking or performing
+  dispatch theater: the inversion governs the default for delegateable
+  bulk, not an absolute.
 - High-stakes open decisions: spawn 2–3 agents with different mandates and
   adjudicate only disagreement.
 - Blocked workers (sandbox, permission, write refusal) escalate, never bypass.
@@ -877,6 +915,19 @@ cross-checked against this pack's existing rules (this section's §3
 completion-claim audit; operational-rigor §2 two-failure and §5 completion
 honesty; ground-truth-gates rule 4), not probed on this pack's private
 fixtures.
+The §1 dispatch-naming rule and §4 ceiling-inversion rule (2026-07-24) come
+from a delta pass over two founding-era sources' post-anchor commits (both
+MIT, ideas only; see README acknowledgements): the dispatch rule is a
+two-source convergence — agent-standard-oss §8's quota-watching +
+reasoning-effort dial and curtischoutw/claude-institution's dispatch.md
+explicit-model + user-visible-labeling rules, whose changelog records the
+named incident (an Explore dispatch silently inheriting the commander's
+expensive model) — bounded here to observable signals only; the
+ceiling-inversion rule generalizes claude-institution's 「Fable 起手」
+mechanism (ladder inverts when the commander IS the ceiling model),
+model-agnostic with a bounded no-viable-delegate exception added at this
+pack's gate review. Both ship `unprobed` per the covenant; their probes
+join the private round-5 queue.
 Stable behavioral rules; re-check
 worktree/agent mechanics and any recorded hosted-endpoint behavioral
 claims against the current environment.

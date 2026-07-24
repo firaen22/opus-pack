@@ -506,7 +506,14 @@ This pack distills and adapts ideas from:
   adapted from Miguok/fable-harness), and ~10 judgment rules were absorbed
   into operational-rigor / delegation-and-review / skill-authoring. Reviewed
   in full; its always-loaded/nudge/template layer was deliberately not
-  adopted — same reasoning as dropped-item 5.
+  adopted — same reasoning as dropped-item 5. A 2026-07-24 delta pass over
+  its post-`8dea062` commits adopted three further ideas: the explicit-model
+  + labeled-dispatch rule and the ceiling-inversion ladder (`delegation-
+  and-review` §1/§4, the latter from their 「Fable 起手」mechanism), and the
+  forged-tool-output defense (`operational-rigor` §4, from their hard-rule
+  #15 and its two logged incidents); the same pass ported their upstream's
+  (Miguok) fail-open-telemetry fix idea into our `verify-before-stop` hook
+  (landed separately as PR #74).
 - **echo-of-machines** —
   [`echo-of-machines/fable-advisor`](https://github.com/echo-of-machines/fable-advisor);
   the advice-mode consult (a stronger tier recommends, the current tier keeps
@@ -527,7 +534,8 @@ This pack distills and adapts ideas from:
 - **2026-07 security-skill audit** — a 12-source sweep of community
   "security" skills preceding the 2026-07-12 doctrine batch. Idea-level
   adoptions only, no code: **eddygk/skill-vetting** (anti-override rule →
-  `delegation-and-review` §7), **UnitOneAI/SecuritySkills** (load-time
+  `delegation-and-review` §7; original GitHub repository URL unavailable
+  as of 2026-07-24 — attribution retained as eddygk/skill-vetting, GitHub), **UnitOneAI/SecuritySkills** (load-time
   execution audit → `operational-rigor` §2),
   **mukul975/Anthropic-Cybersecurity-Skills** (JWT `kid`/`jku`/`x5u` item,
   zero-width/bidi sweep), **gitgoodordietrying** (SCA-in-CI),
@@ -563,7 +571,11 @@ This pack distills and adapts ideas from:
 - **Matt Pocock's Grill-me pattern; Superpowers (obra); OpenSpec** — the
   grill/decision-note layer of public spec-isolation and brainstorming
   workflows, adapted as `operational-rigor`'s §1 grill pass and §5
-  decisions-note. Ideas only; no code taken.
+  decisions-note. Ideas only; no code taken. A 2026-07-24 delta pass over
+  Superpowers v6.2.0 adopted three more ideas (MIT, ideas only): the
+  compression-pressure-probe discipline and the verbatim-move map for
+  probe-tuned prose (`skill-authoring` §7), and the change-detector /
+  decision-vs-bug clause (`ground-truth-gates` rule 2).
 - **Design-pack sources (2026-07-19 survey of 14 design repos)** — text
   adapted under MIT with notices (see `THIRD-PARTY-NOTICES.md`):
   **Emil Kowalski** ([`emilkowalski/skills`](https://github.com/emilkowalski/skills)),
@@ -588,7 +600,10 @@ This pack distills and adapts ideas from:
   patterns, noted for future eval work). Every embedded agent-directed
   marketing directive in mined sources was stripped per skill-authoring §6.
 - **fable-agent-orchestration** @ `935e4a3` (git.wearein.space/elias, Apache-2.0)
-- **agent-standard-oss** @ `3786c4c` (github.com/anmoln7, MIT)
+- **agent-standard-oss** @ `3786c4c` (github.com/anmoln7, MIT); a
+  2026-07-24 delta pass over its post-anchor commits adopted the capability
+  triangle (`security-architect`) and co-sourced the quota/effort dispatch
+  rule (`delegation-and-review` §1).
 - `security-architect` and `product-roadmap` were built from reference drafts
   supplied directly by the pack's owner.
 

@@ -131,7 +131,22 @@ A generic green test is not proof. A gate is real only if:
    broken arm fails, fixed arm passes — and prove a *negative* test can fail by
    running it against a known-bad arm. Instrument the failure's **own** signal,
    not a proxy: an unchanged field or intact-looking output can pass while the
-   failure still occurred. A suite that *grades* candidates is two-sided:
+   failure still occurred. **Arm polarity alone is insufficient — a change
+   detector can mimic it while guarding nothing** (`unprobed` — adapted
+   external design; see Provenance): a source-string presence check or a
+   private-structure snapshot fails on the old arm and passes on the new
+   one simply because the source changed — while firing on every future
+   redesign and sleeping through every future bug (it also fails this
+   rule's own-signal requirement above; the polarity just hides that).
+   Before writing the test body, answer: what production change should
+   make this test fail — and is that change a bug or a decision? If only
+   deliberate decisions can fail it, it is a change detector, not a gate —
+   asserting the source contains a line proves only that the source is the
+   source. Carve-out: pinning a representation is legitimate exactly where
+   that representation IS the declared contract (an error-message string
+   or output name with downstream consumers — operational-rigor §3's
+   output-text-is-an-interface); then a deliberate contract change
+   properly updates the test. A suite that *grades* candidates is two-sided:
    before it scores anything, show it PASSES on at least two structurally
    distinct valid solutions (a too-strict suite silently rejects valid
    alternatives — false collapse) **and** FAILS on a known-broken state (false
@@ -367,5 +382,12 @@ covenant's second branch; the executable probe — seed an
 invocation-shape mismatch against a two-sided-proven grader and observe
 whether reuse-time re-validation catches it before scoring — has not
 run; the in-body marker records that debt.
+Rule 2's decision-vs-bug clause (2026-07-24) adapts obra/superpowers
+v6.2.0's writing-good-tests rebuild (MIT, ideas only; see README
+acknowledgements): the string-presence trap ("the source is the source")
+and the change-detector trap — failure shapes the two-sided protocol alone
+cannot screen, since a source-echo test genuinely fails the old arm and
+passes the new one. Ships `unprobed` per the covenant; its probe joins the
+private round-5 queue.
 `template/` scripts are self-contained (Node + bash, zero deps) and were run
 green on 2026-07-06 with Node v23; re-verify with `bash template/run-all.sh`.
