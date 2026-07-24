@@ -282,8 +282,8 @@ scored campaign(12 個 fixture cell、bare 對 ruled 兩臂僅差內嵌規則摘
 transcript 機械驗證 arming、逐字 reply 擷取、凍結的 fixtures 與 oracle、
 每臂 n=3)。上方前沿層的 null 結論不變。弱模型層恰有一個 cell 達成判別
 (bare 0/3 對 ruled 3/3)——該規則的標記已改為 probed-in-part
-(skill-authoring §6);另有一項 smoke 輪發現促成本包第一個 probe-backed
-的教條修復(delegation-and-review §1 的 decision-binding fallback);其餘
+(skill-authoring §6);另有一項 smoke 輪發現(n=1 smoke 等級,與 scored cells 有別)促成本包第一個
+probe-backed 教條修復(delegation-and-review §1 的 decision-binding fallback);其餘
 cell 在預先註冊的判定表下全部 floor、飽和、或 veto/不可計分。請把它讀成
 「量測機制在運作」,不是分數提升:結果存於私有 ledger,僅以形狀引用。
 
