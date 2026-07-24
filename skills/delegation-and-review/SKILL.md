@@ -573,31 +573,35 @@ reviewers that they silently absorb as implementers.
 - High-stakes open decisions: spawn 2–3 agents with different mandates and
   adjudicate only disagreement.
 - Blocked workers (sandbox, permission, write refusal) escalate, never bypass.
-- **A subordinate's self-reported fix does not drive your escalation — your
-  own re-verification does** (`unprobed` — adapted external design; see
-  Provenance). The counter that advances the ladder above moves on YOUR
-  verification outcomes, never on a worker's "fixed it / should pass now"
-  between attempts (that is a §3 claim). Trust a self-report as progress and
-  an optimistic-but-wrong worker pins you in the low tier indefinitely: it
-  keeps reporting success, the failure count never climbs, the real failure
-  never surfaces. So a claimed fix with no verified pass neither resets the
-  streak nor counts as progress — the streak climbs on each verified failure
-  and resets ONLY on a verified pass; re-verify after a claimed fix and count
-  the next real failure even when success was claimed. Escalating a stuck
-  worker to a more-powerful recovery mode widens its ROOM to act (a bounded,
-  declared action set), never its AUTHORITY over the acceptance criteria,
-  spec, or verdict (operational-rigor §4's authority order and
-  ground-truth-gates rule 4 still bind — the worker satisfies the gate, never
-  rewrites it); a fresh gate you own runs after the intervention and is the
-  only thing that closes the loop, invalid recovery steps failing closed.
-  Record that an agent INTERVENED as a fact distinct from whether the gate
-  PASSED: a green reached only after intervention is not a clean green —
-  carry the intervention marker so an auditor sees the recovery and checks
-  the gate result separately (operational-rigor §5's completion honesty).
-  ✅ "worker said the env was repaired; I re-ran my gate — still red: that's
-  failure #2, escalating with the trail, and the run is marked recovered."
+- **A subordinate's self-reported fix does not advance your escalation —
+  only your own re-verification does** (`unprobed` — adapted external
+  design; see Provenance). When you run the ladder above over a worker that
+  reports progress between attempts ("fixed it / should pass now"), that
+  report is a §3 claim, not a result: the counter that advances the ladder
+  is the dispatcher's tally of YOUR verification outcomes for the same gate
+  (distinct from operational-rigor §2's worker-side same-step replan
+  counter). It climbs on each verified failure of that gate and resets only
+  on a verified PASS of it; a claimed fix with no verified pass neither
+  resets it nor counts as progress, and a re-verification that cannot
+  resolve to pass/fail (an infra or UNKNOWN error) is not a pass — it fails
+  closed and resets nothing. Trust a self-report as progress instead and an
+  optimistic-but-wrong worker pins you in the low tier forever: it keeps
+  reporting success, the count never climbs, the real failure never
+  surfaces. So re-run your gate after a claimed fix and count the next real
+  failure even when success was claimed — a worker cycling
+  claim-fixed/still-red still reaches item 1's change-approach and then
+  escalation. Record that a worker INTERVENED separately from the gate
+  result, labelled as intervention and never as a pass: a gate green only
+  after intervention is not a clean pass, so it does not qualify for item
+  5's downgrade until a later verification passes with NO intervention
+  (shipping honesty for such a pass is operational-rigor §5; the worker
+  never rewrites the gate — ground-truth-gates rule 4). Done: every ladder
+  transition rests on a verified outcome, every intervention is recorded as
+  intervention, and no reset rests on an unverified claim.
+  ✅ "worker said the env was repaired; re-ran my gate — still red: verified
+  failure #2, changing approach, run tagged intervened / gate=FAIL."
   ❌ "worker reported it fixed, so I cleared the retry count and let it keep
-  going."
+  retrying."
 - Quiet is not dead: reconcile process state, output mtime, dirty tree, and logs
   before discarding or relaunching work.
 - Edit conflict ("file modified since read") → never retry blind: re-read, keep
@@ -852,23 +856,23 @@ per the README covenant's second branch; the executable probe — a
 fixture whose subordinate report carries a sandbox-caused RED over
 green code, observing whether the orchestrator re-runs the gate before
 reverting — has not run; the in-body marker records that debt.
-The §4 self-report-vs-re-verification rule (2026-07-24) adapts
-hamanpaul/testpilot-core's tier-2 environment-recovery design (MIT, ideas
-only; see README acknowledgements): its escalation counter resets only when
-the orchestrator's own deterministic `verify_env` gate passes and advances
-on each real re-verification failure, so a tier-1 executor's optimistic
-self-reported success cannot suppress escalation (verified in that repo's
-`remediation.py` — the streak zeroes on the core gate pass and increments
-on the real verify failure, not on the executor's self-report); its
-escalated recovery mode draws only from a plugin's declared capability
-catalog under a tool-denied one-shot boundary and is followed by a forced
-deterministic gate that alone closes the loop; and its `agent_recovered`
-marker records that an agent intervened, never that the gate passed. Ships
-`unprobed` per the README covenant's second branch: adapted external
-design, cross-checked against this pack's existing rules (operational-rigor
-§4 authority order, §5 completion honesty; ground-truth-gates rule 4;
-this section's §3 completion-claim audit), not probed on this pack's
-private fixtures.
+The §4 self-report-vs-re-verification rule (2026-07-24) adapts two ideas
+from hamanpaul/testpilot-core's tier-2 environment-recovery design (MIT,
+ideas only; see README acknowledgements): its escalation counter resets
+only when the orchestrator's own deterministic `verify_env` gate passes and
+increments on each real re-verification failure — a subordinate executor's
+optimistic self-reported success cannot reset or suppress it (verified in
+that repo's `remediation.py`: the streak zeroes on the core gate pass and
+increments on the real verify failure, never on the executor's self-report)
+— and its `agent_recovered` marker records that an agent intervened, never
+that the gate passed. Only the counter-integrity and intervention-marker
+ideas are adopted; the source's capability-catalog / tool-denied one-shot
+recovery machinery is its own design, not installed by this rule. Ships
+`unprobed` per the README covenant's second branch: adapted external design
+cross-checked against this pack's existing rules (this section's §3
+completion-claim audit; operational-rigor §2 two-failure and §5 completion
+honesty; ground-truth-gates rule 4), not probed on this pack's private
+fixtures.
 Stable behavioral rules; re-check
 worktree/agent mechanics and any recorded hosted-endpoint behavioral
 claims against the current environment.
