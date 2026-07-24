@@ -284,7 +284,8 @@ transcript 機械驗證 arming、逐字 reply 擷取、凍結的 fixtures 與 or
 (bare 0/3 對 ruled 3/3)——該規則的標記已改為 probed-in-part
 (skill-authoring §6);另有一項 smoke 輪發現(n=1 smoke 等級,與 scored cells 有別)促成本包第一個
 probe-backed 教條修復(delegation-and-review §1 的 decision-binding fallback);其餘
-cell 在預先註冊的判定表下全部 floor、飽和、或 veto/不可計分。請把它讀成
+cell 在預先註冊的判定表下分別 floor、飽和、觸發 saturation-veto、在延伸
+slot 後判為 NOT-DISCRIMINATED、或不可計分。請把它讀成
 「量測機制在運作」,不是分數提升:結果存於私有 ledger,僅以形狀引用。
 
 本包公約(2026-07-16,採自 fable-method 的「prime directive」——見致謝):
