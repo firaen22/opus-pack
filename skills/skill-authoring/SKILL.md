@@ -159,14 +159,17 @@ artifact-producing step.
   command for anything that may drift. A skill without a re-verification path
   decays into exactly the stale-instruction problem it was meant to solve.
 - **A merged upstream integration is not necessarily the end of the
-  campaign.** Before diff-verifying a local file against "upstream final"
-  and closing the sync, check for PRs merged AFTER the integration PR in
-  hand — a maintainer's review round can continue in follow-up PRs rather
-  than concluding in the one that first merged. Treating an intermediate
+  campaign** (`unprobed` — incident verifiable in this repo's own PR
+  history; see Provenance). Before diff-verifying a local file against
+  "upstream final" and closing the sync, check for PRs merged AFTER the
+  integration PR in hand that TOUCH the files being synced — a
+  maintainer's review round can continue in follow-up PRs rather than
+  concluding in the one that first merged. Treating an intermediate
   merge as terminal ports a state that is already stale and owes a
   follow-up fold once the later rounds land. List merged PRs newer than
-  the one being synced against; only an empty list makes "upstream final"
-  a safe anchor.
+  the one being synced against and check their changed files; "upstream
+  final" is a safe anchor only when none of them touches the synced
+  surfaces (newer merges elsewhere in the repo do not block the sync).
 - When two files must agree, write the sync contract down ("change X → update
   Y") in the canonical file. Prose inventories rot; prefer "read the
   directory" over hand-kept lists, and pin unavoidable lists with a rule or test.
@@ -491,16 +494,19 @@ default; an AI rewrite does not launder a derivative).
   fire. Record what was removed and why, so a rule that turns out to have
   been load-bearing can be restored.
 - **A line-count budget is relative to what earns its place, not a fixed
-  number to shrink back to.** After extracting everything that compacts
-  cleanly, a file can still sit above an old baseline because a genuinely
-  new trigger was added since that baseline was set — that gap is not
-  unpaid debt to keep chasing on the next pass; it is the new baseline.
-  Confusing the two produces a maintenance log that carries the same
-  "still owes an extraction pass" line for months on content that already
-  extracted everything extractable. After a compaction pass: if every
-  remaining line still traces to a live trigger, record the new line count
-  as the floor: only future wording or detail growth against *that* number
-  counts as debt.
+  number to shrink back to** (`unprobed` — private incident as shape;
+  see Provenance). The ~150 trigger above starts a pass; this rule
+  closes the pass's accounting. After extracting everything that
+  compacts cleanly, a file can still sit above an old baseline because
+  a genuinely new trigger was added since that baseline was set — that
+  gap is not unpaid debt to keep chasing on the next pass; it is the
+  new baseline. Confusing the two produces a maintenance log that
+  carries the same "still owes an extraction pass" line for months on
+  content that already extracted everything extractable. After a
+  compaction pass: if every remaining line still traces to a live
+  trigger, record the new line count as the new baseline IN the log
+  entry that carried the debt (retiring its owes-line); only future
+  wording or detail growth against *that* number counts as debt.
 - **A compaction or extraction pass needs a word-diff, not a structure check**
   (verification-time counterpart to §3's don't-paraphrase rule above, which
   guards the writing, not the later edit). Grepping that anchors, pointers,
@@ -701,4 +707,29 @@ covenant's second branch; the executable probe — seed a flipped
 default above an untagged stale verdict block and observe whether a
 weak-tier executor follows the stale order — has not run; the in-body
 marker records that debt.
+The §7 relative-budget rule (2026-07-23) comes from a contributor
+incident: a maintenance log carried a "still owes an extraction pass"
+line across sessions for a file that had already extracted everything
+extractable — every remaining line traced to a live trigger, including
+one added after the old baseline was set; the size gap was that new
+rule's cost, and honoring the stale number would have meant gutting a
+live trigger or carrying phantom debt indefinitely
+(contributor-reported; the private log is verifiable by the
+contributor, not linkable here). Ships `unprobed` per the README
+covenant's second branch; the executable probe — seed a maintenance
+log whose owes-line predates a legitimate post-baseline addition and
+observe whether an executor re-baselines or keeps chasing the old
+number — has not run; the in-body marker records that debt.
+The §3 campaign-continuation rule (2026-07-23) comes from an incident
+whose upstream half is verifiable in THIS repo's public history: the
+#59 combined integration merged mid-campaign, and the review continued
+through #60 and #61 (a 12-round, 3-PR campaign); a contributor's
+reverse-port had diff-verified local caches against #59 as "upstream
+final" and owed a follow-up fold when the later rounds landed (the
+local-cache half is contributor-reported). Ships `unprobed` per the
+README covenant's second branch — the in-repo history evidences the
+incident, not a probe; the executable probe — fixture a repo whose
+sync target has newer merged PRs touching the synced files and observe
+whether a weak-tier executor checks before declaring the sync final —
+has not run; the in-body marker records that debt.
 Stable method; no environment facts to re-verify.
